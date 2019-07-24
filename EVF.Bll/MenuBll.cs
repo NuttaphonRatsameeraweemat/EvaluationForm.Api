@@ -19,6 +19,9 @@ namespace EVF.Bll
         /// The utilities unit of work for manipulating utilities data in database.
         /// </summary>
         private readonly IUnitOfWork _unitOfWork;
+        /// <summary>
+        /// The Role manager provides role functionality.
+        /// </summary>
         private readonly IRoleBll _roleBll;
         #endregion
 
@@ -75,7 +78,7 @@ namespace EVF.Bll
         {
             List<AppMenu> userMenuList = new List<AppMenu>();
 
-            var appMenus = _unitOfWork.GetRepository<AppMenu>().Get().ToList();
+            var appMenus = _unitOfWork.GetRepository<AppMenu>().GetCache().ToList();
 
             //Check menu which user have role to display
             var roleMenuList = appMenus.Where(b => rolelist.Any(a => a.RoleMenu.Equals(b.RoleForDisplay, StringComparison.OrdinalIgnoreCase)) ||

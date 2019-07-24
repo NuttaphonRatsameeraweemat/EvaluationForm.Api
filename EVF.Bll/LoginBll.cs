@@ -37,7 +37,7 @@ namespace EVF.Bll
         /// </summary>
         private readonly IAdService _adService;
         /// <summary>
-        /// The Role Management Service.
+        /// The Role manager provides role functionality.
         /// </summary>
         private readonly IRoleBll _roleBll;
         /// <summary>

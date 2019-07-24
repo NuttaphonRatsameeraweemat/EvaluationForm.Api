@@ -46,7 +46,7 @@ namespace EVF.Bll
         public ResultViewModel ValidateRole(string adUser)
         {
             var result = new ResultViewModel();
-            var data = _unitOfWork.GetRepository<UserRoles>().Get(x => x.AdUser == adUser).FirstOrDefault();
+            var data = _unitOfWork.GetRepository<UserRoles>().GetCache(x => x.AdUser == adUser).FirstOrDefault();
             if (data == null)
             {
                 result = UtilityService.InitialResultError(MessageValue.UserRoleIsEmpty);
@@ -62,7 +62,7 @@ namespace EVF.Bll
         public IEnumerable<AppCompositeRoleItem> GetCompositeRoleItem(string adUser)
         {
             var result = new List<AppCompositeRoleItem>();
-            var user = _unitOfWork.GetRepository<UserRoles>().Get(x => x.AdUser == adUser);
+            var user = _unitOfWork.GetRepository<UserRoles>().GetCache(x => x.AdUser == adUser);
             foreach (var item in user)
             {
                 var temp = _unitOfWork.GetRepository<AppCompositeRoleItem>().Get(x => x.CompositeRoleId == item.CompositeRoleId);
