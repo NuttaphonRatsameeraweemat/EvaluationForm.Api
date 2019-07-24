@@ -20,6 +20,11 @@ using EVF.Helper;
 using EVF.Data;
 using EVF.Data.Repository.Interfaces;
 using EVF.Helper.Models;
+using EVF.Bll.Components.InterfaceComponents;
+using EVF.Bll.Components;
+using EVF.Bll.Interfaces;
+using EVF.Bll;
+
 namespace EVF.Api.Extensions
 {
     public static class ServiceExtensions
@@ -33,10 +38,10 @@ namespace EVF.Api.Extensions
         public static void ConfigureRepository(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddEntityFrameworkSqlServer()
-             .AddDbContext<DbContext>(options =>
-              options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+             .AddDbContext<EVFContext>(options =>
+              options.UseNpgsql(Configuration["ConnectionStrings:DefaultConnection"]));
 
-            //services.AddTransient<IUnitOfWork, TSUnitOfWork>();
+            services.AddTransient<IUnitOfWork, EVFUnitOfWork>();
         }
 
         /// <summary>
@@ -55,7 +60,11 @@ namespace EVF.Api.Extensions
         /// <param name="services">The service collection.</param>
         public static void ConfigureBll(this IServiceCollection services)
         {
-
+            services.AddSingleton<IConfigSetting, ConfigSetting>();
+            services.AddSingleton<IAdService, AdService>();
+            services.AddScoped<ILoginBll, LoginBll>();
+            services.AddScoped<IRoleBll, RoleBll>();
+            services.AddScoped<IMenuBll, MenuBll>();
         }
 
         /// <summary>

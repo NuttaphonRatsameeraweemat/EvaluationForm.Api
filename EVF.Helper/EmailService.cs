@@ -15,7 +15,7 @@ namespace EVF.Helper
         /// <summary>
         /// The config value in appsetting.json
         /// </summary>
-        private readonly IConfiguration _config;
+        private readonly IConfigSetting _config;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace EVF.Helper
         /// Initializes a new instance of the <see cref="EmailService" /> class.
         /// </summary>
         /// <param name="config">The config value.</param>
-        public EmailService(IConfiguration config)
+        public EmailService(IConfigSetting config)
         {
             _config = config;
         }
@@ -59,12 +59,12 @@ namespace EVF.Helper
         private void SendTheEmail(EmailModel email)
         {
             //Get email configuration
-            var smtpHost = _config["SMTP:Host"];
-            var smtpPort = _config["SMTP:Port"];
-            var requireCredential = _config["SMTP:RequireCredential"];
-            var enableSSL = _config["SMTP:EnableSSL"];
-            var user = _config["SMTP:User"];
-            var password = _config["SMTP:Password"];
+            var smtpHost = _config.SmtpHost;
+            var smtpPort = _config.SmtpPort;
+            var requireCredential = _config.SmtpRequireCredential;
+            var enableSSL = _config.SmtpEnableSSL;
+            var user = _config.SmtpUser;
+            var password = _config.SmtpPassword;
 
             SmtpClient client = new SmtpClient(smtpHost, int.Parse(smtpPort))
             {
