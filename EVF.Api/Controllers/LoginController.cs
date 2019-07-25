@@ -12,12 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
     {
 
-        #region Fields
+        #region [Fields]
 
         /// <summary>
         /// The Login manager provides Login functionality.
@@ -29,7 +29,7 @@ namespace EVF.Api.Controllers
         private readonly IMenuBll _menu;
         #endregion
 
-        #region Constructors
+        #region [Constructors]
 
         /// <summary>
         ///  Initializes a new instance of the <see cref="LoginController" /> class.
@@ -43,7 +43,7 @@ namespace EVF.Api.Controllers
 
         #endregion
 
-        #region Methods
+        #region [Methods]
 
         [HttpPost]
         [AllowAnonymous]
