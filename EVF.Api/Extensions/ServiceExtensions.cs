@@ -24,6 +24,7 @@ using EVF.Bll.Components.InterfaceComponents;
 using EVF.Bll.Components;
 using EVF.Bll.Interfaces;
 using EVF.Bll;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EVF.Api.Extensions
 {
@@ -246,6 +247,25 @@ namespace EVF.Api.Extensions
                         options.Events.OnRedirectToLogin = context =>
                         {
                             context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                            var model = new ResultViewModel
+                            {
+                                IsError = true,
+                                Message = $"{context.Response.StatusCode}"
+                            };
+                            string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                            {
+                                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                            });
+                            context.Response.OnStarting(async () =>
+                            {
+                                context.Response.ContentType = "application/json";
+                                await context.Response.WriteAsync(json);
+                            });
+                            return System.Threading.Tasks.Task.CompletedTask;
+                        };
+                        options.Events.OnRedirectToAccessDenied = context =>
+                        {
+                            context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
                             var model = new ResultViewModel
                             {
                                 IsError = true,

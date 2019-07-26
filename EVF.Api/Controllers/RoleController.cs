@@ -12,7 +12,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Role_MA_RoleManagement")]
     public class RoleController : ControllerBase
     {
 

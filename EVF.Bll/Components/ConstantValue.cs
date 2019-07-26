@@ -9,6 +9,8 @@ namespace EVF.Bll.Components
         //Claims Type
         public const string ClamisName = "EmpName";
         public const string ClamisEmpNo = "EmpName";
+        //Response Header Content Type Format
+        public const string ContentTypeJson = "application/json";
         //Template format.
         public const string EmpTemplate = "{0} {1}";
         //Http Method Type.
