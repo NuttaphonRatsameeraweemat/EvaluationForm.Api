@@ -119,10 +119,11 @@ namespace EVF.Bll
                 LastNameTH = data.LastnameTh
             };
 
-            var roleList = _roleBll.GetCompositeRoleItem(username);
+            var roleList = _roleBll.GetCompositeRoleItemByAdUser(username);
             _identity = new ClaimsIdentity();
             _identity.AddClaim(new Claim(ClaimTypes.Name, data.Aduser));
-            _identity.AddClaim(new Claim(ConstantValue.CLAMIS_NAME, string.Format(ConstantValue.EMP_TEMPLATE, data.FirstnameTh, data.LastnameTh)));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisEmpNo, data.EmpNo));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisName, string.Format(ConstantValue.EmpTemplate, data.FirstnameTh, data.LastnameTh)));
             foreach (var item in roleList)
             {
                 _identity.AddClaim(new Claim(ClaimTypes.Role, item.RoleMenu));

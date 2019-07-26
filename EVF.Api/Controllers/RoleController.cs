@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EVF.Bll.Interfaces;
+using EVF.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,10 +41,52 @@ namespace EVF.Api.Controllers
         #region [Methods]
 
         [HttpGet]
-        [Route("GetMenuByCode")]
-        public IActionResult GetMenuByCode(string menuCode)
+        [Route("GetAllMenu")]
+        public IActionResult GetAllMenu()
         {
-            return Ok();
+            return Ok(_role.GetAllMenu());
+        }
+
+        [HttpGet]
+        [Route("GetDetailCompositeRole")]
+        public IActionResult GetDetailCompositeRole(int id)
+        {
+            return Ok(_role.GetDetailCompositeRole(id));
+        }
+
+        [HttpGet]
+        [Route("GetRoleList")]
+        public IActionResult GetRoleList()
+        {
+            return Ok(_role.GetRoleList());
+        }
+
+        [HttpGet]
+        [Route("GetActiveRoleList")]
+        public IActionResult GetActiveRoleList()
+        {
+            return Ok(_role.GetActiveRoleList());
+        }
+
+        [HttpPost]
+        [Route("Save")]
+        public IActionResult Save(RoleViewModel model)
+        {
+            return Ok(_role.Save(model));
+        }
+
+        [HttpPost]
+        [Route("Edit")]
+        public IActionResult Edit(RoleViewModel model)
+        {
+            return Ok(_role.Edit(model));
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public IActionResult Delete(int id)
+        {
+            return Ok(_role.Delete(id));
         }
 
         #endregion

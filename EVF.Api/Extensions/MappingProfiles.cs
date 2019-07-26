@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using EVF.Bll.Models;
+using EVF.Data.Pocos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,8 @@ namespace EVF.Api.Extensions
         /// </summary>
         public MappingProfiles()
         {
-
+            CreateMap<AppCompositeRole, RoleViewModel>();
+            CreateMap<RoleViewModel, AppCompositeRole>();
         }
 
         #endregion

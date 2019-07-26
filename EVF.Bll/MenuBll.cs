@@ -48,7 +48,7 @@ namespace EVF.Bll
         /// <returns></returns>
         public IEnumerable<MenuViewModel> GenerateMenu(string adUser)
         {
-            return this.GetMenu(_roleBll.GetCompositeRoleItem(adUser));
+            return this.GetMenu(_roleBll.GetCompositeRoleItemByAdUser(adUser));
         }
 
         /// <summary>
@@ -60,8 +60,7 @@ namespace EVF.Bll
         {
             List<MenuViewModel> result = new List<MenuViewModel>();
             var userMenuList = this.GetSideMenu(rolelist);
-            string parentMenuCode = ConstantValue.RootMenuCode;
-            var menuList = userMenuList.Where(a => a.ParentMenuCode.Equals(parentMenuCode, StringComparison.OrdinalIgnoreCase)).OrderBy(a => a.Sequence).ToList();
+            var menuList = userMenuList.Where(a => a.ParentMenuCode.Equals(ConstantValue.RootMenuCode, StringComparison.OrdinalIgnoreCase)).OrderBy(a => a.Sequence).ToList();
             foreach (var item in menuList)
             {
                 result.AddRange(this.GetMenuItem(userMenuList, item, rolelist));

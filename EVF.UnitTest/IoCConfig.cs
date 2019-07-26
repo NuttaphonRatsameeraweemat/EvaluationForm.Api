@@ -5,6 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using EVF.Api;
 using EVF.Data;
 using EVF.Data.Repository.Interfaces;
+using EVF.Bll.Components.InterfaceComponents;
+using EVF.Bll.Components;
+using EVF.Helper.Interfaces;
+using EVF.Helper;
 
 namespace EVF.UnitTest
 {
@@ -27,12 +31,15 @@ namespace EVF.UnitTest
             var services = new ServiceCollection();
             // Add services to the container.
             services.AddEntityFrameworkSqlServer()
-             .AddDbContext<DbContext>(options =>
+             .AddDbContext<EVFContext>(options =>
               options.UseSqlServer(config["ConnectionStrings:DefaultConnection"]));
 
             services.AddSingleton<IConfiguration>(config);
-            //services.AddTransient<IUnitOfWork, TSUnitOfWork>();
+            services.AddTransient<IUnitOfWork, EVFUnitOfWork>();
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddScoped<IConfigSetting, ConfigSetting>();
+            services.AddScoped<IAdService, AdService>();
 
             ServiceProvider = services.BuildServiceProvider();
         }

@@ -65,6 +65,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IRoleBll, RoleBll>();
             services.AddScoped<IMenuBll, MenuBll>();
+            services.AddScoped<IManageToken, ManageToken>();
         }
 
         /// <summary>
