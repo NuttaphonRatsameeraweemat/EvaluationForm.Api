@@ -77,6 +77,19 @@ namespace EVF.Helper
         /// Get Domain User value
         /// </summary>
         public string DomainUser => _config["DomainUser"];
+        /// <summary>
+        /// Get Users Basic Authen.
+        /// </summary>
+        public string BasicAuthUsers => _config["BasicAuth:Users"];
+        /// <summary>
+        /// Get Passwords Basic Authen.
+        /// </summary>
+        public string BasicAuthPasswords => _config["BasicAuth:Passwords"];
+        /// <summary>
+        /// Get Roles Basic Authen.
+        /// </summary>
+        public string BasicAuthRoles => _config["BasicAuth:Roles"];
+
         #endregion
 
     }

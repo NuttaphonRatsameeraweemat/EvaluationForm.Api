@@ -50,6 +50,18 @@ namespace EVF.Helper.Interfaces
         /// Get Domain User value
         /// </summary>
         string DomainUser { get; }
+        /// <summary>
+        /// Get Users Basic Authen.
+        /// </summary>
+        string BasicAuthUsers { get; }
+        /// <summary>
+        /// Get Passwords Basic Authen.
+        /// </summary>
+        string BasicAuthPasswords { get; }
+        /// <summary>
+        /// Get Roles Basic Authen.
+        /// </summary>
+        string BasicAuthRoles { get; }
 
     }
 }

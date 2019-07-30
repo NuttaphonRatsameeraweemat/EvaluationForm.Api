@@ -11,6 +11,7 @@ namespace EVF.Bll.Components
         public const string ClamisEmpNo = "EmpName";
         //Response Header Content Type Format
         public const string ContentTypeJson = "application/json";
+        public const string BasicAuthentication = "BasicAuthentication";
         //Template format.
         public const string EmpTemplate = "{0} {1}";
         //Http Method Type.

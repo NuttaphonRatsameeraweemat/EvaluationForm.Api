@@ -25,6 +25,7 @@ using EVF.Bll.Components;
 using EVF.Bll.Interfaces;
 using EVF.Bll;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
 
 namespace EVF.Api.Extensions
 {
@@ -168,6 +169,14 @@ namespace EVF.Api.Extensions
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
+        }
+
+        public static void ConfigureBasicAuthen(this IServiceCollection services)
+        {
+            // configure basic authentication 
+            services.AddAuthentication(ConstantValue.BasicAuthentication)
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(ConstantValue.BasicAuthentication, null);
+
         }
 
         /// <summary>

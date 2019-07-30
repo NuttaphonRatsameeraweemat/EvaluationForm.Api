@@ -31,6 +31,7 @@ namespace EVF.Api
             services.ConfigureCors();
             services.ConfigureJwtAuthen(Configuration);
             services.ConfigureCookieAuthen(Configuration);
+            services.ConfigureBasicAuthen();
             services.ConfigureEmailService();
             services.AddAutoMapper();
             services.AddMvc(opt =>
@@ -48,7 +49,6 @@ namespace EVF.Api
             {
                 app.UseSwaager();
             }
-            app.UseAuthentication();
             app.ConfigureMiddleware();
             app.UseCors("CorsPolicy");
             app.UseMvc();
