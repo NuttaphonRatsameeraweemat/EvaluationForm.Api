@@ -62,6 +62,10 @@ namespace EVF.Helper.Interfaces
         /// Get Roles Basic Authen.
         /// </summary>
         string BasicAuthRoles { get; }
+        /// <summary>
+        /// Get EncryptionKey parameter.
+        /// </summary>
+        string EncryptionKey { get; }
 
     }
 }

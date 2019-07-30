@@ -9,6 +9,7 @@ namespace EVF.Bll.Components
         //Claims Type
         public const string ClamisName = "EmpName";
         public const string ClamisEmpNo = "EmpName";
+        public const string ClamisEncrypt = "UlZaR1gxTkZRMUpGVkE9PQ==";
         //Response Header Content Type Format
         public const string ContentTypeJson = "application/json";
         public const string BasicAuthentication = "BasicAuthentication";

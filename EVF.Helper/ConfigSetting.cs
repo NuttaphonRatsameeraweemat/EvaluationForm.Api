@@ -89,6 +89,10 @@ namespace EVF.Helper
         /// Get Roles Basic Authen.
         /// </summary>
         public string BasicAuthRoles => _config["BasicAuth:Roles"];
+        /// <summary>
+        /// Get EncrptionKey parameter.
+        /// </summary>
+        public string EncryptionKey => _config["EncryptionKey"];
 
         #endregion
 

@@ -54,7 +54,7 @@ namespace EVF.Api.Controllers
             result = _login.Authenticate(auth);
             if (!result.IsError)
             {
-                var model = _login.ManageClaimsIdentity(auth.Username);
+                var model = _login.ManageClaimsIdentity(auth);
                 string token = _login.BuildToken();
                 var responseMessage = new
                 {

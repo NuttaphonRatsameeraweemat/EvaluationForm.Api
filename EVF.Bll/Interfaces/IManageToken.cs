@@ -18,5 +18,9 @@ namespace EVF.Bll.Interfaces
         /// Get Employee No from payload token.
         /// </summary>
         string EmpNo { get; }
+        /// <summary>
+        /// Get Encrypt value from payload token.
+        /// </summary>
+        string Encrypt { get; }
     }
 }

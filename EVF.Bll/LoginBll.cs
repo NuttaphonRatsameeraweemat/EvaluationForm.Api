@@ -105,9 +105,9 @@ namespace EVF.Bll
         /// The Method Add ClaimsIdentity Properties.
         /// </summary>
         /// <param name="username">The identity user.</param>
-        public EmployeeViewModel ManageClaimsIdentity(string username)
+        public EmployeeViewModel ManageClaimsIdentity(LoginViewModel login)
         {
-            Hremployee data = _unitOfWork.GetRepository<Hremployee>().Get(x => x.Aduser == username).FirstOrDefault();
+            Hremployee data = _unitOfWork.GetRepository<Hremployee>().Get(x => x.Aduser == login.Username).FirstOrDefault();
             if (data == null)
             {
                 throw new ArgumentNullException(ConstantValue.HrEmployeeArgumentNullExceptionMessage);
@@ -119,9 +119,10 @@ namespace EVF.Bll
                 LastNameTH = data.LastnameTh
             };
 
-            var roleList = _roleBll.GetCompositeRoleItemByAdUser(username);
+            var roleList = _roleBll.GetCompositeRoleItemByAdUser(login.Username);
             _identity = new ClaimsIdentity();
             _identity.AddClaim(new Claim(ClaimTypes.Name, data.Aduser));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisEncrypt, UtilityService.EncryptString(login.Password, _config.EncryptionKey)));
             _identity.AddClaim(new Claim(ConstantValue.ClamisEmpNo, data.EmpNo));
             _identity.AddClaim(new Claim(ConstantValue.ClamisName, string.Format(ConstantValue.EmpTemplate, data.FirstnameTh, data.LastnameTh)));
             foreach (var item in roleList)

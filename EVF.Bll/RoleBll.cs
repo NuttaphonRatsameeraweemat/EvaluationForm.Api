@@ -9,7 +9,6 @@ using EVF.Helper.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Transactions;
 
 namespace EVF.Bll
@@ -92,7 +91,6 @@ namespace EVF.Bll
         public IEnumerable<RoleItemViewModel> GetAllMenu()
         {
             var result = new List<RoleItemViewModel>();
-
             var data = _unitOfWork.GetRepository<AppMenu>().GetCache(x => x.MenuCode != ConstantValue.RootMenuCode);
             var menuList = data.Where(a => a.ParentMenuCode.Equals(ConstantValue.RootMenuCode, StringComparison.OrdinalIgnoreCase)).OrderBy(a => a.Sequence).ToList();
             foreach (var item in menuList)

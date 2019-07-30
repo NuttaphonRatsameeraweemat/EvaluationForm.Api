@@ -47,6 +47,10 @@ namespace EVF.Bll
         /// Get Employee No from payload token.
         /// </summary>
         public string EmpNo => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisEmpNo)?.Value;
+        /// <summary>
+        /// Get Encrypt value from payload token.
+        /// </summary>
+        public string Encrypt => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisEncrypt)?.Value;
 
         #endregion
 

@@ -33,6 +33,6 @@ namespace EVF.Bll.Interfaces
         /// The Method Add ClaimsIdentity Properties.
         /// </summary>
         /// <param name="username">The identity user.</param>
-        EmployeeViewModel ManageClaimsIdentity(string username);
+        EmployeeViewModel ManageClaimsIdentity(LoginViewModel login);
     }
 }
