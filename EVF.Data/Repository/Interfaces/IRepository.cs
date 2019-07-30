@@ -33,5 +33,6 @@ namespace EVF.Data.Repository.Interfaces
         void Remove(int id);
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
+        void ReCache();
     }
 }

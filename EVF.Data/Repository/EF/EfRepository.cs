@@ -89,6 +89,16 @@ namespace EVF.Data.Repository.EF
         }
 
         /// <summary>
+        /// Re load cache entity name.
+        /// </summary>
+        public void ReCache()
+        {
+            string[] cacheList = new string[] { typeof(TEntity).Name };
+            QueryCacheManager.ExpireTag(cacheList); //Clear Cache 
+            this.GetCache();
+        }
+
+        /// <summary>
         /// Gets poco entity representing data in database by using primary key.
         /// </summary>
         /// <param name="id">The primary key.</param>

@@ -215,7 +215,7 @@ namespace EVF.Bll
                 _unitOfWork.GetRepository<AppCompositeRoleItem>().AddRange(this.InitialRoleItem(compositeRole.Id, model.RoleItem));
                 _unitOfWork.Complete(scope);
             }
-
+            this.ReloadCacheRole();
             return result;
         }
 
@@ -237,7 +237,7 @@ namespace EVF.Bll
                 this.UpdateRoleItem(compositeRole.Id, this.InitialRoleItem(compositeRole.Id, model.RoleItem));
                 _unitOfWork.Complete(scope);
             }
-
+            this.ReloadCacheRole();
             return result;
         }
 
@@ -257,6 +257,7 @@ namespace EVF.Bll
                 _unitOfWork.GetRepository<AppCompositeRoleItem>().RemoveRange(compositeRoleItems);
                 _unitOfWork.Complete(scope);
             }
+            this.ReloadCacheRole();
             return result;
         }
         
@@ -279,7 +280,7 @@ namespace EVF.Bll
                 {
                     result.Add(new AppCompositeRoleItem { CompositeRoleId = compoId, RoleMenu = item.RoleDisplayName });
                 }
-                if (item.ParentMenu.Count > 0)
+                if (item.ParentMenu != null && item.ParentMenu.Count > 0)
                 {
                     result.AddRange(this.InitialRoleItem(compoId, item.ParentMenu));
                 }
@@ -304,6 +305,15 @@ namespace EVF.Bll
             _unitOfWork.GetRepository<AppCompositeRoleItem>().UpdateRange(appRoleItems);
             _unitOfWork.GetRepository<AppCompositeRoleItem>().AddRange(roleAdd);
             _unitOfWork.GetRepository<AppCompositeRoleItem>().RemoveRange(roleDelete);
+        }
+
+        /// <summary>
+        /// Reload Cache when Appcomposite and AppcompositeRoleItem is change.
+        /// </summary>
+        private void ReloadCacheRole()
+        {
+            _unitOfWork.GetRepository<AppCompositeRole>().ReCache();
+            _unitOfWork.GetRepository<AppCompositeRoleItem>().ReCache();
         }
 
         #endregion
