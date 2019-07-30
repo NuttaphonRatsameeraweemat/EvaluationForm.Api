@@ -9,17 +9,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Authorize(Roles = "EVF", AuthenticationSchemes = ConstantValue.BasicAuthentication)]
     public class CacheController : ControllerBase
     {
-
         [HttpPost]
         public IActionResult InitialCache()
         {
             return Ok();
         }
-
     }
 }

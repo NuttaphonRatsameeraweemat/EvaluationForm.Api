@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
@@ -16,11 +15,31 @@ using System.Threading.Tasks;
 
 namespace EVF.Helper
 {
+    /// <summary>
+    /// The BasicAuthenticationHandler Schema.
+    /// </summary>
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
 
+        #region [Fields]
+
+        /// <summary>
+        /// The config value in appsetting.json
+        /// </summary>
         private readonly IConfigSetting _config;
 
+        #endregion
+
+        #region [Constructors]
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicAuthenticationHandler" /> class.
+        /// </summary>
+        /// <param name="options">The Interfaces option monitor.</param>
+        /// <param name="logger">The Logger class.</param>
+        /// <param name="encoder">The Url Encoder class.</param>
+        /// <param name="clock">The system clock.</param>
+        /// <param name="config">The config value in appsetting.json.</param>
         public BasicAuthenticationHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
@@ -31,6 +50,10 @@ namespace EVF.Helper
         {
             _config = config;
         }
+
+        #endregion
+
+        #region [Methods]
 
         /// <summary>
         /// Handle Basic Authentication.
@@ -167,6 +190,8 @@ namespace EVF.Helper
                 identity.AddClaim(new Claim(ClaimTypes.Role, item));
             }
         }
+
+        #endregion
 
     }
 }

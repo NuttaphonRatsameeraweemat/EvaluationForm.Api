@@ -48,6 +48,9 @@ namespace EVF.Bll.Models
             RoleItem = new List<RoleItemViewModel>();
         }
 
+        public const string RoleForManageData = "Role_MA_RoleManagement";
+        public const string RoleForDisplayData = "Role_DS_RoleManagement";
+
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
