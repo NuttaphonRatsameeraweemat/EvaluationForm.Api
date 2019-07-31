@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EVF.Bll.Interfaces;
+﻿using EVF.Bll.Interfaces;
 using EVF.Bll.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = UserRoleViewModel.RoleForManageData, AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class UserRolesController : ControllerBase
     {
 

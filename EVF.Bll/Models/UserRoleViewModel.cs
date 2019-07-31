@@ -11,6 +11,9 @@ namespace EVF.Bll.Models
             RoleList = new List<int>();
         }
 
+        public const string RoleForManageData = "Role_MA_UserRole";
+        public const string RoleForDisplayData = "Role_DS_UserRole";
+
         public string EmpNo { get; set; }
         public string FirstNameTh { get; set; }
         public string LastNameTh { get; set; }
