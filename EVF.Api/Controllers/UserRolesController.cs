@@ -52,16 +52,23 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
-        public IActionResult Save(UserRoleViewModel model)
+        public IActionResult Save([FromBody]UserRoleViewModel model)
         {
             return Ok(_userRole.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit(UserRoleViewModel model)
+        public IActionResult Edit([FromBody]UserRoleViewModel model)
         {
             return Ok(_userRole.Edit(model));
+        }
+
+        [HttpPost]
+        [Route("Delete")]
+        public IActionResult Delete([FromBody]string adUser)
+        {
+            return Ok(_userRole.Delete(adUser));
         }
 
         #endregion
