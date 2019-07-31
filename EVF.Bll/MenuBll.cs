@@ -131,9 +131,10 @@ namespace EVF.Bll
         /// <param name="menu">The current menu.</param>
         /// <param name="userRoleList">The user role list.</param>
         /// <returns></returns>
-        private List<MenuViewModel> GetMenuItem(IEnumerable<AppMenu> userMenuList, AppMenu menu, IEnumerable<AppCompositeRoleItem> userRoleList)
+        private List<MenuViewModel> GetMenuItem(IEnumerable<AppMenu> userMenuList, AppMenu menu, IEnumerable<AppCompositeRoleItem> userRoleList, string url = null)
         {
             List<MenuViewModel> result = new List<MenuViewModel>();
+            url = string.Format("{0}/{1}", url, menu.MenuCode);
             if (menu.MenuType.Equals("GROUP", StringComparison.OrdinalIgnoreCase))
             {
                 List<AppMenu> childMenuList = userMenuList.Where(a => a.ParentMenuCode.Equals(menu.MenuCode, StringComparison.OrdinalIgnoreCase)).OrderBy(a => a.Sequence).ToList();
@@ -143,12 +144,13 @@ namespace EVF.Bll
                     Name = menu.MenuName,
                     DisplayOnly = false,
                     Icon = menu.Icon,
+                    Url = url,
                     Parent = new List<MenuViewModel>()
                 };
 
                 foreach (var item in childMenuList)
                 {
-                    mItem.Parent.AddRange(this.GetMenuItem(userMenuList, item, userRoleList));
+                    mItem.Parent.AddRange(this.GetMenuItem(userMenuList, item, userRoleList, url));
                 }
 
                 if (mItem.Parent.Count <= 0)
@@ -166,6 +168,7 @@ namespace EVF.Bll
                     Name = menu.MenuName,
                     DisplayOnly = !userRoleList.Any(x => x.RoleMenu == menu.RoleForManage),
                     Icon = menu.Icon,
+                    Url = url,
                     Parent = null,
                 };
                 result.Add(sItem);
