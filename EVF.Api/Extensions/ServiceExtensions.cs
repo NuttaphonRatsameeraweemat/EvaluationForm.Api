@@ -47,13 +47,22 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
-        /// Dependency Injection Repository and UnitOfWork.
+        /// Dependency Injection rediscahce.
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="Configuration">The configuration from settinfile.</param>
         public static void ConfigureRedisCache(this IServiceCollection services, IConfiguration Configuration)
         {
             RedisCacheHandler.ConnectionString = Configuration["ConnectionStrings:RedisCacheConnection"];
+        }
+
+        /// <summary>
+        /// Register k2 service component class.
+        /// </summary>
+        /// <param name="services"></param>
+        public static void ConfigureK2Service(this IServiceCollection services)
+        {
+            services.AddTransient<IK2Service, K2Service>();
         }
 
         /// <summary>
@@ -67,8 +76,9 @@ namespace EVF.Api.Extensions
             services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IRoleBll, RoleBll>();
             services.AddScoped<IMenuBll, MenuBll>();
-            services.AddScoped<IManageToken, ManageToken>();
             services.AddScoped<IUserRoleBll, UserRoleBll>();
+
+            services.AddTransient<IManageToken, ManageToken>();
         }
 
         /// <summary>

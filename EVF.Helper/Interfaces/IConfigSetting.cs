@@ -66,6 +66,13 @@ namespace EVF.Helper.Interfaces
         /// Get EncryptionKey parameter.
         /// </summary>
         string EncryptionKey { get; }
-
+        /// <summary>
+        /// Get K2 service url.
+        /// </summary>
+        string K2ServiceUrl { get; }
+        /// <summary>
+        /// Get K2 Process Folder.
+        /// </summary>
+        string K2ProcessFolder { get; }
     }
 }

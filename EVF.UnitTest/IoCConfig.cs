@@ -9,6 +9,10 @@ using EVF.Bll.Components.InterfaceComponents;
 using EVF.Bll.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper;
+using EVF.Bll.Interfaces;
+using EVF.Bll;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.UnitTest
 {
@@ -39,9 +43,16 @@ namespace EVF.UnitTest
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IConfigSetting, ConfigSetting>();
+            services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IAdService, AdService>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddTransient<IManageToken, ManageToken>(c => new ManageToken(this.InitialHttpContext()));
+            services.AddTransient<IK2Service, K2Service>();
+
             ServiceProvider = services.BuildServiceProvider();
+
         }
 
         /// <summary>
@@ -57,6 +68,21 @@ namespace EVF.UnitTest
         /// The Serivce Provider, this provides access to the IServiceCollection.
         /// </summary>
         public ServiceProvider ServiceProvider { get; private set; }
+
+        /// <summary>
+        /// Initial Mockup HttpContext inject to test.
+        /// </summary>
+        /// <returns></returns>
+        private HttpContextAccessor InitialHttpContext()
+        {
+            var httpContextAccessor = new HttpContextAccessor();
+            var httpContext = new DefaultHttpContext();
+
+            httpContext.Request.Headers["TEST"] = "12345";
+
+            httpContextAccessor.HttpContext = httpContext;
+            return httpContextAccessor;
+        }
 
     }
 }

@@ -34,65 +34,80 @@ namespace EVF.Helper
         #region [Methods]
 
         /// <summary>
+        /// Read value in appsetting config with key name;
+        /// </summary>
+        /// <param name="name">The key name parameter in appsetting.</param>
+        /// <returns></returns>
+        private string GetAppSetting(string name) => _config[name];
+
+        /// <summary>
         /// Get SystemId for AD Authentication.
         /// </summary>
-        public string SystemId => _config["SystemID"];
+        public string SystemId => this.GetAppSetting("SystemID");
         /// <summary>
         /// Get Ad Employee Url.
         /// </summary>
-        public string AdUrl => _config["ADEmployeeURL"];
+        public string AdUrl => this.GetAppSetting("ADEmployeeURL");
         /// <summary>
         /// Get SMTP Host Url.
         /// </summary>
-        public string SmtpHost => _config["SMTP:Host"];
+        public string SmtpHost => this.GetAppSetting("SMTP:Host");
         /// <summary>
         /// Get SMTP Port.
         /// </summary>
-        public string SmtpPort => _config["SMTP:Port"];
+        public string SmtpPort => this.GetAppSetting("SMTP:Port");
         /// <summary>
         /// Get RequireCredential SMTP.
         /// </summary>
-        public string SmtpRequireCredential => _config["SMTP:RequireCredential"];
+        public string SmtpRequireCredential => this.GetAppSetting("SMTP:RequireCredential");
         /// <summary>
         /// Get SMTP EnableSSL.
         /// </summary>
-        public string SmtpEnableSSL => _config["SMTP:EnableSSL"];
+        public string SmtpEnableSSL => this.GetAppSetting("SMTP:EnableSSL");
         /// <summary>
         /// Get User Authenticate SMTP Server.
         /// </summary>
-        public string SmtpUser => _config["SMTP:User"];
+        public string SmtpUser => this.GetAppSetting("SMTP:User");
         /// <summary>
         /// Get Password Authenticate SMTP Server.
         /// </summary>
-        public string SmtpPassword => _config["SMTP:Password"];
+        public string SmtpPassword => this.GetAppSetting("SMTP:Password");
         /// <summary>
         /// Get Json Web Token Config Issuer value.
         /// </summary>
-        public string JwtIssuer => _config["Jwt:Issuer"];
+        public string JwtIssuer => this.GetAppSetting("Jwt:Issuer");
         /// <summary>
         /// Get Json Web Token Config Key value
         /// </summary>
-        public string JwtKey => _config["Jwt:Key"];
+        public string JwtKey => this.GetAppSetting("Jwt:Key");
         /// <summary>
         /// Get Domain User value
         /// </summary>
-        public string DomainUser => _config["DomainUser"];
+        public string DomainUser => this.GetAppSetting("DomainUser");
         /// <summary>
         /// Get Users Basic Authen.
         /// </summary>
-        public string BasicAuthUsers => _config["BasicAuth:Users"];
+        public string BasicAuthUsers => this.GetAppSetting("BasicAuth:Users");
         /// <summary>
         /// Get Passwords Basic Authen.
         /// </summary>
-        public string BasicAuthPasswords => _config["BasicAuth:Passwords"];
+        public string BasicAuthPasswords => this.GetAppSetting("BasicAuth:Passwords");
         /// <summary>
         /// Get Roles Basic Authen.
         /// </summary>
-        public string BasicAuthRoles => _config["BasicAuth:Roles"];
+        public string BasicAuthRoles => this.GetAppSetting("BasicAuth:Roles");
         /// <summary>
         /// Get EncrptionKey parameter.
         /// </summary>
-        public string EncryptionKey => _config["EncryptionKey"];
+        public string EncryptionKey => this.GetAppSetting("EncryptionKey");
+        /// <summary>
+        /// Get K2 service url.
+        /// </summary>
+        public string K2ServiceUrl => this.GetAppSetting("K2:Url");
+        /// <summary>
+        /// Get K2 Process Folder.
+        /// </summary>
+        public string K2ProcessFolder => this.GetAppSetting("K2:ProcessFolder");
 
         #endregion
 

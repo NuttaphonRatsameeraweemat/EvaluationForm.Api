@@ -25,5 +25,6 @@ namespace EVF.Bll.Components
         public const string RoleManage = "Role_MA_";
         //Error Log Messages.
         public const string HrEmployeeArgumentNullExceptionMessage = "The {0} hasn't in HrEmployee Table.";
+        public const string HttpRequestFailedMessage = "Response StatusCode {0}, {1}";
     }
 }

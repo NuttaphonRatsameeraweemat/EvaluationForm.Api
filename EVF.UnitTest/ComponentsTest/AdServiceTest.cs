@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace EVF.UnitTest
+namespace EVF.UnitTest.ComponentsTest
 {
     /// <summary>
     /// The AdServiceTest class testing adservice class.

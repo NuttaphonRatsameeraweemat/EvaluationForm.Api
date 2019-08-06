@@ -1,7 +1,9 @@
 ﻿using EVF.Helper.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -101,6 +103,24 @@ namespace EVF.Helper
                     return result;
                 }
             }
+        }
+
+        /// <summary>
+        /// Serialize object class to string content.
+        /// </summary>
+        /// <typeparam name="T">The object class paramter.</typeparam>
+        /// <param name="model">The object.</param>
+        /// <returns></returns>
+        public static StringContent SerializeContent<T>(T model)
+        {
+            var jsonString = JsonConvert.SerializeObject(model);
+            return new StringContent(jsonString, Encoding.UTF8, "application/json");
+        }
+
+        public static T DeserializeContent<T>(HttpContent httpContent)
+        {
+            var jsonString = httpContent.ReadAsStringAsync().Result;
+            return JsonConvert.DeserializeObject<T>(jsonString);
         }
 
     }
