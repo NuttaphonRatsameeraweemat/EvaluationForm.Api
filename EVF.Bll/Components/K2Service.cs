@@ -87,23 +87,29 @@ namespace EVF.Bll.Components
         /// <summary>
         /// Call k2 service start workflow route.
         /// </summary>
-        /// <param name="startWorkflowModel">The start workflow value.</param>
+        /// <param name="processName">The workflow name to start.</param>
+        /// <param name="folio">The task title display in k2.</param>
+        /// <param name="dataFields">The datafields value in workflow.</param>
         /// <returns></returns>
-        public int StartWorkflow(K2Model.StartWorkflowModel startWorkflowModel)
+        public int StartWorkflow(string processName, string folio, Dictionary<string,object> dataFields)
         {
-            int processInstanceId = 0;
-            startWorkflowModel.K2Connect = _k2ProfileModel;
+            var model = new K2Model.StartWorkflowModel
+            {
+                K2Connect = _k2ProfileModel,
+                ProcessName = processName,
+                Folio =  folio,
+                DataFields = dataFields
+            };
             using (HttpResponseMessage response = _client.PostAsync(
                                                     this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteStartWorkflow)),
-                                                    UtilityService.SerializeContent(startWorkflowModel)).Result)
+                                                    UtilityService.SerializeContent(model)).Result)
             {
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new HttpRequestException(string.Format(ConstantValue.HttpRequestFailedMessage, (int)response.StatusCode, response.StatusCode.ToString()));
                 }
-                processInstanceId = UtilityService.DeserializeContent<int>(response.Content);
+                return UtilityService.DeserializeContent<int>(response.Content);
             }
-            return processInstanceId;
         }
 
         public void ActionWorkflow()

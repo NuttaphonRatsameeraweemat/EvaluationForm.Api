@@ -10,8 +10,10 @@ namespace EVF.Bll.Components.InterfaceComponents
         /// <summary>
         /// Call k2 service start workflow route.
         /// </summary>
-        /// <param name="startWorkflowModel">The start workflow value.</param>
+        /// <param name="processName">The workflow name to start.</param>
+        /// <param name="folio">The task title display in k2.</param>
+        /// <param name="dataFields">The datafields value in workflow.</param>
         /// <returns></returns>
-        int StartWorkflow(K2Model.StartWorkflowModel startWorkflowModel);
+        int StartWorkflow(string processName, string folio, Dictionary<string, object> dataFields);
     }
 }
