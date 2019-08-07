@@ -63,5 +63,34 @@ namespace EVF.Bll.Components.ModelComponents
             public DateTime? EndDate { get; set; }
         }
 
+        /// <summary>
+        /// Response Model from get workflist.
+        /// </summary>
+        public class TaskListModel
+        {
+            public TaskListModel()
+            {
+                DataFields = new Dictionary<string, object>();
+            }
+
+            public string AllocatedUser { get; set; }
+            public string Folio { get; set; }
+            public DateTime StartDate { get; set; }
+            public string Folder { get; set; }
+            public string Name { get; set; }
+            public string FullName { get; set; }
+            public string SerialNumber { get; set; }
+            public Dictionary<string, object> DataFields { get; set; }
+        }
+
+        /// <summary>
+        /// Request model get smartobject.
+        /// </summary>
+        public class SmartObjectModel
+        {
+            public string SmartObjectName { get; set; }
+            public string ExecuteMethodName { get; set; }
+        }
+
     }
 }
