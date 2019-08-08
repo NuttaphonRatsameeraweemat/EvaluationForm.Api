@@ -11,7 +11,7 @@ namespace EVF.Data
         {
         }
 
-        public EVFContext(DbContextOptions<EVFContext> options)
+        public EVFContext(DbContextOptions<d9vs38qobc5nv6Context> options)
             : base(options)
         {
         }
@@ -20,7 +20,9 @@ namespace EVF.Data
         public virtual DbSet<AppCompositeRoleItem> AppCompositeRoleItem { get; set; }
         public virtual DbSet<AppMenu> AppMenu { get; set; }
         public virtual DbSet<Hremployee> Hremployee { get; set; }
+        public virtual DbSet<Performance> Performance { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
+        public virtual DbSet<ValueHelp> ValueHelp { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +42,12 @@ namespace EVF.Data
                     .HasName("HREmployee_pkey");
 
                 entity.Property(e => e.EmpNo).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<ValueHelp>(entity =>
+            {
+                entity.HasKey(e => new { e.ValueType, e.ValueKey })
+                    .HasName("ValueHelp_pkey");
             });
         }
     }
