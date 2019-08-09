@@ -11,7 +11,7 @@ namespace EVF.Data
         {
         }
 
-        public EVFContext(DbContextOptions<d9vs38qobc5nv6Context> options)
+        public EVFContext(DbContextOptions<EVFContext> options)
             : base(options)
         {
         }

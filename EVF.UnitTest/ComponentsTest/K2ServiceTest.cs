@@ -34,7 +34,7 @@ namespace EVF.UnitTest.ComponentsTest
         #endregion
 
         #region [Methods]
-        
+
         [Fact]
         public void K2ServiceStartWorkflow()
         {
@@ -46,10 +46,7 @@ namespace EVF.UnitTest.ComponentsTest
 
                 httpContextAccessor.HttpContext = httpContext;
 
-                _k2Service.StartWorkflow(new Bll.Components.ModelComponents.K2Model.StartWorkflowModel
-                {
-                    
-                });
+                _k2Service.StartWorkflow("", "", null);
             }
             catch (Exception ex)
             {
