@@ -1,4 +1,5 @@
-﻿using EVF.Helper.Interfaces;
+﻿using EVF.Bll.Components;
+using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -93,7 +94,7 @@ namespace EVF.Api
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = (int)System.Net.HttpStatusCode.InternalServerError;
 
-            var model = new ResultViewModel { IsError = true, Message = $"{httpContext.Response.StatusCode}" };
+            var model = new ResultViewModel { IsError = true, StatusCode = httpContext.Response.StatusCode, Message = $"{MessageValue.InternalServerError}" };
 
             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
             {

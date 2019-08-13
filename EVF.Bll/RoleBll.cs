@@ -61,7 +61,7 @@ namespace EVF.Bll
             var data = _unitOfWork.GetRepository<UserRoles>().GetCache(x => x.AdUser == adUser).FirstOrDefault();
             if (data == null)
             {
-                result = UtilityService.InitialResultError(MessageValue.UserRoleIsEmpty);
+                result = UtilityService.InitialResultError(MessageValue.UserRoleIsEmpty, 403);
             }
             return result;
         }
@@ -251,7 +251,7 @@ namespace EVF.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var compositeRole = _unitOfWork.GetRepository<AppCompositeRole>().GetCache(x=>x.Id == id).FirstOrDefault();
+                var compositeRole = _unitOfWork.GetRepository<AppCompositeRole>().GetCache(x => x.Id == id).FirstOrDefault();
                 var compositeRoleItems = _unitOfWork.GetRepository<AppCompositeRoleItem>().GetCache(x => x.CompositeRoleId == id);
                 _unitOfWork.GetRepository<AppCompositeRole>().Remove(compositeRole);
                 _unitOfWork.GetRepository<AppCompositeRoleItem>().RemoveRange(compositeRoleItems);
@@ -260,7 +260,7 @@ namespace EVF.Bll
             this.ReloadCacheRole();
             return result;
         }
-        
+
         /// <summary>
         /// Mapping RoleItemViewModel Logic to AppcompositeRoleItem Model.
         /// </summary>

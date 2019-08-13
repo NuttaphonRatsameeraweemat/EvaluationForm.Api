@@ -40,12 +40,6 @@ namespace EVF.UnitTest.ComponentsTest
         {
             try
             {
-                var httpContextAccessor = new HttpContextAccessor();
-                var httpContext = new DefaultHttpContext();
-                httpContext.Request.Headers["TEST"] = "12345";
-
-                httpContextAccessor.HttpContext = httpContext;
-
                 _k2Service.StartWorkflow("", "", null);
             }
             catch (Exception ex)

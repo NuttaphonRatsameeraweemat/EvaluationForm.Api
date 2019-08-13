@@ -21,11 +21,12 @@ namespace EVF.Helper
         /// </summary>
         /// <param name="message">The message.</param>
         /// <returns></returns>
-        public static ResultViewModel InitialResultError(string message)
+        public static ResultViewModel InitialResultError(string message, int statusCode = 500)
         {
             return new ResultViewModel
             {
                 IsError = true,
+                StatusCode = statusCode,
                 Message = message
             };
         }

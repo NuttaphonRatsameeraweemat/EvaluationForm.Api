@@ -22,6 +22,10 @@ namespace EVF.Api.Extensions
             CreateMap<RoleViewModel, AppCompositeRole>();
             CreateMap<Hremployee, UserRoleViewModel>();
             CreateMap<UserRoleViewModel, Hremployee>();
+            CreateMap<Performance, PerformanceViewModel>();
+            CreateMap<PerformanceViewModel, Performance>();
+            CreateMap<ValueHelp, ValueHelpViewModel>();
+            CreateMap<ValueHelpViewModel, ValueHelp>();
         }
 
         #endregion

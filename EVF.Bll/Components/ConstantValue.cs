@@ -17,6 +17,8 @@ namespace EVF.Bll.Components
         public const string EmpTemplate = "{0} {1}";
         //Http Method Type.
         public const string HttpMethodPost = "POST";
+        //Value Help Constant value type
+        public const string ValueTypeActiveStatus = "ACTIVE_STATUS";
         //Role and Menu.
         public const string RootMenuCode = "ROOT";
         public const string GroupMenuCode = "GROUP";

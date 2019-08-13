@@ -225,7 +225,8 @@ namespace EVF.Api.Extensions
                          var model = new ResultViewModel
                          {
                              IsError = true,
-                             Message = $"{context.Response.StatusCode}"
+                             StatusCode = context.Response.StatusCode,
+                             Message = $"{MessageValue.InternalServerError}"
                          };
                          string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                          {
@@ -271,7 +272,8 @@ namespace EVF.Api.Extensions
                             var model = new ResultViewModel
                             {
                                 IsError = true,
-                                Message = $"{context.Response.StatusCode}"
+                                StatusCode = context.Response.StatusCode,
+                                Message = $"{MessageValue.InternalServerError}"
                             };
                             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                             {
@@ -290,7 +292,8 @@ namespace EVF.Api.Extensions
                             var model = new ResultViewModel
                             {
                                 IsError = true,
-                                Message = $"{context.Response.StatusCode}"
+                                StatusCode = context.Response.StatusCode,
+                                Message = $"{MessageValue.UserRoleIsEmpty}"
                             };
                             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                             {

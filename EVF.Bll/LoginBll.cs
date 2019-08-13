@@ -78,7 +78,7 @@ namespace EVF.Bll
                 login.Username = $"{_config.DomainUser}\\{login.Username}";
                 result = _roleBll.ValidateRole(login.Username);
             }
-            else result = UtilityService.InitialResultError(MessageValue.LoginFailed);
+            else result = UtilityService.InitialResultError(MessageValue.LoginFailed, 401);
             return result;
         }
 
