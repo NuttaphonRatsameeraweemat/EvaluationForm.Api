@@ -19,8 +19,11 @@ namespace EVF.Data
         public virtual DbSet<AppCompositeRole> AppCompositeRole { get; set; }
         public virtual DbSet<AppCompositeRoleItem> AppCompositeRoleItem { get; set; }
         public virtual DbSet<AppMenu> AppMenu { get; set; }
+        public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }
         public virtual DbSet<Hremployee> Hremployee { get; set; }
         public virtual DbSet<Performance> Performance { get; set; }
+        public virtual DbSet<PerformanceGroup> PerformanceGroup { get; set; }
+        public virtual DbSet<PerformanceGroupItem> PerformanceGroupItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
 
@@ -42,6 +45,12 @@ namespace EVF.Data
                     .HasName("HREmployee_pkey");
 
                 entity.Property(e => e.EmpNo).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<PerformanceGroupItem>(entity =>
+            {
+                entity.HasKey(e => new { e.PerformanceGroupId, e.PerformanceItemId })
+                    .HasName("PerformanceGroupItem_pkey");
             });
 
             modelBuilder.Entity<ValueHelp>(entity =>

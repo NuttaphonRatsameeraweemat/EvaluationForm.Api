@@ -75,7 +75,7 @@ namespace EVF.Bll
             var result = new ResultViewModel();
             if (_adService.Authen(login.Username, login.Password))
             {
-                login.Username = $"{_config.DomainUser}\\{login.Username}";
+                login.Username = $"{_config.DomainUser}{login.Username}";
                 result = _roleBll.ValidateRole(login.Username);
             }
             else result = UtilityService.InitialResultError(MessageValue.LoginFailed, 401);

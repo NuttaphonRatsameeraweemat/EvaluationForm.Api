@@ -24,6 +24,8 @@ namespace EVF.Api.Extensions
             CreateMap<UserRoleViewModel, Hremployee>();
             CreateMap<Performance, PerformanceViewModel>();
             CreateMap<PerformanceViewModel, Performance>();
+            CreateMap<PerformanceGroup, PerformanceGroupViewModel>();
+            CreateMap<PerformanceGroupViewModel, PerformanceGroup>();
             CreateMap<ValueHelp, ValueHelpViewModel>();
             CreateMap<ValueHelpViewModel, ValueHelp>();
         }

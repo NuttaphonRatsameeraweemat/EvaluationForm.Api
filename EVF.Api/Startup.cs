@@ -33,6 +33,7 @@ namespace EVF.Api
             services.ConfigureCookieAuthen(Configuration);
             services.ConfigureBasicAuthen();
             services.ConfigureEmailService();
+            services.ConfigureComponent();
             services.AddAutoMapper();
             services.AddMvc(opt =>
             {

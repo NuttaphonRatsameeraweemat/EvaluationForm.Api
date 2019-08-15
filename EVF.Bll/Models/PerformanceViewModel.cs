@@ -8,8 +8,8 @@ namespace EVF.Bll.Models
     public class PerformanceViewModel
     {
 
-        public const string RoleForManageData = "Role_MA_RolePerformance";
-        public const string RoleForDisplayData = "Role_DS_RolePerformance";
+        public const string RoleForManageData = "Role_MA_Performance";
+        public const string RoleForDisplayData = "Role_DS_Performance";
 
         public int Id { get; set; }
         [Required]

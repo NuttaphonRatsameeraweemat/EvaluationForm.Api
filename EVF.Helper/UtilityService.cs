@@ -118,10 +118,29 @@ namespace EVF.Helper
             return new StringContent(jsonString, Encoding.UTF8, "application/json");
         }
 
+        /// <summary>
+        /// Deserialize string to object class.
+        /// </summary>
+        /// <typeparam name="T">The object class type.</typeparam>
+        /// <param name="httpContent">The httpcontext.</param>
+        /// <returns></returns>
         public static T DeserializeContent<T>(HttpContent httpContent)
         {
             var jsonString = httpContent.ReadAsStringAsync().Result;
             return JsonConvert.DeserializeObject<T>(jsonString);
+        }
+
+        /// <summary>
+        /// Convert string to date time using parameter format.
+        /// </summary>
+        /// <param name="value">The string datetime.</param>
+        /// <param name="format">The datetime format.</param>
+        /// <returns></returns>
+        public static DateTime ConvertToDateTime(string value, string format)
+        {
+            return DateTime.TryParseExact(value, format,
+                                       System.Globalization.CultureInfo.InvariantCulture,
+                                       System.Globalization.DateTimeStyles.None, out DateTime temp) ? temp : throw new ArgumentException($"DateTime incorrect format : {value}");
         }
 
     }

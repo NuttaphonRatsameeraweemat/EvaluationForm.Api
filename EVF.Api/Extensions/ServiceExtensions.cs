@@ -57,27 +57,29 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
-        /// Register k2 service component class.
-        /// </summary>
-        /// <param name="services"></param>
-        public static void ConfigureK2Service(this IServiceCollection services)
-        {
-            services.AddTransient<IK2Service, K2Service>();
-        }
-
-        /// <summary>
         /// Dependency Injection Class Business Logic Layer.
         /// </summary>
         /// <param name="services">The service collection.</param>
         public static void ConfigureBll(this IServiceCollection services)
         {
-            services.AddSingleton<IConfigSetting, ConfigSetting>();
-            services.AddSingleton<IAdService, AdService>();
             services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IRoleBll, RoleBll>();
             services.AddScoped<IMenuBll, MenuBll>();
             services.AddScoped<IUserRoleBll, UserRoleBll>();
             services.AddScoped<IPerformanceBll, PerformanceBll>();
+            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+            services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
+        }
+
+        /// <summary>
+        /// Register service components class.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureComponent(this IServiceCollection services)
+        {
+            services.AddSingleton<IConfigSetting, ConfigSetting>();
+            services.AddSingleton<IAdService, AdService>();
+            services.AddSingleton<IK2Service, K2Service>();
 
             services.AddTransient<IManageToken, ManageToken>();
         }

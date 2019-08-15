@@ -36,7 +36,7 @@ namespace EVF.UnitTest
             // Add services to the container.
             services.AddEntityFrameworkSqlServer()
              .AddDbContext<EVFContext>(options =>
-              options.UseSqlServer(config["ConnectionStrings:DefaultConnection"]));
+              options.UseNpgsql(config["ConnectionStrings:DefaultConnection"]));
 
             services.AddSingleton<IConfiguration>(config);
             services.AddTransient<IUnitOfWork, EVFUnitOfWork>();
@@ -44,13 +44,16 @@ namespace EVF.UnitTest
 
             services.AddScoped<IConfigSetting, ConfigSetting>();
             services.AddScoped<ILoginBll, LoginBll>();
+            services.AddScoped<IMenuBll, MenuBll>();
+            services.AddScoped<IRoleBll, RoleBll>();
             services.AddScoped<IAdService, AdService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IAdService, AdService>();
+            services.AddSingleton<IK2Service, K2Service>();
 
             services.AddTransient<IManageToken, ManageToken>(c => new ManageToken(this.InitialHttpContext()));
-            services.AddTransient<IK2Service, K2Service>();
-
+            
             ServiceProvider = services.BuildServiceProvider();
 
         }
