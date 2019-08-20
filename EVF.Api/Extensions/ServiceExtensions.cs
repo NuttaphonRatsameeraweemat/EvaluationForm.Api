@@ -59,18 +59,35 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
-        /// Dependency Injection Class Business Logic Layer.
+        /// Dependency Injection Master Business Logic Layer.
         /// </summary>
         /// <param name="services">The service collection.</param>
-        public static void ConfigureBll(this IServiceCollection services)
+        public static void ConfigureMasterBll(this IServiceCollection services)
+        {
+            services.AddScoped<IPerformanceBll, PerformanceBll>();
+            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Authorization Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureAuthorizationBll(this IServiceCollection services)
         {
             services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IRoleBll, RoleBll>();
             services.AddScoped<IMenuBll, MenuBll>();
             services.AddScoped<IUserRoleBll, UserRoleBll>();
-            services.AddScoped<IPerformanceBll, PerformanceBll>();
-            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Central Setting Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureCentralSettingBll(this IServiceCollection services)
+        {
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
+            services.AddScoped<IValueHelpBll, ValueHelpBll>();
         }
 
         /// <summary>

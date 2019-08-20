@@ -3,6 +3,7 @@ using EVF.CentralSetting.Bll.Interfaces;
 using EVF.CentralSetting.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -98,7 +99,20 @@ namespace EVF.CentralSetting.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-
+                var data = new List<HolidayCalendar>();
+                foreach (var item in model.HolidayList)
+                {
+                    data.Add(new HolidayCalendar
+                    {
+                        Year = model.Year,
+                        HolidayDate = UtilityService.ConvertToDateTime(item.HolidayDateString, ConstantValue.DateTimeFormat),
+                        Description = item.Description,
+                        CreateBy = _token.EmpNo,
+                        CreateDate = DateTime.Now
+                    });
+                }
+                _unitOfWork.GetRepository<HolidayCalendar>().AddRange(data);
+                _unitOfWork.Complete(scope);
             }
             this.ReloadCacheHolidayCalendar();
             return result;

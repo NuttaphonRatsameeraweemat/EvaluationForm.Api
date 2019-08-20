@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EVF.CentralSetting.Bll.Interfaces;
 using EVF.CentralSetting.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 
 namespace EVF.CentralSetting.Bll
 {
-    public class ValueHelpBll
+    public class ValueHelpBll : IValueHelpBll
     {
 
         #region [Fields]

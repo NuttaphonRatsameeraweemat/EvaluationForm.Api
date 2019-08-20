@@ -25,7 +25,9 @@ namespace EVF.Api
             //Add Configure Extension and Bll class.
             services.ConfigureRepository(Configuration);
             services.ConfigureRedisCache(Configuration);
-            services.ConfigureBll();
+            services.ConfigureMasterBll();
+            services.ConfigureAuthorizationBll();
+            services.ConfigureCentralSettingBll();
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();

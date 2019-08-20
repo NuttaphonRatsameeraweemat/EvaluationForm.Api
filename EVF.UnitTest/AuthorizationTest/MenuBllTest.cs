@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Xunit;
 
-namespace EVF.UnitTest.BusinessLogicTest
+namespace EVF.UnitTest.AuthorizationTest
 {
     public class MenuBllTest : IClassFixture<IoCConfig>
     {
@@ -18,7 +18,7 @@ namespace EVF.UnitTest.BusinessLogicTest
         /// <summary>
         /// The config setting provides config setting functionality.
         /// </summary>
-        private IConfigSetting _config; 
+        private IConfigSetting _config;
 
         #endregion
 

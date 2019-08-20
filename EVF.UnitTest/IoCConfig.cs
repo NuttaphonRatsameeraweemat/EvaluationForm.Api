@@ -10,6 +10,10 @@ using EVF.Helper;
 using Microsoft.AspNetCore.Http;
 using EVF.Authorization.Bll.Interfaces;
 using EVF.Authorization.Bll;
+using EVF.CentralSetting.Bll.Interfaces;
+using EVF.CentralSetting.Bll;
+using EVF.Master.Bll.Interfaces;
+using EVF.Master.Bll;
 
 namespace EVF.UnitTest
 {
@@ -38,16 +42,22 @@ namespace EVF.UnitTest
             services.AddSingleton<IConfiguration>(config);
             services.AddTransient<IUnitOfWork, EVFUnitOfWork>();
             services.AddAutoMapper(typeof(Startup));
-
-            services.AddScoped<IConfigSetting, ConfigSetting>();
+            
             services.AddScoped<ILoginBll, LoginBll>();
             services.AddScoped<IMenuBll, MenuBll>();
             services.AddScoped<IRoleBll, RoleBll>();
-            services.AddScoped<IAdService, AdService>();
+            services.AddScoped<IUserRoleBll, UserRoleBll>();
+
+            services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
+            services.AddScoped<IValueHelpBll, ValueHelpBll>();
+
+            services.AddScoped<IPerformanceBll, PerformanceBll>();
+            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAdService, AdService>();
             services.AddSingleton<IK2Service, K2Service>();
+            services.AddSingleton<IConfigSetting, ConfigSetting>();
 
             services.AddTransient<IManageToken, ManageToken>(c => new ManageToken(this.InitialHttpContext()));
             
@@ -83,6 +93,8 @@ namespace EVF.UnitTest
             httpContextAccessor.HttpContext = httpContext;
             return httpContextAccessor;
         }
+
+
 
     }
 }
