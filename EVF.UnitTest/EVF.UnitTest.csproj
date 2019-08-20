@@ -15,9 +15,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EVF.Api\EVF.Api.csproj" />
-    <ProjectReference Include="..\EVF.Bll\EVF.Bll.csproj" />
+    <ProjectReference Include="..\EVF.Authorization.Bll\EVF.Authorization.Bll.csproj" />
+    <ProjectReference Include="..\EVF.CentralSetting.Bll\EVF.CentralSetting.Bll.csproj" />
     <ProjectReference Include="..\EVF.Data\EVF.Data.csproj" />
     <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
+    <ProjectReference Include="..\EVF.Master.Bll\EVF.Master.Bll.csproj" />
   </ItemGroup>
 
 </Project>

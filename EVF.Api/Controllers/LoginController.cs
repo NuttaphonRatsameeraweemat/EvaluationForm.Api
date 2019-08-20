@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EVF.Bll.Interfaces;
-using EVF.Bll.Models;
-using EVF.Helper;
+﻿using EVF.Authorization.Bll.Interfaces;
+using EVF.Authorization.Bll.Models;
 using EVF.Helper.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers

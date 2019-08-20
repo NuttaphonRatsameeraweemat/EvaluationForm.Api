@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
-using EVF.Bll.Models;
+using EVF.Authorization.Bll.Models;
+using EVF.CentralSetting.Bll.Models;
 using EVF.Data.Pocos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using EVF.Master.Bll.Models;
 
 namespace EVF.Api.Extensions
 {

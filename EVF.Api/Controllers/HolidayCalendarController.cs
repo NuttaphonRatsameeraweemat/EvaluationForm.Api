@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using EVF.Bll.Components;
-using EVF.Bll.Interfaces;
-using EVF.Bll.Models;
+﻿using System.Text.RegularExpressions;
+using EVF.CentralSetting.Bll.Interfaces;
+using EVF.CentralSetting.Bll.Models;
+using EVF.Helper.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers

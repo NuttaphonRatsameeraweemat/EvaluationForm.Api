@@ -5,14 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using EVF.Api;
 using EVF.Data;
 using EVF.Data.Repository.Interfaces;
-using EVF.Bll.Components.InterfaceComponents;
-using EVF.Bll.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper;
-using EVF.Bll.Interfaces;
-using EVF.Bll;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using EVF.Authorization.Bll.Interfaces;
+using EVF.Authorization.Bll;
 
 namespace EVF.UnitTest
 {

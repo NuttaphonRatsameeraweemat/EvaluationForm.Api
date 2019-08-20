@@ -1,9 +1,7 @@
-﻿using EVF.Bll.Interfaces;
+﻿using EVF.Authorization.Bll.Interfaces;
 using EVF.Helper.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace EVF.UnitTest.BusinessLogicTest

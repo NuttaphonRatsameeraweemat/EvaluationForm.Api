@@ -20,12 +20,14 @@ using EVF.Helper;
 using EVF.Data;
 using EVF.Data.Repository.Interfaces;
 using EVF.Helper.Models;
-using EVF.Bll.Components.InterfaceComponents;
-using EVF.Bll.Components;
-using EVF.Bll.Interfaces;
-using EVF.Bll;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
+using EVF.Authorization.Bll.Interfaces;
+using EVF.Authorization.Bll;
+using EVF.Master.Bll.Interfaces;
+using EVF.CentralSetting.Bll.Interfaces;
+using EVF.Master.Bll;
+using EVF.CentralSetting.Bll;
+using EVF.Helper.Components;
 
 namespace EVF.Api.Extensions
 {

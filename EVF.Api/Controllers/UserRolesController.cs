@@ -1,5 +1,5 @@
-﻿using EVF.Bll.Interfaces;
-using EVF.Bll.Models;
+﻿using EVF.Authorization.Bll.Interfaces;
+using EVF.Authorization.Bll.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

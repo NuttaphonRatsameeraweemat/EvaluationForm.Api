@@ -1,9 +1,6 @@
-﻿using EVF.Bll.Components.InterfaceComponents;
-using Microsoft.AspNetCore.Http;
+﻿using EVF.Helper.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace EVF.UnitTest.ComponentsTest
