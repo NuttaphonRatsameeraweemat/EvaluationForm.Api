@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace EVF.Authorization.Bll.Models
@@ -18,8 +19,10 @@ namespace EVF.Authorization.Bll.Models
         public string FirstNameTh { get; set; }
         public string LastNameTh { get; set; }
         public string OrgName { get; set; }
+        [Required]
         public string AdUser { get; set; }
         public string RoleDisplay { get; set; }
+        [Required]
         public List<int> RoleList { get; set; }
 
     }

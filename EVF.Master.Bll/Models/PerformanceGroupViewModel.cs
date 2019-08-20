@@ -15,7 +15,9 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
-        public string PerformanceGroupName { get; set; }
+        public string PerformanceGroupNameTh { get; set; }
+        [Required]
+        public string PerformanceGroupNameEn { get; set; }
         public List<int> PerformanceGroupItems { get; set; }
     }
 }

@@ -156,7 +156,7 @@ namespace EVF.Authorization.Bll
         {
             var result = new UserRoleViewModel();
             result = _mapper.Map<Hremployee, UserRoleViewModel>(
-                _unitOfWork.GetRepository<Hremployee>().GetCache().FirstOrDefault());
+                _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == adUser).FirstOrDefault());
 
             if (result == null)
             {

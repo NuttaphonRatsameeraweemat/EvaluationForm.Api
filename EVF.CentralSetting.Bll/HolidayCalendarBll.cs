@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Transactions;
+using static EVF.CentralSetting.Bll.Models.HolidayCalendarViewModel;
 
 namespace EVF.CentralSetting.Bll
 {
@@ -128,10 +129,60 @@ namespace EVF.CentralSetting.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
+                var data = _unitOfWork.GetRepository<HolidayCalendar>().GetCache(x => x.Year == model.Year);
+                var addHoliday = new List<HolidayCalendar>();
+                var updateHoliday = new List<HolidayCalendar>();
 
+                this.InitialEditHolidayCalendar(model.Year, model.HolidayList, data, updateHoliday, addHoliday);
+
+                var deleteHoliday = data.Where(x => !updateHoliday.Any(y => x.Id == y.Id)).ToList();
+
+                _unitOfWork.GetRepository<HolidayCalendar>().AddRange(addHoliday);
+                _unitOfWork.GetRepository<HolidayCalendar>().UpdateRange(updateHoliday);
+                _unitOfWork.GetRepository<HolidayCalendar>().RemoveRange(deleteHoliday);
+                _unitOfWork.Complete(scope);
             }
             this.ReloadCacheHolidayCalendar();
             return result;
+        }
+
+        /// <summary>
+        /// Holiday logic edit item.
+        /// </summary>
+        /// <param name="year">The year target holiday calendar.</param>
+        /// <param name="holidayList">The holiday list.</param>
+        /// <param name="data">The master holiday target year list for edit.</param>
+        /// <param name="updateHoliday">The holiday data update.</param>
+        /// <param name="addHoliday">The new holiday.</param>
+        private void InitialEditHolidayCalendar(string year,
+            IEnumerable<HolidayCalendarDetail> holidayList, 
+            IEnumerable<HolidayCalendar> data,
+            List<HolidayCalendar> updateHoliday,
+            List<HolidayCalendar> addHoliday)
+        {
+            foreach (var item in holidayList)
+            {
+                item.HolidayDate = UtilityService.ConvertToDateTime(item.HolidayDateString, ConstantValue.DateTimeFormat);
+                var holidayItem = data.FirstOrDefault(x => x.HolidayDate.Value.Date == item.HolidayDate.Date);
+                if (holidayItem != null)
+                {
+                    holidayItem.LastModifyBy = _token.EmpNo;
+                    holidayItem.LastModifyDate = DateTime.Now;
+                    holidayItem.Description = item.Description;
+                    updateHoliday.Add(holidayItem);
+                }
+                else
+                {
+                    addHoliday.Add(new HolidayCalendar
+                    {
+                        Year = year,
+                        HolidayDate = item.HolidayDate,
+                        Description = item.Description,
+                        CreateBy = _token.EmpNo,
+                        CreateDate = DateTime.Now
+                    });
+                }
+            }
         }
 
         /// <summary>
@@ -144,7 +195,9 @@ namespace EVF.CentralSetting.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-
+                var data = _unitOfWork.GetRepository<HolidayCalendar>().GetCache(x => x.Year == year);
+                _unitOfWork.GetRepository<HolidayCalendar>().RemoveRange(data);
+                _unitOfWork.Complete(scope);
             }
             this.ReloadCacheHolidayCalendar();
             return result;

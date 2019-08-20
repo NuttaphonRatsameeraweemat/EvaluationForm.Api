@@ -10,7 +10,7 @@ namespace EVF.Data.Pocos
         [Column("ID")]
         public int Id { get; set; }
         [StringLength(255)]
-        public string PerformanceName { get; set; }
+        public string PerformanceNameTh { get; set; }
         [StringLength(255)]
         public string CreateBy { get; set; }
         [Column(TypeName = "date")]
@@ -19,5 +19,7 @@ namespace EVF.Data.Pocos
         public string LastModifyBy { get; set; }
         [Column(TypeName = "date")]
         public DateTime? LastModifyDate { get; set; }
+        [StringLength(255)]
+        public string PerformanceNameEn { get; set; }
     }
 }

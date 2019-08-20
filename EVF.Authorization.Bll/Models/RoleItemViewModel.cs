@@ -1,5 +1,6 @@
 ﻿using EVF.Helper.Components;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVF.Authorization.Bll.Models
 {
@@ -10,6 +11,7 @@ namespace EVF.Authorization.Bll.Models
             ParentMenu = new List<RoleItemViewModel>();
         }
 
+        [Required]
         public string MenuCode { get; set; }
         public string MenuName { get; set; }
         public bool IsDisplay { get; set; }

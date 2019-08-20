@@ -10,6 +10,8 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
-        public string PerformanceName { get; set; }
+        public string PerformanceNameTh { get; set; }
+        [Required]
+        public string PerformanceNameEn { get; set; }
     }
 }
