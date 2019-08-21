@@ -71,7 +71,7 @@ namespace EVF.UnitTest.MasterTest
             {
                 var response = _performance.Save(new Master.Bll.Models.PerformanceViewModel
                 {
-                    PerformanceName = performanceName
+                    PerformanceNameTh = performanceName
                 });
                 Console.WriteLine(response);
             }
@@ -90,7 +90,7 @@ namespace EVF.UnitTest.MasterTest
                 var response = _performance.Edit(new Master.Bll.Models.PerformanceViewModel
                 {
                     Id = id,
-                    PerformanceName = performanceName
+                    PerformanceNameTh = performanceName
                 });
                 Console.WriteLine(response);
             }

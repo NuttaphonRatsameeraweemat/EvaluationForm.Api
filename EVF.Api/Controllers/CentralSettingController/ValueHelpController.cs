@@ -37,10 +37,17 @@ namespace EVF.Api.Controllers
         #region Methods
 
         [HttpGet]
-        [Route("GetTypeProject")]
-        public IActionResult GetTypeProject()
+        [Route("GetActiveStatus")]
+        public IActionResult GetActiveStatus()
         {
             return Ok(_valueHelp.Get(ConstantValue.ValueTypeActiveStatus));
+        }
+
+        [HttpGet]
+        [Route("GetSapScoreFields")]
+        public IActionResult GetSapScoreFields()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeSAPScoreFields));
         }
 
         #endregion

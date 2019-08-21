@@ -71,7 +71,7 @@ namespace EVF.UnitTest.MasterTest
             {
                 var response = _performanceGroup.Save(new Master.Bll.Models.PerformanceGroupViewModel
                 {
-                    PerformanceGroupName = performanceGroupName,
+                    PerformanceGroupNameTh = performanceGroupName,
                     PerformanceGroupItems = new List<int> { 1, 2, 3 }
                 });
                 Console.WriteLine(response);
@@ -91,7 +91,7 @@ namespace EVF.UnitTest.MasterTest
                 var response = _performanceGroup.Save(new Master.Bll.Models.PerformanceGroupViewModel
                 {
                     Id = id,
-                    PerformanceGroupName = performanceGroupName,
+                    PerformanceGroupNameTh = performanceGroupName,
                     PerformanceGroupItems = new List<int> { 1, 2 }
                 });
                 Console.WriteLine(response);

@@ -21,6 +21,7 @@ namespace EVF.Helper.Components
         public const string HttpMethodPost = "POST";
         //Value Help Constant value type
         public const string ValueTypeActiveStatus = "ACTIVE_STATUS";
+        public const string ValueTypeSAPScoreFields = "SAPScoreFields";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";
