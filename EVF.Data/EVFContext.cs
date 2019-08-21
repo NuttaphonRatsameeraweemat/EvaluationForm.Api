@@ -21,7 +21,11 @@ namespace EVF.Data
         public virtual DbSet<AppMenu> AppMenu { get; set; }
         public virtual DbSet<AuthorityCompany> AuthorityCompany { get; set; }
         public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }
+        public virtual DbSet<Hrcompany> Hrcompany { get; set; }
         public virtual DbSet<Hremployee> Hremployee { get; set; }
+        public virtual DbSet<Hrorg> Hrorg { get; set; }
+        public virtual DbSet<HrorgRelation> HrorgRelation { get; set; }
+        public virtual DbSet<Hrposition> Hrposition { get; set; }
         public virtual DbSet<Performance> Performance { get; set; }
         public virtual DbSet<PerformanceGroup> PerformanceGroup { get; set; }
         public virtual DbSet<PerformanceGroupItem> PerformanceGroupItem { get; set; }
@@ -40,12 +44,42 @@ namespace EVF.Data
                 entity.Property(e => e.MenuCode).ValueGeneratedNever();
             });
 
+            modelBuilder.Entity<Hrcompany>(entity =>
+            {
+                entity.HasKey(e => e.ComCode)
+                    .HasName("HRCompany_pkey");
+
+                entity.Property(e => e.ComCode).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<Hremployee>(entity =>
             {
                 entity.HasKey(e => e.EmpNo)
                     .HasName("HREmployee_pkey");
 
                 entity.Property(e => e.EmpNo).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<Hrorg>(entity =>
+            {
+                entity.HasKey(e => e.OrgId)
+                    .HasName("HROrg_pkey");
+
+                entity.Property(e => e.OrgId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<HrorgRelation>(entity =>
+            {
+                entity.HasKey(e => new { e.ParentOrgId, e.ChildOrgId })
+                    .HasName("HROrgRelation_pkey");
+            });
+
+            modelBuilder.Entity<Hrposition>(entity =>
+            {
+                entity.HasKey(e => e.PosId)
+                    .HasName("HRPosition_pkey");
+
+                entity.Property(e => e.PosId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<PerformanceGroupItem>(entity =>

@@ -28,6 +28,7 @@ namespace EVF.Api
             services.ConfigureMasterBll();
             services.ConfigureAuthorizationBll();
             services.ConfigureCentralSettingBll();
+            services.ConfigureHrBll();
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EVF.Authorization.Bll.Models;
 using EVF.CentralSetting.Bll.Models;
+using EVF.Hr.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Master.Bll.Models;
 
@@ -26,6 +27,12 @@ namespace EVF.Api.Extensions
             CreateMap<PerformanceGroupViewModel, PerformanceGroup>();
             CreateMap<ValueHelp, ValueHelpViewModel>();
             CreateMap<ValueHelpViewModel, ValueHelp>();
+            CreateMap<Hrcompany, HrCompanyViewModel>();
+            CreateMap<HrCompanyViewModel, Hrcompany>();
+            CreateMap<Hrorg, HrOrgViewModel>();
+            CreateMap<HrOrgViewModel, Hrorg>();
+            CreateMap<Hremployee, HrEmployeeViewModel>();
+            CreateMap<HrEmployeeViewModel, Hremployee>();
         }
 
         #endregion

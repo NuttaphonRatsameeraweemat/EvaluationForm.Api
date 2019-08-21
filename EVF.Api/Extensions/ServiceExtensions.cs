@@ -28,6 +28,8 @@ using EVF.CentralSetting.Bll.Interfaces;
 using EVF.Master.Bll;
 using EVF.CentralSetting.Bll;
 using EVF.Helper.Components;
+using EVF.Hr.Bll.Interfaces;
+using EVF.Hr.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -79,6 +81,17 @@ namespace EVF.Api.Extensions
             services.AddScoped<IMenuBll, MenuBll>();
             services.AddScoped<IUserRoleBll, UserRoleBll>();
             services.AddScoped<IAuthorityCompanyBll, AuthorityCompanyBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection HR Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureHrBll(this IServiceCollection services)
+        {
+            services.AddScoped<IHrCompanyBll, HrCompanyBll>();
+            services.AddScoped<IHrOrgBll, HrOrgBll>();
+            services.AddScoped<IHrEmployeeBll, HrEmployeeBll>();
         }
 
         /// <summary>
