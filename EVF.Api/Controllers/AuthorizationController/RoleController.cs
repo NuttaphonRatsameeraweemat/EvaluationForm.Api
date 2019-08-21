@@ -66,14 +66,14 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
-        public IActionResult Save(RoleViewModel model)
+        public IActionResult Save([FromBody]RoleViewModel model)
         {
             return Ok(_role.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit(RoleViewModel model)
+        public IActionResult Edit([FromBody]RoleViewModel model)
         {
             return Ok(_role.Edit(model));
         }

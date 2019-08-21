@@ -52,14 +52,14 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
-        public IActionResult Save(PerformanceGroupViewModel model)
+        public IActionResult Save([FromBody]PerformanceGroupViewModel model)
         {
             return Ok(_performanceGroup.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit(PerformanceGroupViewModel model)
+        public IActionResult Edit([FromBody]PerformanceGroupViewModel model)
         {
             return Ok(_performanceGroup.Edit(model));
         }

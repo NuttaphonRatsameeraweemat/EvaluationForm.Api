@@ -62,21 +62,21 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
-        public IActionResult Save(HolidayCalendarViewModel model)
+        public IActionResult Save([FromBody]HolidayCalendarViewModel model)
         {
             return Ok(_holidayCalendar.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit(HolidayCalendarViewModel model)
+        public IActionResult Edit([FromBody]HolidayCalendarViewModel model)
         {
             return Ok(_holidayCalendar.Edit(model));
         }
 
         [HttpPost]
         [Route("Delete")]
-        public IActionResult Delete(string year)
+        public IActionResult Delete([FromBody]string year)
         {
             IActionResult response;
             if (!Regex.IsMatch(year, ConstantValue.RegexYearFormat))
