@@ -1,5 +1,6 @@
 ﻿using EVF.Authorization.Bll.Interfaces;
 using EVF.Authorization.Bll.Models;
+using EVF.Helper.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +48,13 @@ namespace EVF.Api.Controllers
         [Route("GetDetail")]
         public IActionResult GetDetail(string adUser)
         {
-            return Ok(_userRole.GetDetail(adUser));
+            IActionResult response;
+            if (string.IsNullOrEmpty(adUser))
+            {
+                response = BadRequest(ConstantValue.ArgullmentNullOrEmptyMessage);
+            }
+            else response = Ok(_userRole.GetDetail(adUser));
+            return response;
         }
 
         [HttpPost]
@@ -68,7 +75,13 @@ namespace EVF.Api.Controllers
         [Route("Delete")]
         public IActionResult Delete([FromBody]string adUser)
         {
-            return Ok(_userRole.Delete(adUser));
+            IActionResult response;
+            if (string.IsNullOrEmpty(adUser))
+            {
+                response = BadRequest(ConstantValue.ArgullmentNullOrEmptyMessage);
+            }
+            else response = Ok(_userRole.Delete(adUser));
+            return response;
         }
 
         #endregion
