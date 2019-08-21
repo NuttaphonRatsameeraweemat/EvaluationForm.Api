@@ -209,7 +209,7 @@ namespace EVF.Authorization.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var compositeRole = _mapper.Map<RoleViewModel, AppCompositeRole>(model);
-                compositeRole.CreateBy = _token.AdUser;
+                compositeRole.CreateBy = _token.EmpNo;
                 compositeRole.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<AppCompositeRole>().Add(compositeRole);
                 _unitOfWork.Complete();

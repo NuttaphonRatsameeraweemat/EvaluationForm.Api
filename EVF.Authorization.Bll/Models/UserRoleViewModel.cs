@@ -16,8 +16,8 @@ namespace EVF.Authorization.Bll.Models
         public const string RoleForDisplayData = "Role_DS_UserRole";
 
         public string EmpNo { get; set; }
-        public string FirstNameTh { get; set; }
-        public string LastNameTh { get; set; }
+        public string FirstnameTH { get; set; }
+        public string LastnameTH { get; set; }
         public string OrgName { get; set; }
         [Required]
         public string AdUser { get; set; }

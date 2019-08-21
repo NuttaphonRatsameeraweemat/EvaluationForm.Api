@@ -33,6 +33,10 @@ namespace EVF.Api.Extensions
             CreateMap<HrOrgViewModel, Hrorg>();
             CreateMap<Hremployee, HrEmployeeViewModel>();
             CreateMap<HrEmployeeViewModel, Hremployee>();
+            CreateMap<Approval, ApprovalViewModel>();
+            CreateMap<ApprovalViewModel, Approval>();
+            CreateMap<ApprovalItem, ApprovalItemViewModel>();
+            CreateMap<ApprovalItemViewModel, ApprovalItem>();
         }
 
         #endregion

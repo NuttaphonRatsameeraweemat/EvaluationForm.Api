@@ -54,11 +54,9 @@ namespace EVF.Data.Pocos
         public string OrgId { get; set; }
         [StringLength(100)]
         public string ManagerEmpNo { get; set; }
-        [Column(TypeName = "timestamp(6) without time zone")]
         public DateTime? LastInterface { get; set; }
         [StringLength(10)]
         public string ComCode { get; set; }
-        [Column(TypeName = "timestamp(6) without time zone")]
         public DateTime? BirthDate { get; set; }
     }
 }

@@ -96,7 +96,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var performanceGroup = _mapper.Map<PerformanceGroupViewModel, PerformanceGroup>(model);
-                performanceGroup.CreateBy = _token.AdUser;
+                performanceGroup.CreateBy = _token.EmpNo;
                 performanceGroup.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<PerformanceGroup>().Add(performanceGroup);
                 _unitOfWork.Complete();

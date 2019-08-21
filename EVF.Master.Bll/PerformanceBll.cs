@@ -82,7 +82,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var performance = _mapper.Map<PerformanceViewModel, Performance>(model);
-                performance.CreateBy = _token.AdUser;
+                performance.CreateBy = _token.EmpNo;
                 performance.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Performance>().Add(performance);
                 _unitOfWork.Complete(scope);

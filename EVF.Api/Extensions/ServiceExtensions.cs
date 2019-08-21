@@ -68,6 +68,7 @@ namespace EVF.Api.Extensions
         {
             services.AddScoped<IPerformanceBll, PerformanceBll>();
             services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+            services.AddScoped<IApprovalBll, ApprovalBll>();
         }
 
         /// <summary>

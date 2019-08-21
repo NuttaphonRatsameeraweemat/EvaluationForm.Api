@@ -65,7 +65,7 @@ namespace EVF.Authorization.Bll
                     {
                         AdUser = model.AdUser,
                         CompositeRoleId = item,
-                        CreateBy = _token.AdUser,
+                        CreateBy = _token.EmpNo,
                         CreateDate = DateTime.Now
                     };
                     _unitOfWork.GetRepository<UserRoles>().Add(data);
@@ -97,7 +97,7 @@ namespace EVF.Authorization.Bll
                     {
                         AdUser = model.AdUser,
                         CompositeRoleId = item,
-                        CreateBy = _token.AdUser,
+                        CreateBy = _token.EmpNo,
                         CreateDate = DateTime.Now
                     };
                     _unitOfWork.GetRepository<UserRoles>().Add(data);

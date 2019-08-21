@@ -19,6 +19,8 @@ namespace EVF.Data
         public virtual DbSet<AppCompositeRole> AppCompositeRole { get; set; }
         public virtual DbSet<AppCompositeRoleItem> AppCompositeRoleItem { get; set; }
         public virtual DbSet<AppMenu> AppMenu { get; set; }
+        public virtual DbSet<Approval> Approval { get; set; }
+        public virtual DbSet<ApprovalItem> ApprovalItem { get; set; }
         public virtual DbSet<AuthorityCompany> AuthorityCompany { get; set; }
         public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }
         public virtual DbSet<Hrcompany> Hrcompany { get; set; }

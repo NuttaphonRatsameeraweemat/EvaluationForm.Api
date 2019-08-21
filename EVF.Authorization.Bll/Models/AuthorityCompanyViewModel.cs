@@ -14,5 +14,8 @@ namespace EVF.Authorization.Bll.Models
         public string AdUser { get; set; }
         [Required]
         public List<string> ComCode { get; set; }
+
+        public string FirstnameTH { get; set; }
+        public string LastnameTH { get; set; }
     }
 }

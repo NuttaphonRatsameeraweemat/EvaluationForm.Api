@@ -56,11 +56,13 @@ namespace EVF.Authorization.Bll
         /// <returns></returns>
         public IEnumerable<AuthorityCompanyViewModel> GetList()
         {
+            var employee = _unitOfWork.GetRepository<Hremployee>().GetCache();
             var adUserGroup = _unitOfWork.GetRepository<AuthorityCompany>().GetCache().Select(x => x.AdUser).Distinct().ToList();
             var result = new List<AuthorityCompanyViewModel>();
             foreach (var item in adUserGroup)
             {
-                result.Add(new AuthorityCompanyViewModel { AdUser = item });
+                var temp = employee.FirstOrDefault(x => x.Aduser == item);
+                result.Add(new AuthorityCompanyViewModel { AdUser = item, FirstnameTH = temp?.FirstnameTh, LastnameTH = temp?.LastnameTh });
             }
             return result;
         }
