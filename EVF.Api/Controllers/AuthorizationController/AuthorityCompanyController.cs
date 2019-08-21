@@ -1,9 +1,11 @@
 ﻿using EVF.Authorization.Bll.Interfaces;
 using EVF.Authorization.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace EVF.Api.Controllers
 {
@@ -51,7 +53,7 @@ namespace EVF.Api.Controllers
             IActionResult response;
             if (string.IsNullOrEmpty(adUser))
             {
-                response = BadRequest(ConstantValue.ArgullmentNullOrEmptyMessage);
+                response = BadRequest(UtilityService.InitialResultError(ConstantValue.ArgullmentNullOrEmptyMessage, (int)HttpStatusCode.BadRequest));
             }
             else response = Ok(_authorityCompany.GetDetail(adUser));
             return response;
@@ -78,7 +80,7 @@ namespace EVF.Api.Controllers
             IActionResult response;
             if (string.IsNullOrEmpty(adUser))
             {
-                response = BadRequest(ConstantValue.ArgullmentNullOrEmptyMessage);
+                response = BadRequest(UtilityService.InitialResultError(ConstantValue.ArgullmentNullOrEmptyMessage, (int)HttpStatusCode.BadRequest));
             }
             else response = Ok(_authorityCompany.Delete(adUser));
             return response;

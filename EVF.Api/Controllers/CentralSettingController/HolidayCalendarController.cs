@@ -1,6 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Net;
+using System.Text.RegularExpressions;
 using EVF.CentralSetting.Bll.Interfaces;
 using EVF.CentralSetting.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +54,7 @@ namespace EVF.Api.Controllers
             IActionResult response;
             if (string.IsNullOrEmpty(year) || !Regex.IsMatch(year, ConstantValue.RegexYearFormat))
             {
-                response = BadRequest(ConstantValue.YearIncorrectFormat);
+                response = BadRequest(UtilityService.InitialResultError(ConstantValue.YearIncorrectFormat, (int)HttpStatusCode.BadRequest));
             }
             else response = Ok(_holidayCalendar.GetDetail(year));
             return response;
@@ -79,7 +81,7 @@ namespace EVF.Api.Controllers
             IActionResult response;
             if (!Regex.IsMatch(year, ConstantValue.RegexYearFormat))
             {
-                response = BadRequest(ConstantValue.YearIncorrectFormat);
+                response = BadRequest(UtilityService.InitialResultError(ConstantValue.YearIncorrectFormat, (int)HttpStatusCode.BadRequest));
             }
             else response = Ok(_holidayCalendar.Delete(year));
             return response;
