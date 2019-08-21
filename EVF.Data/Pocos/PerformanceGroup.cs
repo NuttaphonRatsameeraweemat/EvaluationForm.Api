@@ -21,5 +21,7 @@ namespace EVF.Data.Pocos
         public DateTime? LastModifyDate { get; set; }
         [StringLength(255)]
         public string PerformanceGroupNameEn { get; set; }
+        [StringLength(100)]
+        public string SapScoreField { get; set; }
     }
 }

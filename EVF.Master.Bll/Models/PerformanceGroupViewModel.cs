@@ -18,6 +18,8 @@ namespace EVF.Master.Bll.Models
         public string PerformanceGroupNameTh { get; set; }
         [Required]
         public string PerformanceGroupNameEn { get; set; }
+        [Required]
+        public string SapScoreField { get; set; }
         public List<int> PerformanceGroupItems { get; set; }
     }
 }
