@@ -137,11 +137,17 @@ namespace EVF.Authorization.Bll
             result = _mapper.Map<IEnumerable<Hremployee>, IEnumerable<UserRoleViewModel>>(
                 _unitOfWork.GetRepository<Hremployee>().GetCache()).ToList();
             var roles = _unitOfWork.GetRepository<UserRoles>().GetCache();
-
+            var orgList = _unitOfWork.GetRepository<Hrorg>().GetCache();
+            foreach (var item in result)
+            {
+                var orgInfo = orgList.FirstOrDefault(x => x.OrgId == item.OrgId);
+                item.OrgName = orgInfo?.OrgName;
+            }
             foreach (var item in roles)
             {
                 var data = result.FirstOrDefault(x => x.AdUser == item.AdUser);
                 var roleInfo = _unitOfWork.GetRepository<AppCompositeRole>().GetCache(x => x.Id == item.CompositeRoleId).FirstOrDefault();
+                
                 data.RoleDisplay += $"{roleInfo?.Name} ";
             }
             return result;

@@ -114,7 +114,10 @@ namespace EVF.Authorization.Bll
             {
                 EmpNo = data.EmpNo,
                 FirstNameTH = data.FirstnameTh,
-                LastNameTH = data.LastnameTh
+                LastNameTH = data.LastnameTh,
+                ComCode = data.ComCode,
+                OrgId = data.OrgId,
+                PositionId = data.PositionId
             };
 
             var roleList = _roleBll.GetCompositeRoleItemByAdUser(login.Username);

@@ -97,7 +97,7 @@ namespace EVF.CentralSetting.Bll
         {
             var result = _mapper.Map<Approval, ApprovalViewModel>(_unitOfWork.GetRepository<Approval>().GetCache(x => x.Id == id).FirstOrDefault());
             result.ApprovalList.AddRange(_mapper.Map<IEnumerable<ApprovalItem>, IEnumerable<ApprovalItemViewModel>>(
-                _unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == id)));
+                _unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == id, y => y.OrderBy(x => x.Step))));
             return result;
         }
 
@@ -112,6 +112,8 @@ namespace EVF.CentralSetting.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var approval = _mapper.Map<ApprovalViewModel, Approval>(model);
+                approval.CreateBy = _token.EmpNo;
+                approval.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Approval>().Add(approval);
                 _unitOfWork.Complete();
                 this.SaveItem(approval.Id, _mapper.Map<IEnumerable<ApprovalItemViewModel>, IEnumerable<ApprovalItem>>(model.ApprovalList));
@@ -142,12 +144,13 @@ namespace EVF.CentralSetting.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var approval = _mapper.Map<ApprovalViewModel, Approval>(model);
-                var approvalItem = _mapper.Map<IEnumerable<ApprovalItemViewModel>, IEnumerable<ApprovalItem>>(model.ApprovalList);
-                _unitOfWork.GetRepository<Approval>().Update(approval);
-                _unitOfWork.Complete();
-                approvalItem.Select(c => { c.ApprovalId = approval.Id; return c; }).ToList();
-                _unitOfWork.GetRepository<ApprovalItem>().AddRange(approvalItem);
+                var data = _unitOfWork.GetRepository<Approval>().GetCache(x => x.Id == model.Id).FirstOrDefault();
+                data.ComCode = model.ComCode;
+                data.OrgId = model.OrgId;
+                data.LastModifyBy = _token.EmpNo;
+                data.LastModifyDate = DateTime.Now;
+                _unitOfWork.GetRepository<Approval>().Update(data);
+                this.EditItem(data.Id, model.ApprovalList);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheApproval();
@@ -164,8 +167,13 @@ namespace EVF.CentralSetting.Bll
             var data = _unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == approvalId);
 
             var addItem = approvalList.Where(x => x.Id == 0);
+            var tempUpdate = approvalList.Where(x => data.Any(y => x.Id == y.Id));
             var removeItem = data.Where(x => !approvalList.Any(y => x.Id == y.Id));
-            
+
+            var updateItem = _mapper.Map<IEnumerable<ApprovalItemViewModel>, IEnumerable<ApprovalItem>>(tempUpdate);
+            updateItem.Select(c => { c.ApprovalId = approvalId; return c; }).ToList();
+            _unitOfWork.GetRepository<ApprovalItem>().UpdateRange(updateItem);
+
             this.SaveItem(approvalId, _mapper.Map<IEnumerable<ApprovalItemViewModel>, IEnumerable<ApprovalItem>>(addItem));
             this.DeleteItem(removeItem);
         }
