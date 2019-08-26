@@ -16,11 +16,9 @@ namespace EVF.Data.Pocos
         public string OrgId { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
-        [Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
         [StringLength(11)]
         public string LastModifyBy { get; set; }
-        [Column(TypeName = "date")]
         public DateTime? LastModifyDate { get; set; }
     }
 }

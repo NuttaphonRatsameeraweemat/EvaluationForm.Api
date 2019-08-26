@@ -12,14 +12,12 @@ namespace EVF.Data.Pocos
         [StringLength(255)]
         public string PerformanceNameTh { get; set; }
         [StringLength(255)]
-        public string CreateBy { get; set; }
-        [Column(TypeName = "date")]
-        public DateTime? CreateDate { get; set; }
-        [StringLength(255)]
-        public string LastModifyBy { get; set; }
-        [Column(TypeName = "date")]
-        public DateTime? LastModifyDate { get; set; }
-        [StringLength(255)]
         public string PerformanceNameEn { get; set; }
+        [StringLength(11)]
+        public string CreateBy { get; set; }
+        public DateTime? CreateDate { get; set; }
+        [StringLength(11)]
+        public string LastModifyBy { get; set; }
+        public DateTime? LastModifyDate { get; set; }
     }
 }

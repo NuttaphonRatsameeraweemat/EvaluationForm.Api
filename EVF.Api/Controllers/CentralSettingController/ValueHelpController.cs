@@ -50,6 +50,13 @@ namespace EVF.Api.Controllers
             return Ok(_valueHelp.Get(ConstantValue.ValueTypeSAPScoreFields));
         }
 
+        [HttpGet]
+        [Route("GetPeriodRound")]
+        public IActionResult GetPeriodRound()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypePeriodRound));
+        }
+
         #endregion
 
     }

@@ -11,7 +11,7 @@ namespace EVF.Data.Pocos
         public int Id { get; set; }
         [Column("ApprovalID")]
         public int? ApprovalId { get; set; }
-        [StringLength(255)]
+        [StringLength(100)]
         public string AdUser { get; set; }
         public int? Step { get; set; }
     }

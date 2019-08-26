@@ -45,7 +45,7 @@ namespace EVF.Api.Extensions
         {
             services.AddEntityFrameworkSqlServer()
              .AddDbContext<EVFContext>(options =>
-              options.UseNpgsql(Configuration["ConnectionStrings:DefaultConnection"]));
+              options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
 
             services.AddTransient<IUnitOfWork, EVFUnitOfWork>();
         }

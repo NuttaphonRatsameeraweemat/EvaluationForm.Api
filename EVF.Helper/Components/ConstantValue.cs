@@ -22,6 +22,7 @@ namespace EVF.Helper.Components
         //Value Help Constant value type
         public const string ValueTypeActiveStatus = "ACTIVE_STATUS";
         public const string ValueTypeSAPScoreFields = "SAPScoreFields";
+        public const string ValueTypePeriodRound = "PeriodRound";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";

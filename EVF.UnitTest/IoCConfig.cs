@@ -37,7 +37,7 @@ namespace EVF.UnitTest
             // Add services to the container.
             services.AddEntityFrameworkSqlServer()
              .AddDbContext<EVFContext>(options =>
-              options.UseNpgsql(config["ConnectionStrings:DefaultConnection"]));
+              options.UseSqlServer(config["ConnectionStrings:DefaultConnection"]));
 
             services.AddSingleton<IConfiguration>(config);
             services.AddTransient<IUnitOfWork, EVFUnitOfWork>();

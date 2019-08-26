@@ -232,8 +232,8 @@ namespace EVF.Authorization.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var compositeRole = _mapper.Map<RoleViewModel, AppCompositeRole>(model);
-                compositeRole.ModifyBy = _token.AdUser;
-                compositeRole.ModifyDate = DateTime.Now;
+                compositeRole.LastModifyBy = _token.EmpNo;
+                compositeRole.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<AppCompositeRole>().Update(compositeRole);
                 this.UpdateRoleItem(compositeRole.Id, this.InitialRoleItem(compositeRole.Id, model.RoleItem));
                 _unitOfWork.Complete(scope);

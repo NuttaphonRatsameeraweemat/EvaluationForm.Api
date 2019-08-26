@@ -11,7 +11,7 @@ namespace EVF.Data.Pocos
         public int Id { get; set; }
         [Column("CompositeRoleID")]
         public int? CompositeRoleId { get; set; }
-        [StringLength(255)]
+        [StringLength(100)]
         public string RoleMenu { get; set; }
     }
 }

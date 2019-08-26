@@ -31,6 +31,8 @@ namespace EVF.Data
         public virtual DbSet<Performance> Performance { get; set; }
         public virtual DbSet<PerformanceGroup> PerformanceGroup { get; set; }
         public virtual DbSet<PerformanceGroupItem> PerformanceGroupItem { get; set; }
+        public virtual DbSet<Period> Period { get; set; }
+        public virtual DbSet<PeriodItem> PeriodItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
 
