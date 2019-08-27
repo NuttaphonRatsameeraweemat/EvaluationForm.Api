@@ -79,7 +79,7 @@ namespace EVF.Api.Controllers
         public IActionResult Delete([FromBody]string year)
         {
             IActionResult response;
-            if (!Regex.IsMatch(year, ConstantValue.RegexYearFormat))
+            if (string.IsNullOrEmpty(year) || !Regex.IsMatch(year, ConstantValue.RegexYearFormat))
             {
                 response = BadRequest(UtilityService.InitialResultError(ConstantValue.YearIncorrectFormat, (int)HttpStatusCode.BadRequest));
             }

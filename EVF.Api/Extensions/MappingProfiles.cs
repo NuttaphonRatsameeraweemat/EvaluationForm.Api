@@ -41,6 +41,10 @@ namespace EVF.Api.Extensions
             CreateMap<PeriodViewModel, Period>();
             CreateMap<PeriodItem, PeriodItemViewModel>();
             CreateMap<PeriodItemViewModel, PeriodItem>();
+            CreateMap<Grade, GradeViewModel>();
+            CreateMap<GradeViewModel, Grade>();
+            CreateMap<GradeItem, GradeItemViewModel>();
+            CreateMap<GradeItemViewModel, GradeItem>();
         }
 
         #endregion

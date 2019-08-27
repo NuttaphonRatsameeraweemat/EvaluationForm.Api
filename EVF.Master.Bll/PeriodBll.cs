@@ -112,7 +112,7 @@ namespace EVF.Master.Bll
                 this.SaveItem(periodGroup.Id, this.InitialEvaluationDate(model.PeriodItems));
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCachePerformanceGroup();
+            this.ReloadCachePeriod();
             return result;
         }
 
@@ -145,7 +145,7 @@ namespace EVF.Master.Bll
                 this.EditItem(periodGroup.Id, this.InitialEvaluationDate(model.PeriodItems));
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCachePerformanceGroup();
+            this.ReloadCachePeriod();
             return result;
         }
 
@@ -184,7 +184,7 @@ namespace EVF.Master.Bll
                 this.DeleteItem(_unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == id));
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCachePerformanceGroup();
+            this.ReloadCachePeriod();
             return result;
         }
 
@@ -200,7 +200,7 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Reload Cache when period and periodItems is change.
         /// </summary>
-        private void ReloadCachePerformanceGroup()
+        private void ReloadCachePeriod()
         {
             _unitOfWork.GetRepository<Period>().ReCache();
             _unitOfWork.GetRepository<PeriodItem>().ReCache();

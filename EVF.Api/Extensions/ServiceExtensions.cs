@@ -69,6 +69,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IPerformanceBll, PerformanceBll>();
             services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
             services.AddScoped<IPeriodBll, PeriodBll>();
+            services.AddScoped<IGradeBll, GradeBll>();
         }
 
         /// <summary>
