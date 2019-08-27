@@ -37,6 +37,8 @@ namespace EVF.Api.Extensions
             CreateMap<ApprovalViewModel, Approval>();
             CreateMap<ApprovalItem, ApprovalItemViewModel>();
             CreateMap<ApprovalItemViewModel, ApprovalItem>();
+            CreateMap<Period, PeriodViewModel>();
+            CreateMap<PeriodViewModel, Period>();
         }
 
         #endregion

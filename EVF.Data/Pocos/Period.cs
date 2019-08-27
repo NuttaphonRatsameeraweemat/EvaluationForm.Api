@@ -9,7 +9,7 @@ namespace EVF.Data.Pocos
     {
         [Column("ID")]
         public int Id { get; set; }
-        public int? Year { get; set; }
+        public int Year { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }

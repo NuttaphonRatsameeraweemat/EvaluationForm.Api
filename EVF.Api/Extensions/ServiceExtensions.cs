@@ -68,7 +68,7 @@ namespace EVF.Api.Extensions
         {
             services.AddScoped<IPerformanceBll, PerformanceBll>();
             services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
-            services.AddScoped<IApprovalBll, ApprovalBll>();
+            services.AddScoped<IPeriodBll, PeriodBll>();
         }
 
         /// <summary>
@@ -103,6 +103,7 @@ namespace EVF.Api.Extensions
         {
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
+            services.AddScoped<IApprovalBll, ApprovalBll>();
         }
 
         /// <summary>
@@ -215,7 +216,7 @@ namespace EVF.Api.Extensions
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "My API V1");
             });
         }
 
