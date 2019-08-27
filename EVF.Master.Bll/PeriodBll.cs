@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
+using EVF.Helper.Models;
 using EVF.Master.Bll.Interfaces;
 using EVF.Master.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace EVF.Master.Bll
 {
@@ -59,138 +64,161 @@ namespace EVF.Master.Bll
                    _unitOfWork.GetRepository<Period>().GetCache());
         }
 
-        ///// <summary>
-        ///// Get Detail of performance group.
-        ///// </summary>
-        ///// <param name="id">The identity of performance group.</param>
-        ///// <returns></returns>
-        //public PerformanceGroupViewModel GetDetail(int id)
-        //{
-        //    var data = _mapper.Map<PerformanceGroup, PerformanceGroupViewModel>(
-        //           _unitOfWork.GetRepository<PerformanceGroup>().GetById(id));
-        //    data.PerformanceGroupItems = this.GetPerformanceGroupItem(id).ToList();
-        //    return data;
-        //}
+        /// <summary>
+        /// Get Detail of period.
+        /// </summary>
+        /// <param name="id">The identity of period group.</param>
+        /// <returns></returns>
+        public PeriodViewModel GetDetail(int id)
+        {
+            var data = _mapper.Map<Period, PeriodViewModel>(
+                   _unitOfWork.GetRepository<Period>().GetById(id));
+            data.PeriodItems = this.GetPeriodItem(id).ToList();
+            return data;
+        }
 
-        ///// <summary>
-        ///// Get performance group item.
-        ///// </summary>
-        ///// <param name="performanceGroupId">The identity performance group.</param>
-        ///// <returns></returns>
-        //private IEnumerable<int> GetPerformanceGroupItem(int performanceGroupId)
-        //{
-        //    var data = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId);
-        //    return data.Select(x => x.PerformanceItemId);
-        //}
+        /// <summary>
+        /// Get period group item.
+        /// </summary>
+        /// <param name="periodId">The identity period group.</param>
+        /// <returns></returns>
+        private IEnumerable<PeriodItemViewModel> GetPeriodItem(int periodId)
+        {
+            var data = _mapper.Map<IEnumerable<PeriodItem>, IEnumerable<PeriodItemViewModel>>(
+                   _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodId));
+            foreach (var item in data)
+            {
+                item.StartEvaDateString = item.StartEvaDate.ToString(ConstantValue.DateTimeFormat);
+                item.EndEvaDateString = item.EndEvaDate.ToString(ConstantValue.DateTimeFormat);
+            }
+            return data;
+        }
 
-        ///// <summary>
-        ///// Insert new performance group.
-        ///// </summary>
-        ///// <param name="model">The performance information value.</param>
-        ///// <returns></returns>
-        //public ResultViewModel Save(PerformanceGroupViewModel model)
-        //{
-        //    var result = new ResultViewModel();
-        //    using (TransactionScope scope = new TransactionScope())
-        //    {
-        //        var performanceGroup = _mapper.Map<PerformanceGroupViewModel, PerformanceGroup>(model);
-        //        performanceGroup.CreateBy = _token.EmpNo;
-        //        performanceGroup.CreateDate = DateTime.Now;
-        //        _unitOfWork.GetRepository<PerformanceGroup>().Add(performanceGroup);
-        //        _unitOfWork.Complete();
-        //        this.SaveItem(performanceGroup.Id, model.PerformanceGroupItems);
-        //        _unitOfWork.Complete(scope);
-        //    }
-        //    this.ReloadCachePerformanceGroup();
-        //    return result;
-        //}
+        /// <summary>
+        /// Insert new period group.
+        /// </summary>
+        /// <param name="model">The period information value.</param>
+        /// <returns></returns>
+        public ResultViewModel Save(PeriodViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var periodGroup = _mapper.Map<PeriodViewModel, Period>(model);
+                periodGroup.CreateBy = _token.EmpNo;
+                periodGroup.CreateDate = DateTime.Now;
+                _unitOfWork.GetRepository<Period>().Add(periodGroup);
+                _unitOfWork.Complete();
+                this.SaveItem(periodGroup.Id, this.InitialEvaluationDate(model.PeriodItems));
+                _unitOfWork.Complete(scope);
+            }
+            this.ReloadCachePerformanceGroup();
+            return result;
+        }
 
-        ///// <summary>
-        ///// Insert performance group item list.
-        ///// </summary>
-        ///// <param name="performanceGroupId">The identity of performance group.</param>
-        ///// <param name="performanceItems">The identity of performance items.</param>
-        //private void SaveItem(int performanceGroupId, IEnumerable<int> performanceItems)
-        //{
-        //    var data = new List<PerformanceGroupItem>();
-        //    foreach (var item in performanceItems)
-        //    {
-        //        data.Add(new PerformanceGroupItem { PerformanceGroupId = performanceGroupId, PerformanceItemId = item });
-        //    }
-        //    _unitOfWork.GetRepository<PerformanceGroupItem>().AddRange(data);
-        //}
+        /// <summary>
+        /// Insert period group item list.
+        /// </summary>
+        /// <param name="periodGroupId">The identity of period group.</param>
+        /// <param name="periodItems">The identity of period items.</param>
+        private void SaveItem(int periodGroupId, IEnumerable<PeriodItemViewModel> periodItems)
+        {
+            var data = _mapper.Map<IEnumerable<PeriodItemViewModel>, IEnumerable<PeriodItem>>(periodItems);
+            data.Select(c => { c.PeriodId = periodGroupId; return c; }).ToList();
+            _unitOfWork.GetRepository<PeriodItem>().AddRange(data);
+        }
 
-        ///// <summary>
-        ///// Update performance group.
-        ///// </summary>
-        ///// <param name="model">The performance information value.</param>
-        ///// <returns></returns>
-        //public ResultViewModel Edit(PerformanceGroupViewModel model)
-        //{
-        //    var result = new ResultViewModel();
-        //    using (TransactionScope scope = new TransactionScope())
-        //    {
-        //        var performanceGroup = _mapper.Map<PerformanceGroupViewModel, PerformanceGroup>(model);
-        //        performanceGroup.LastModifyBy = _token.AdUser;
-        //        performanceGroup.LastModifyDate = DateTime.Now;
-        //        _unitOfWork.GetRepository<PerformanceGroup>().Update(performanceGroup);
-        //        this.EditItem(performanceGroup.Id, model.PerformanceGroupItems);
-        //        _unitOfWork.Complete(scope);
-        //    }
-        //    this.ReloadCachePerformanceGroup();
-        //    return result;
-        //}
+        /// <summary>
+        /// Update period group.
+        /// </summary>
+        /// <param name="model">The period information value.</param>
+        /// <returns></returns>
+        public ResultViewModel Edit(PeriodViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var periodGroup = _mapper.Map<PeriodViewModel, Period>(model);
+                periodGroup.LastModifyBy = _token.EmpNo;
+                periodGroup.LastModifyDate = DateTime.Now;
+                _unitOfWork.GetRepository<Period>().Update(periodGroup);
+                this.EditItem(periodGroup.Id, this.InitialEvaluationDate(model.PeriodItems));
+                _unitOfWork.Complete(scope);
+            }
+            this.ReloadCachePerformanceGroup();
+            return result;
+        }
 
-        ///// <summary>
-        ///// Update performance group items.
-        ///// </summary>
-        ///// <param name="performanceGroupId">The identity of performance group.</param>
-        ///// <param name="performanceGroupItems">The identity of performance items.</param>
-        //private void EditItem(int performanceGroupId, IEnumerable<int> performanceGroupItems)
-        //{
-        //    var data = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceItemId == performanceGroupId);
+        /// <summary>
+        /// Update period group items.
+        /// </summary>
+        /// <param name="periodGroupId">The identity of period group.</param>
+        /// <param name="periodItems">The identity of period items.</param>
+        private void EditItem(int periodGroupId, IEnumerable<PeriodItemViewModel> periodItems)
+        {
+            var data = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodGroupId);
 
-        //    var performanceItemAdd = performanceGroupItems.Where(x => !data.Any(y => x == y.PerformanceItemId));
-        //    var performanceItemDelete = data.Where(x => !performanceGroupItems.Any(y => x.PerformanceItemId == y));
+            var periodItemAdd = periodItems.Where(x => x.Id == 0);
+            var periodItemDelete = data.Where(x => !periodItems.Any(y => x.Id == y.Id));
 
-        //    this.SaveItem(performanceGroupId, performanceItemAdd);
-        //    this.DeleteItem(performanceItemDelete);
-        //}
+            var periodItemUpdate = _mapper.Map<IEnumerable<PeriodItemViewModel>, IEnumerable<PeriodItem>>(periodItems);
+            periodItemUpdate = periodItemUpdate.Where(x => data.Any(y => x.Id == y.Id));
+           
+            this.SaveItem(periodGroupId, periodItemAdd);
+            this.DeleteItem(periodItemDelete);
+            _unitOfWork.GetRepository<PeriodItem>().UpdateRange(periodItemUpdate);
+        }
 
-        ///// <summary>
-        ///// Remove performance group.
-        ///// </summary>
-        ///// <param name="id">The identity of performance group.</param>
-        ///// <returns></returns>
-        //public ResultViewModel Delete(int id)
-        //{
-        //    var result = new ResultViewModel();
-        //    using (TransactionScope scope = new TransactionScope())
-        //    {
-        //        _unitOfWork.GetRepository<PerformanceGroup>().Remove(
-        //            _unitOfWork.GetRepository<PerformanceGroup>().GetById(id));
-        //        this.DeleteItem(_unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == id));
-        //    }
-        //    this.ReloadCachePerformanceGroup();
-        //    return result;
-        //}
+        /// <summary>
+        /// Remove period group.
+        /// </summary>
+        /// <param name="id">The identity of period group.</param>
+        /// <returns></returns>
+        public ResultViewModel Delete(int id)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                _unitOfWork.GetRepository<Period>().Remove(
+                    _unitOfWork.GetRepository<Period>().GetById(id));
+                this.DeleteItem(_unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == id));
+                _unitOfWork.Complete(scope);
+            }
+            this.ReloadCachePerformanceGroup();
+            return result;
+        }
 
-        ///// <summary>
-        ///// Remove performance group items.
-        ///// </summary>
-        ///// <param name="model">The performance group items.</param>
-        //private void DeleteItem(IEnumerable<PerformanceGroupItem> model)
-        //{
-        //    _unitOfWork.GetRepository<PerformanceGroupItem>().RemoveRange(model);
-        //}
+        /// <summary>
+        /// Remove period group items.
+        /// </summary>
+        /// <param name="model">The period group items.</param>
+        private void DeleteItem(IEnumerable<PeriodItem> model)
+        {
+            _unitOfWork.GetRepository<PeriodItem>().RemoveRange(model);
+        }
 
-        ///// <summary>
-        ///// Reload Cache when Performance Group is change.
-        ///// </summary>
-        //private void ReloadCachePerformanceGroup()
-        //{
-        //    _unitOfWork.GetRepository<PerformanceGroup>().ReCache();
-        //}
+        /// <summary>
+        /// Reload Cache when period and periodItems is change.
+        /// </summary>
+        private void ReloadCachePerformanceGroup()
+        {
+            _unitOfWork.GetRepository<Period>().ReCache();
+            _unitOfWork.GetRepository<PeriodItem>().ReCache();
+        }
+
+        /// <summary>
+        /// Initial evaluation string to datetime.
+        /// </summary>
+        /// <param name="periodItems">The period group items.</param>
+        private IEnumerable<PeriodItemViewModel> InitialEvaluationDate(IEnumerable<PeriodItemViewModel> periodItems)
+        {
+            foreach (var item in periodItems)
+            {
+                item.StartEvaDate = UtilityService.ConvertToDateTime(item.StartEvaDateString, ConstantValue.DateTimeFormat);
+                item.EndEvaDate = UtilityService.ConvertToDateTime(item.EndEvaDateString, ConstantValue.DateTimeFormat);
+            }
+            return periodItems;
+        }
 
         #endregion
 

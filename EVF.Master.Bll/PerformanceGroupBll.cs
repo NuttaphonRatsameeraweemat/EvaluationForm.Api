@@ -133,7 +133,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var performanceGroup = _mapper.Map<PerformanceGroupViewModel, PerformanceGroup>(model);
-                performanceGroup.LastModifyBy = _token.AdUser;
+                performanceGroup.LastModifyBy = _token.EmpNo;
                 performanceGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<PerformanceGroup>().Update(performanceGroup);
                 this.EditItem(performanceGroup.Id, model.PerformanceGroupItems);
@@ -172,6 +172,7 @@ namespace EVF.Master.Bll
                 _unitOfWork.GetRepository<PerformanceGroup>().Remove(
                     _unitOfWork.GetRepository<PerformanceGroup>().GetById(id));
                 this.DeleteItem(_unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == id));
+                _unitOfWork.Complete(scope);
             }
             this.ReloadCachePerformanceGroup();
             return result;

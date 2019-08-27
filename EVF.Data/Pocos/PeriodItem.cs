@@ -13,6 +13,7 @@ namespace EVF.Data.Pocos
         public int? PeriodId { get; set; }
         public DateTime? StartEvaDate { get; set; }
         public DateTime? EndEvaDate { get; set; }
-        public int? Round { get; set; }
+        [StringLength(100)]
+        public string PeriodName { get; set; }
     }
 }
