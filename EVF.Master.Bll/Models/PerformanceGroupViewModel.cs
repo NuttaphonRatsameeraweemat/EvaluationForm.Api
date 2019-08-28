@@ -7,7 +7,7 @@ namespace EVF.Master.Bll.Models
     {
         public PerformanceGroupViewModel()
         {
-            PerformanceGroupItems = new List<int>();
+            PerformanceGroupItems = new List<PerformanceGroupItemViewModel>();
         }
 
         public const string RoleForManageData = "Role_MA_PerformanceGroup";
@@ -20,6 +20,7 @@ namespace EVF.Master.Bll.Models
         public string PerformanceGroupNameEn { get; set; }
         [Required]
         public string SapScoreField { get; set; }
-        public List<int> PerformanceGroupItems { get; set; }
+        public bool IsUse { get; set; }
+        public List<PerformanceGroupItemViewModel> PerformanceGroupItems { get; set; }
     }
 }

@@ -79,13 +79,14 @@ namespace EVF.Master.Bll
         /// </summary>
         /// <param name="performanceGroupId">The identity performance group.</param>
         /// <returns></returns>
-        private IEnumerable<int> GetPerformanceGroupItem(int performanceGroupId)
+        private IEnumerable<PerformanceGroupItemViewModel> GetPerformanceGroupItem(int performanceGroupId)
         {
-            var data = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId);
-            return data.Select(x => x.PerformanceItemId);
+            return _mapper.Map<IEnumerable<PerformanceGroupItem>, IEnumerable<PerformanceGroupItemViewModel>>(
+                _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId, 
+                                                                           y => y.OrderBy(x => x.Sequence)));
         }
 
-        /// <summary>
+        /// <summary>   
         /// Insert new performance group.
         /// </summary>
         /// <param name="model">The performance information value.</param>
@@ -112,13 +113,10 @@ namespace EVF.Master.Bll
         /// </summary>
         /// <param name="performanceGroupId">The identity of performance group.</param>
         /// <param name="performanceItems">The identity of performance items.</param>
-        private void SaveItem(int performanceGroupId, IEnumerable<int> performanceItems)
+        private void SaveItem(int performanceGroupId, IEnumerable<PerformanceGroupItemViewModel> performanceItems)
         {
-            var data = new List<PerformanceGroupItem>();
-            foreach (var item in performanceItems)
-            {
-                data.Add(new PerformanceGroupItem { PerformanceGroupId = performanceGroupId, PerformanceItemId = item });
-            }
+            var data = _mapper.Map<IEnumerable<PerformanceGroupItemViewModel>, IEnumerable<PerformanceGroupItem>>(performanceItems);
+            data.Select(c => { c.PerformanceGroupId = performanceGroupId; return c; }).ToList();
             _unitOfWork.GetRepository<PerformanceGroupItem>().AddRange(data);
         }
 
@@ -148,15 +146,19 @@ namespace EVF.Master.Bll
         /// </summary>
         /// <param name="performanceGroupId">The identity of performance group.</param>
         /// <param name="performanceGroupItems">The identity of performance items.</param>
-        private void EditItem(int performanceGroupId, IEnumerable<int> performanceGroupItems)
+        private void EditItem(int performanceGroupId, IEnumerable<PerformanceGroupItemViewModel> performanceGroupItems)
         {
-            var data = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceItemId == performanceGroupId);
+            var data = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId);
 
-            var performanceItemAdd = performanceGroupItems.Where(x => !data.Any(y => x == y.PerformanceItemId));
-            var performanceItemDelete = data.Where(x => !performanceGroupItems.Any(y => x.PerformanceItemId == y));
+            var performanceItemAdd = performanceGroupItems.Where(x => x.Id == 0);
+            var performanceItemDelete = data.Where(x => !performanceGroupItems.Any(y => x.Id == y.Id));
+
+            var performanceItemUpdate = _mapper.Map<IEnumerable<PerformanceGroupItemViewModel>, IEnumerable<PerformanceGroupItem>>(performanceGroupItems);
+            performanceItemUpdate = performanceItemUpdate.Where(x => data.Any(y => x.Id == y.Id));
 
             this.SaveItem(performanceGroupId, performanceItemAdd);
             this.DeleteItem(performanceItemDelete);
+            _unitOfWork.GetRepository<PerformanceGroupItem>().UpdateRange(performanceItemUpdate);
         }
 
         /// <summary>
@@ -193,6 +195,7 @@ namespace EVF.Master.Bll
         private void ReloadCachePerformanceGroup()
         {
             _unitOfWork.GetRepository<PerformanceGroup>().ReCache();
+            _unitOfWork.GetRepository<PerformanceGroupItem>().ReCache();
         }
 
         #endregion

@@ -30,6 +30,8 @@ namespace EVF.Data
         public virtual DbSet<Hrorg> Hrorg { get; set; }
         public virtual DbSet<HrorgRelation> HrorgRelation { get; set; }
         public virtual DbSet<Hrposition> Hrposition { get; set; }
+        public virtual DbSet<LevelPoint> LevelPoint { get; set; }
+        public virtual DbSet<LevelPointItem> LevelPointItem { get; set; }
         public virtual DbSet<Performance> Performance { get; set; }
         public virtual DbSet<PerformanceGroup> PerformanceGroup { get; set; }
         public virtual DbSet<PerformanceGroupItem> PerformanceGroupItem { get; set; }
@@ -86,12 +88,6 @@ namespace EVF.Data
                     .HasName("HRPosition_pkey");
 
                 entity.Property(e => e.PosId).ValueGeneratedNever();
-            });
-
-            modelBuilder.Entity<PerformanceGroupItem>(entity =>
-            {
-                entity.HasKey(e => new { e.PerformanceGroupId, e.PerformanceItemId })
-                    .HasName("PerformanceGroupItem_pkey");
             });
 
             modelBuilder.Entity<ValueHelp>(entity =>

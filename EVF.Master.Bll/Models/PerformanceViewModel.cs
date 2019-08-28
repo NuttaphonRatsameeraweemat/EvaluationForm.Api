@@ -13,5 +13,6 @@ namespace EVF.Master.Bll.Models
         public string PerformanceNameTh { get; set; }
         [Required]
         public string PerformanceNameEn { get; set; }
+        public bool IsUse { get; set; }
     }
 }

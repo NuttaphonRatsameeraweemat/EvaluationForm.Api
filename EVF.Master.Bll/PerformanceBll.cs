@@ -123,6 +123,8 @@ namespace EVF.Master.Bll
             {
                 var performance = _unitOfWork.GetRepository<Performance>().GetById(id);
                 _unitOfWork.GetRepository<Performance>().Remove(performance);
+                var performanceGroupItem = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceItemId == id);
+                _unitOfWork.GetRepository<PerformanceGroupItem>().RemoveRange(performanceGroupItem);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCachePerformance();
@@ -135,6 +137,7 @@ namespace EVF.Master.Bll
         private void ReloadCachePerformance()
         {
             _unitOfWork.GetRepository<Performance>().ReCache();
+            _unitOfWork.GetRepository<PerformanceGroupItem>().ReCache();
         }
 
         #endregion
