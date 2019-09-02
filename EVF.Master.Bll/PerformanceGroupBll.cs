@@ -82,8 +82,40 @@ namespace EVF.Master.Bll
         private IEnumerable<PerformanceGroupItemViewModel> GetPerformanceGroupItem(int performanceGroupId)
         {
             return _mapper.Map<IEnumerable<PerformanceGroupItem>, IEnumerable<PerformanceGroupItemViewModel>>(
-                _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId, 
+                _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(x => x.PerformanceGroupId == performanceGroupId,
                                                                            y => y.OrderBy(x => x.Sequence)));
+        }
+
+        /// <summary>
+        /// Get performance group item for display on criteria.
+        /// </summary>
+        /// <param name="performanceGroupId">The identity performance group</param>
+        /// <returns></returns>
+        public IEnumerable<CriteriaItemViewModel> GetPerformanceItemDisplayCriteria(int performanceGroupId)
+        {
+            var result = new List<CriteriaItemViewModel>();
+            var performanceGroupItems = _unitOfWork.GetRepository<PerformanceGroupItem>().GetCache(
+                                                                           x => x.PerformanceGroupId == performanceGroupId,
+                                                                           y => y.OrderBy(x => x.Sequence));
+            var arrayIds = performanceGroupItems.Select(x => x.PerformanceItemId).ToArray();
+            var performanceList = _unitOfWork.GetRepository<Performance>().GetCache(x => arrayIds.Contains(x.Id));
+
+            foreach (var item in performanceGroupItems)
+            {
+                var temp = performanceList.FirstOrDefault(x => x.Id == item.PerformanceItemId);
+                if (temp != null)
+                {
+                    result.Add(new CriteriaItemViewModel
+                    {
+                        PerformanceId = temp.Id,
+                        PerformanceNameTh = temp.PerformanceNameTh,
+                        PerformanceNameEn = temp.PerformanceNameEn,
+                        Sequence = item.Sequence.Value
+                    });
+                }
+            }
+
+            return result;
         }
 
         /// <summary>   

@@ -22,6 +22,9 @@ namespace EVF.Data
         public virtual DbSet<Approval> Approval { get; set; }
         public virtual DbSet<ApprovalItem> ApprovalItem { get; set; }
         public virtual DbSet<AuthorityCompany> AuthorityCompany { get; set; }
+        public virtual DbSet<Criteria> Criteria { get; set; }
+        public virtual DbSet<CriteriaGroup> CriteriaGroup { get; set; }
+        public virtual DbSet<CriteriaItem> CriteriaItem { get; set; }
         public virtual DbSet<Grade> Grade { get; set; }
         public virtual DbSet<GradeItem> GradeItem { get; set; }
         public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }

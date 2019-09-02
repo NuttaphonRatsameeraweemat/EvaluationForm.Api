@@ -11,5 +11,7 @@ namespace EVF.Helper.Components
         public const string InternalServerError = "ระบบเกิดข้อผิดพลาด กรุณาติดต่อเจ้าหน้าที่";
         public const string GradePointIncorrect = "กรุณากรอก ช่วงคะแนนให้ถูกต้อง";
         public const string GradePointOverRange = "กรุณาระบุช่วงคะแนน 0 ถึง 100 เท่านั้น";
+        public const string CriteriaOverScore = "ขออภัย คะแนนเต็ม ทั้งหมดรวมกัน ไม่สามารถเกิน 100 คะแนนได้";
+        public const string CriteriaItemScoreGreatethanScoreGroup = "ขออภัย คะแนนกลุ่มตัวชี้วัด ไม่สามารถน้อยกว่าหรือมากกว่า คะแนนตัวชี้วัดรวมกันได้";
     }
 }

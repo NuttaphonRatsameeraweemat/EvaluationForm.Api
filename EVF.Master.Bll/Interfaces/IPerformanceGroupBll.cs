@@ -18,6 +18,12 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         PerformanceGroupViewModel GetDetail(int id);
         /// <summary>
+        /// Get performance group item for display on criteria.
+        /// </summary>
+        /// <param name="performanceGroupId">The identity performance group</param>
+        /// <returns></returns>
+        IEnumerable<CriteriaItemViewModel> GetPerformanceItemDisplayCriteria(int performanceGroupId);
+        /// <summary>
         /// Insert new performance group.
         /// </summary>
         /// <param name="model">The performance information value.</param>

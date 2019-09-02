@@ -20,7 +20,7 @@ namespace EVF.Api.Controllers.MasterController
         #region [Fields]
 
         /// <summary>
-        /// The period manager provides period functionality.
+        /// The grade manager provides grade functionality.
         /// </summary>
         private readonly IGradeBll _grade;
 
