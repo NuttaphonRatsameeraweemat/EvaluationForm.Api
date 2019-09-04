@@ -34,9 +34,9 @@ namespace EVF.Master.Bll
         /// </summary>
         private readonly IManageToken _token;
         /// <summary>
-        /// The Performance Group manager provides performance group functionality.
+        /// The kpi Group manager provides kpi group functionality.
         /// </summary>
-        private readonly IKpiGroupBll _performanceGroup;
+        private readonly IKpiGroupBll _kpiGroup;
 
         #endregion
 
@@ -48,13 +48,13 @@ namespace EVF.Master.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        /// <param name="performanceGroup">The Performance Group manager provides performance group functionality.</param>
-        public CriteriaBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IKpiGroupBll performanceGroup)
+        /// <param name="kpiGroup">The kpi Group manager provides kpi group functionality.</param>
+        public CriteriaBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IKpiGroupBll kpiGroup)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
-            _performanceGroup = performanceGroup;
+            _kpiGroup = kpiGroup;
         }
 
         #endregion
@@ -97,9 +97,31 @@ namespace EVF.Master.Bll
             var criteriaItems = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => groupIds.Contains(x.CriteriaGroupId.Value));
             foreach (var item in criteriaGroup)
             {
-                item.CriteriaItems = _performanceGroup.GetKpiItemDisplayCriteria(item.KpiGroupId).ToList();
+                item.CriteriaItems = _kpiGroup.GetKpiItemDisplayCriteria(item.KpiGroupId).ToList();
+                this.GetCriteriaItems(item.CriteriaItems, criteriaItems.Where(x => x.CriteriaGroupId == item.Id));
             }
             return criteriaGroup;
+        }
+
+        /// <summary>
+        /// Get criteria item id and score.
+        /// </summary>
+        /// <param name="criteriaItems">The criteria item information display.</param>
+        /// <param name="dataCriteria">The criteria item information identity and score.</param>
+        /// <returns></returns>
+        private IEnumerable<CriteriaItemViewModel> GetCriteriaItems(IEnumerable<CriteriaItemViewModel> criteriaItems, IEnumerable<CriteriaItem> dataCriteria)
+        {
+            foreach (var item in criteriaItems)
+            {
+                var temp = dataCriteria.FirstOrDefault(x => x.KpiId == item.KpiId);
+                if (temp != null)
+                {
+                    item.Id = temp.Id;
+                    item.CriteriaGroupId = temp.CriteriaGroupId;
+                    item.MaxScore = temp.MaxScore.Value;
+                }
+            }
+            return criteriaItems;
         }
 
         /// <summary>
@@ -110,7 +132,7 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(CriteriaViewModel model)
         {
             var result = new ResultViewModel();
-            int totalScore = model.CriteriaGroups.Sum(x => x.Score);
+            int totalScore = model.CriteriaGroups.Sum(x => x.MaxScore);
             if (totalScore > 100)
             {
                 result = UtilityService.InitialResultError(MessageValue.CriteriaOverScore, (int)HttpStatusCode.BadRequest);
@@ -118,8 +140,8 @@ namespace EVF.Master.Bll
             }
             foreach (var item in model.CriteriaGroups)
             {
-                int scoreGroup = item.CriteriaItems.Sum(x => x.Score);
-                if (scoreGroup > item.Score || scoreGroup < item.Score)
+                int scoreGroup = item.CriteriaItems.Sum(x => x.MaxScore);
+                if (scoreGroup > item.MaxScore || scoreGroup < item.MaxScore)
                 {
                     result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, (int)HttpStatusCode.BadRequest);
                 }
@@ -138,15 +160,15 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var criteria = _mapper.Map<CriteriaViewModel, Criteria>(model);
+                this.SetIsDefault(model);
                 criteria.CreateBy = _token.EmpNo;
                 criteria.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Criteria>().Add(criteria);
                 _unitOfWork.Complete();
                 this.SaveCriteriaGroup(criteria.Id, model.CriteriaGroups);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCacheGrade();
+            this.ReloadCacheCriteria();
             return result;
         }
 
@@ -168,7 +190,7 @@ namespace EVF.Master.Bll
                     this.SaveCriteriaItem(data.Id, item.CriteriaItems);
                 }
             }
-            
+
         }
 
         /// <summary>
@@ -194,15 +216,17 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var criteria = _mapper.Map<CriteriaViewModel, Criteria>(model);
+                this.SetIsDefault(model);
+                var criteria = _unitOfWork.GetRepository<Criteria>().GetById(model.Id);
+                criteria.CriteriaName = model.CriteriaName;
+                criteria.IsDefault = model.IsDefault;
                 criteria.LastModifyBy = _token.EmpNo;
                 criteria.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Criteria>().Update(criteria);
                 this.EditCriteriaGroup(criteria.Id, model.CriteriaGroups);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCacheGrade();
+            this.ReloadCacheCriteria();
             return result;
         }
 
@@ -230,7 +254,7 @@ namespace EVF.Master.Bll
             {
                 this.EditCriteriaItem(item.CriteriaItems);
             }
-            
+
         }
 
         /// <summary>
@@ -258,7 +282,7 @@ namespace EVF.Master.Bll
                 this.DeleteCriteriaGroups(_unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == id));
                 _unitOfWork.Complete(scope);
             }
-            this.ReloadCacheGrade();
+            this.ReloadCacheCriteria();
             return result;
         }
 
@@ -305,10 +329,11 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Reload Cache when grade and gradeItems is change.
         /// </summary>
-        private void ReloadCacheGrade()
+        private void ReloadCacheCriteria()
         {
-            _unitOfWork.GetRepository<Grade>().ReCache();
-            _unitOfWork.GetRepository<GradeItem>().ReCache();
+            _unitOfWork.GetRepository<Criteria>().ReCache();
+            _unitOfWork.GetRepository<CriteriaGroup>().ReCache();
+            _unitOfWork.GetRepository<CriteriaItem>().ReCache();
         }
 
         #endregion

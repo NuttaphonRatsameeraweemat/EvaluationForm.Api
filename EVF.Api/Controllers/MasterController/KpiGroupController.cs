@@ -15,9 +15,9 @@ namespace EVF.Api.Controllers
         #region [Fields]
 
         /// <summary>
-        /// The performance group manager provides performance group functionality.
+        /// The kpi group manager provides kpi group functionality.
         /// </summary>
-        private readonly IKpiGroupBll _performanceGroup;
+        private readonly IKpiGroupBll _kpiGroup;
 
         #endregion
 
@@ -26,10 +26,10 @@ namespace EVF.Api.Controllers
         /// <summary>
         ///  Initializes a new instance of the <see cref="KpiGroupController" /> class.
         /// </summary>
-        /// <param name="performance"></param>
-        public KpiGroupController(IKpiGroupBll performance)
+        /// <param name="kpi"></param>
+        public KpiGroupController(IKpiGroupBll kpi)
         {
-            _performanceGroup = performance;
+            _kpiGroup = kpi;
         }
 
         #endregion
@@ -40,35 +40,42 @@ namespace EVF.Api.Controllers
         [Route("GetList")]
         public IActionResult GetList()
         {
-            return Ok(_performanceGroup.GetList());
+            return Ok(_kpiGroup.GetList());
         }
 
         [HttpGet]
         [Route("GetDetail")]
         public IActionResult GetDetail(int id)
         {
-            return Ok(_performanceGroup.GetDetail(id));
+            return Ok(_kpiGroup.GetDetail(id));
+        }
+
+        [HttpGet]
+        [Route("GetKpiIteDisplayCriteria")]
+        public IActionResult GetKpiIteDisplayCriteria(int id)
+        {
+            return Ok(_kpiGroup.GetKpiItemDisplayCriteria(id));
         }
 
         [HttpPost]
         [Route("Save")]
         public IActionResult Save([FromBody]KpiGroupViewModel model)
         {
-            return Ok(_performanceGroup.Save(model));
+            return Ok(_kpiGroup.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
         public IActionResult Edit([FromBody]KpiGroupViewModel model)
         {
-            return Ok(_performanceGroup.Edit(model));
+            return Ok(_kpiGroup.Edit(model));
         }
 
         [HttpPost]
         [Route("Delete")]
         public IActionResult Delete(int id)
         {
-            return Ok(_performanceGroup.Delete(id));
+            return Ok(_kpiGroup.Delete(id));
         }
 
         #endregion

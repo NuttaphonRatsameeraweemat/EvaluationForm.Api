@@ -138,7 +138,8 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var periodGroup = _mapper.Map<PeriodViewModel, Period>(model);
+                var periodGroup = _unitOfWork.GetRepository<Period>().GetById(model.Id);
+                periodGroup.Year = Convert.ToInt32(model.Year);
                 periodGroup.LastModifyBy = _token.EmpNo;
                 periodGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Period>().Update(periodGroup);

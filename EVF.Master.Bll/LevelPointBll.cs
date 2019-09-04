@@ -101,12 +101,12 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var levelPointGroup = _mapper.Map<LevelPointViewModel, LevelPoint>(model);
+                this.SetIsDefault(model);
                 levelPointGroup.CreateBy = _token.EmpNo;
                 levelPointGroup.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<LevelPoint>().Add(levelPointGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(levelPointGroup.Id, model.LevelPointItems);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheLevelPoint();
@@ -135,12 +135,14 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var levelPointGroup = _mapper.Map<LevelPointViewModel, LevelPoint>(model);
+                this.SetIsDefault(model);
+                var levelPointGroup = _unitOfWork.GetRepository<LevelPoint>().GetById(model.Id);
+                levelPointGroup.Name = model.Name;
+                levelPointGroup.IsDefault = model.IsDefault;
                 levelPointGroup.LastModifyBy = _token.EmpNo;
                 levelPointGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<LevelPoint>().Update(levelPointGroup);
                 this.EditItem(levelPointGroup.Id, model.LevelPointItems);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheLevelPoint();

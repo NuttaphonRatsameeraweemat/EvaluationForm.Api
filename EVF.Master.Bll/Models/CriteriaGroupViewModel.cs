@@ -21,7 +21,7 @@ namespace EVF.Master.Bll.Models
         public int Sequence { get; set; }
         [Required]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
-        public int Score { get; set; }
+        public int MaxScore { get; set; }
         public List<CriteriaItemViewModel> CriteriaItems { get; set; }
     }
 
@@ -36,7 +36,7 @@ namespace EVF.Master.Bll.Models
         public string KpiNameEn { get; set; }
         [Required]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
-        public int Score { get; set; }
+        public int MaxScore { get; set; }
     }
 
 }

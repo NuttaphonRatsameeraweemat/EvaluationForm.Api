@@ -126,12 +126,12 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var gradeGroup = _mapper.Map<GradeViewModel, Grade>(model);
+                this.SetIsDefault(model);
                 gradeGroup.CreateBy = _token.EmpNo;
                 gradeGroup.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Grade>().Add(gradeGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(gradeGroup.Id, model.GradeItems);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheGrade();
@@ -160,12 +160,14 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var gradeGroup = _mapper.Map<GradeViewModel, Grade>(model);
+                this.SetIsDefault(model);
+                var gradeGroup = _unitOfWork.GetRepository<Grade>().GetById(model.Id);
+                gradeGroup.Name = model.Name;
+                gradeGroup.IsDefault = model.IsDefault;
                 gradeGroup.LastModifyBy = _token.EmpNo;
                 gradeGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Grade>().Update(gradeGroup);
                 this.EditItem(gradeGroup.Id, model.GradeItems);
-                this.SetIsDefault(model);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheGrade();

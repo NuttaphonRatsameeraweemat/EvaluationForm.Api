@@ -89,13 +89,13 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Get Kpi group item for display on criteria.
         /// </summary>
-        /// <param name="KpiGroupId">The identity Kpi group</param>
+        /// <param name="kpiGroupId">The identity Kpi group</param>
         /// <returns></returns>
-        public IEnumerable<CriteriaItemViewModel> GetKpiItemDisplayCriteria(int KpiGroupId)
+        public IEnumerable<CriteriaItemViewModel> GetKpiItemDisplayCriteria(int kpiGroupId)
         {
             var result = new List<CriteriaItemViewModel>();
             var KpiGroupItems = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(
-                                                                           x => x.KpiGroupId == KpiGroupId,
+                                                                           x => x.KpiGroupId == kpiGroupId,
                                                                            y => y.OrderBy(x => x.Sequence));
             var arrayIds = KpiGroupItems.Select(x => x.KpiId).ToArray();
             var KpiList = _unitOfWork.GetRepository<Kpi>().GetCache(x => arrayIds.Contains(x.Id));
@@ -162,11 +162,14 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var KpiGroup = _mapper.Map<KpiGroupViewModel, KpiGroup>(model);
-                KpiGroup.LastModifyBy = _token.EmpNo;
-                KpiGroup.LastModifyDate = DateTime.Now;
-                _unitOfWork.GetRepository<KpiGroup>().Update(KpiGroup);
-                this.EditItem(KpiGroup.Id, model.KpiGroupItems);
+                var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetById(model.Id);
+                kpiGroup.KpiGroupNameTh = model.KpiGroupNameTh;
+                kpiGroup.KpiGroupNameEn = model.KpiGroupNameEn;
+                kpiGroup.SapScoreField = model.SapScoreField;
+                kpiGroup.LastModifyBy = _token.EmpNo;
+                kpiGroup.LastModifyDate = DateTime.Now;
+                _unitOfWork.GetRepository<KpiGroup>().Update(kpiGroup);
+                this.EditItem(kpiGroup.Id, model.KpiGroupItems);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheKpiGroup();

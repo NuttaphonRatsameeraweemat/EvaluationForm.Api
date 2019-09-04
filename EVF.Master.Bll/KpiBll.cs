@@ -101,10 +101,12 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var Kpi = _mapper.Map<KpiViewModel, Kpi>(model);
-                Kpi.LastModifyBy = _token.AdUser;
-                Kpi.LastModifyDate = DateTime.Now;
-                _unitOfWork.GetRepository<Kpi>().Update(Kpi);
+                var kpi = _unitOfWork.GetRepository<Kpi>().GetById(model.Id);
+                kpi.KpiNameTh = model.KpiNameTh;
+                kpi.KpiNameEn = model.KpiNameEn;
+                kpi.LastModifyBy = _token.EmpNo;
+                kpi.LastModifyDate = DateTime.Now;
+                _unitOfWork.GetRepository<Kpi>().Update(kpi);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheKpi();

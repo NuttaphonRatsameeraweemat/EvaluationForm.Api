@@ -18,6 +18,9 @@ namespace EVF.Master.Bll.Models
         public int? EndPoint { get; set; }
         [Required]
         [MaxLength(100)]
-        public string GradeName { get; set; }
+        public string GradeNameTh { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string GradeNameEn { get; set; }
     }
 }
