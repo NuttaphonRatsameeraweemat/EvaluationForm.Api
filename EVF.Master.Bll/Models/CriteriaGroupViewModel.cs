@@ -8,10 +8,15 @@ namespace EVF.Master.Bll.Models
 {
     public class CriteriaGroupViewModel
     {
+        public CriteriaGroupViewModel()
+        {
+            CriteriaItems = new List<CriteriaItemViewModel>();
+        }
+
         public int Id { get; set; }
         public int? CriteriaId { get; set; }
         [Required]
-        public int PerformanceGroupId { get; set; }
+        public int KpiGroupId { get; set; }
         [Required]
         public int Sequence { get; set; }
         [Required]
@@ -26,9 +31,9 @@ namespace EVF.Master.Bll.Models
         public int Sequence { get; set; }
         public int? CriteriaGroupId { get; set; }
         [Required]
-        public int? PerformanceId { get; set; }
-        public string PerformanceNameTh { get; set; }
-        public string PerformanceNameEn { get; set; }
+        public int? KpiId { get; set; }
+        public string KpiNameTh { get; set; }
+        public string KpiNameEn { get; set; }
         [Required]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int Score { get; set; }

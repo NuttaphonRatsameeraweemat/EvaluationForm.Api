@@ -51,8 +51,8 @@ namespace EVF.UnitTest
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
 
-            services.AddScoped<IPerformanceBll, PerformanceBll>();
-            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+            services.AddScoped<IKpiBll, KpiBll>();
+            services.AddScoped<IKpiGroupBll, KpiGroupBll>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IAdService, AdService>();

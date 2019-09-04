@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Data.Pocos
 {
-    public partial class PerformanceGroup
+    public partial class KpiGroup
     {
         [Column("ID")]
         public int Id { get; set; }
         [StringLength(255)]
-        public string PerformanceGroupNameTh { get; set; }
+        public string KpiGroupNameTh { get; set; }
         [StringLength(255)]
-        public string PerformanceGroupNameEn { get; set; }
+        public string KpiGroupNameEn { get; set; }
         [StringLength(100)]
         public string SapScoreField { get; set; }
         [StringLength(11)]

@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EVF.Master.Bll.Models
 {
-    public class PerformanceGroupViewModel
+    public class KpiGroupViewModel
     {
-        public PerformanceGroupViewModel()
+        public KpiGroupViewModel()
         {
-            PerformanceGroupItems = new List<PerformanceGroupItemViewModel>();
+            KpiGroupItems = new List<KpiGroupItemViewModel>();
         }
 
         public const string RoleForManageData = "Role_MA_PerformanceGroup";
@@ -15,12 +15,12 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
-        public string PerformanceGroupNameTh { get; set; }
+        public string KpiGroupNameTh { get; set; }
         [Required]
-        public string PerformanceGroupNameEn { get; set; }
+        public string KpiGroupNameEn { get; set; }
         [Required]
         public string SapScoreField { get; set; }
         public bool IsUse { get; set; }
-        public List<PerformanceGroupItemViewModel> PerformanceGroupItems { get; set; }
+        public List<KpiGroupItemViewModel> KpiGroupItems { get; set; }
     }
 }

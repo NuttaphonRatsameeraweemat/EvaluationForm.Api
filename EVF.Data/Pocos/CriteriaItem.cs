@@ -11,8 +11,8 @@ namespace EVF.Data.Pocos
         public int Id { get; set; }
         [Column("CriteriaGroupID")]
         public int? CriteriaGroupId { get; set; }
-        [Column("PerformanceID")]
-        public int? PerformanceId { get; set; }
-        public int? Score { get; set; }
+        [Column("KpiID")]
+        public int? KpiId { get; set; }
+        public int? MaxScore { get; set; }
     }
 }

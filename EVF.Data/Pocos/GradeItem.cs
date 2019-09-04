@@ -14,6 +14,8 @@ namespace EVF.Data.Pocos
         public int? StartPoint { get; set; }
         public int? EndPoint { get; set; }
         [StringLength(100)]
-        public string GradeName { get; set; }
+        public string GradeNameTh { get; set; }
+        [StringLength(100)]
+        public string GradeNameEn { get; set; }
     }
 }

@@ -8,6 +8,14 @@ namespace EVF.Master.Bll.Models
 {
     public class CriteriaViewModel
     {
+        public CriteriaViewModel()
+        {
+            CriteriaGroups = new List<CriteriaGroupViewModel>();
+        }
+
+        public const string RoleForManageData = "Role_MA_Criteria";
+        public const string RoleForDisplayData = "Role_DS_Criteria";
+
         public int Id { get; set; }
         [Required]
         [MaxLength(200)]

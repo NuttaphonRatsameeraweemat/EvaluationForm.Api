@@ -7,15 +7,15 @@ using Xunit;
 
 namespace EVF.UnitTest.MasterTest
 {
-    public class PerformanceGroupBllTest : IClassFixture<IoCConfig>
+    public class KpiGroupBllTest : IClassFixture<IoCConfig>
     {
 
         #region [Fields]
 
         /// <summary>
-        /// The PerformanceGroup service manager provides PerformanceGroup service functionality.
+        /// The KpiGroup service manager provides KpiGroup service functionality.
         /// </summary>
-        private IPerformanceGroupBll _performanceGroup;
+        private IKpiGroupBll _KpiGroup;
 
         #endregion
 
@@ -25,9 +25,9 @@ namespace EVF.UnitTest.MasterTest
         /// Initializes a new instance of the <see cref="HolidayCalendarBllTest" /> class.
         /// </summary>
         /// <param name="io">The IoCConfig class provide installing all components needed to use.</param>
-        public PerformanceGroupBllTest(IoCConfig io)
+        public KpiGroupBllTest(IoCConfig io)
         {
-            _performanceGroup = io.ServiceProvider.GetRequiredService<IPerformanceGroupBll>();
+            _KpiGroup = io.ServiceProvider.GetRequiredService<IKpiGroupBll>();
         }
 
         #endregion
@@ -39,7 +39,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performanceGroup.GetList();
+                var response = _KpiGroup.GetList();
                 Console.WriteLine(response);
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performanceGroup.GetDetail(id);
+                var response = _KpiGroup.GetDetail(id);
                 Console.WriteLine(response);
             }
             catch (Exception ex)
@@ -64,14 +64,14 @@ namespace EVF.UnitTest.MasterTest
         }
 
         [Theory]
-        [InlineData("UnitTest PerformanceGroup")]
-        public void Save(string performanceGroupName)
+        [InlineData("UnitTest KpiGroup")]
+        public void Save(string KpiGroupName)
         {
             try
             {
-                var response = _performanceGroup.Save(new Master.Bll.Models.PerformanceGroupViewModel
+                var response = _KpiGroup.Save(new Master.Bll.Models.KpiGroupViewModel
                 {
-                    PerformanceGroupNameTh = performanceGroupName
+                    KpiGroupNameTh = KpiGroupName
                 });
                 Console.WriteLine(response);
             }
@@ -82,15 +82,15 @@ namespace EVF.UnitTest.MasterTest
         }
 
         [Theory]
-        [InlineData(1, "UnitTest PerformanceGroup Edit")]
-        public void Edit(int id, string performanceGroupName)
+        [InlineData(1, "UnitTest KpiGroup Edit")]
+        public void Edit(int id, string KpiGroupName)
         {
             try
             {
-                var response = _performanceGroup.Save(new Master.Bll.Models.PerformanceGroupViewModel
+                var response = _KpiGroup.Save(new Master.Bll.Models.KpiGroupViewModel
                 {
                     Id = id,
-                    PerformanceGroupNameTh = performanceGroupName
+                    KpiGroupNameTh = KpiGroupName
                 });
                 Console.WriteLine(response);
             }
@@ -106,7 +106,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performanceGroup.Delete(id);
+                var response = _KpiGroup.Delete(id);
                 Console.WriteLine(response);
             }
             catch (Exception ex)

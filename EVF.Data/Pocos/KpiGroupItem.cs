@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Data.Pocos
 {
-    public partial class PerformanceGroupItem
+    public partial class KpiGroupItem
     {
         [Column("ID")]
         public int Id { get; set; }
-        [Column("PerformanceGroupID")]
-        public int? PerformanceGroupId { get; set; }
-        [Column("PerformanceItemID")]
-        public int? PerformanceItemId { get; set; }
+        [Column("KpiGroupID")]
+        public int? KpiGroupId { get; set; }
+        [Column("KpiID")]
+        public int? KpiId { get; set; }
         public int? Sequence { get; set; }
     }
 }

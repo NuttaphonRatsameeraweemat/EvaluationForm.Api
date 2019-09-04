@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Data.Pocos
 {
-    public partial class Performance
+    public partial class Kpi
     {
         [Column("ID")]
         public int Id { get; set; }
         [StringLength(255)]
-        public string PerformanceNameTh { get; set; }
+        public string KpiNameTh { get; set; }
         [StringLength(255)]
-        public string PerformanceNameEn { get; set; }
+        public string KpiNameEn { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }

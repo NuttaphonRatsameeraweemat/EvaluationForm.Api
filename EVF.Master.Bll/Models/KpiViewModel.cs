@@ -2,7 +2,7 @@
 
 namespace EVF.Master.Bll.Models
 {
-    public class PerformanceViewModel
+    public class KpiViewModel
     {
 
         public const string RoleForManageData = "Role_MA_Performance";
@@ -10,9 +10,9 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
-        public string PerformanceNameTh { get; set; }
+        public string KpiNameTh { get; set; }
         [Required]
-        public string PerformanceNameEn { get; set; }
+        public string KpiNameEn { get; set; }
         public bool IsUse { get; set; }
     }
 }

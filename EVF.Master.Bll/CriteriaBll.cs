@@ -36,7 +36,7 @@ namespace EVF.Master.Bll
         /// <summary>
         /// The Performance Group manager provides performance group functionality.
         /// </summary>
-        private readonly IPerformanceGroupBll _performanceGroup;
+        private readonly IKpiGroupBll _performanceGroup;
 
         #endregion
 
@@ -49,7 +49,7 @@ namespace EVF.Master.Bll
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
         /// <param name="performanceGroup">The Performance Group manager provides performance group functionality.</param>
-        public CriteriaBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IPerformanceGroupBll performanceGroup)
+        public CriteriaBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IKpiGroupBll performanceGroup)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -93,9 +93,11 @@ namespace EVF.Master.Bll
         {
             var criteriaGroup = _mapper.Map<IEnumerable<CriteriaGroup>, IEnumerable<CriteriaGroupViewModel>>(
                    _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId));
+            var groupIds = criteriaGroup.Select(x => x.Id).ToArray();
+            var criteriaItems = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => groupIds.Contains(x.CriteriaGroupId.Value));
             foreach (var item in criteriaGroup)
             {
-                item.CriteriaItems = _performanceGroup.GetPerformanceItemDisplayCriteria(item.PerformanceGroupId).ToList();
+                item.CriteriaItems = _performanceGroup.GetKpiItemDisplayCriteria(item.KpiGroupId).ToList();
             }
             return criteriaGroup;
         }
@@ -226,7 +228,7 @@ namespace EVF.Master.Bll
             criteriaGroups = criteriaGroups.Where(x => criteriaGroupUpdate.Any(y => y.Id == x.Id));
             foreach (var item in criteriaGroups)
             {
-                this.UpdateCriteriaItem(item.CriteriaItems);
+                this.EditCriteriaItem(item.CriteriaItems);
             }
             
         }
@@ -235,7 +237,7 @@ namespace EVF.Master.Bll
         /// Update criteria item list.
         /// </summary>
         /// <param name="criteriaItems">The criteria items information value.</param>
-        private void UpdateCriteriaItem(IEnumerable<CriteriaItemViewModel> criteriaItems)
+        private void EditCriteriaItem(IEnumerable<CriteriaItemViewModel> criteriaItems)
         {
             _unitOfWork.GetRepository<CriteriaItem>().UpdateRange(
                 _mapper.Map<IEnumerable<CriteriaItemViewModel>, IEnumerable<CriteriaItem>>(criteriaItems));

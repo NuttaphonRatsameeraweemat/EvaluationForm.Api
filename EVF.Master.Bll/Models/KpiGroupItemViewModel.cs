@@ -4,11 +4,11 @@ using System.Text;
 
 namespace EVF.Master.Bll.Models
 {
-    public class PerformanceGroupItemViewModel
+    public class KpiGroupItemViewModel
     {
         public int Id { get; set; }
-        public int PerformanceGroupId { get; set; }
-        public int PerformanceItemId { get; set; }
+        public int KpiGroupId { get; set; }
+        public int KpiId { get; set; }
         public int Sequence { get; set; }
     }
 }

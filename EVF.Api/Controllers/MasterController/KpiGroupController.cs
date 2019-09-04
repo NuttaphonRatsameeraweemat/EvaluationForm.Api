@@ -8,28 +8,28 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = PerformanceViewModel.RoleForManageData, AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-    public class PerformanceController : ControllerBase
+    [Authorize(Roles = KpiGroupViewModel.RoleForManageData, AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    public class KpiGroupController : ControllerBase
     {
 
         #region [Fields]
 
         /// <summary>
-        /// The performance manager provides performance functionality.
+        /// The performance group manager provides performance group functionality.
         /// </summary>
-        private readonly IPerformanceBll _performance;
+        private readonly IKpiGroupBll _performanceGroup;
 
         #endregion
 
         #region [Constructors]
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="PerformanceController" /> class.
+        ///  Initializes a new instance of the <see cref="KpiGroupController" /> class.
         /// </summary>
-        /// <param name="role"></param>
-        public PerformanceController(IPerformanceBll performance)
+        /// <param name="performance"></param>
+        public KpiGroupController(IKpiGroupBll performance)
         {
-            _performance = performance;
+            _performanceGroup = performance;
         }
 
         #endregion
@@ -40,39 +40,38 @@ namespace EVF.Api.Controllers
         [Route("GetList")]
         public IActionResult GetList()
         {
-            return Ok(_performance.GetList());
+            return Ok(_performanceGroup.GetList());
         }
 
         [HttpGet]
         [Route("GetDetail")]
         public IActionResult GetDetail(int id)
         {
-            return Ok(_performance.GetDetail(id));
+            return Ok(_performanceGroup.GetDetail(id));
         }
 
         [HttpPost]
         [Route("Save")]
-        public IActionResult Save([FromBody]PerformanceViewModel model)
+        public IActionResult Save([FromBody]KpiGroupViewModel model)
         {
-            return Ok(_performance.Save(model));
+            return Ok(_performanceGroup.Save(model));
         }
 
         [HttpPost]
         [Route("Edit")]
-        public IActionResult Edit([FromBody]PerformanceViewModel model)
+        public IActionResult Edit([FromBody]KpiGroupViewModel model)
         {
-            return Ok(_performance.Edit(model));
+            return Ok(_performanceGroup.Edit(model));
         }
 
         [HttpPost]
         [Route("Delete")]
         public IActionResult Delete(int id)
         {
-            return Ok(_performance.Delete(id));
+            return Ok(_performanceGroup.Delete(id));
         }
 
         #endregion
-
 
     }
 }

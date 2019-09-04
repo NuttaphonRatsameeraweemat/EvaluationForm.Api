@@ -7,15 +7,15 @@ using Xunit;
 
 namespace EVF.UnitTest.MasterTest
 {
-    public class PerformanceBllTest : IClassFixture<IoCConfig>
+    public class KpiBllTest : IClassFixture<IoCConfig>
     {
 
         #region [Fields]
 
         /// <summary>
-        /// The Performance service manager provides Performance service functionality.
+        /// The Kpi service manager provides Kpi service functionality.
         /// </summary>
-        private IPerformanceBll _performance;
+        private IKpiBll _Kpi;
 
         #endregion
 
@@ -25,9 +25,9 @@ namespace EVF.UnitTest.MasterTest
         /// Initializes a new instance of the <see cref="HolidayCalendarBllTest" /> class.
         /// </summary>
         /// <param name="io">The IoCConfig class provide installing all components needed to use.</param>
-        public PerformanceBllTest(IoCConfig io)
+        public KpiBllTest(IoCConfig io)
         {
-            _performance = io.ServiceProvider.GetRequiredService<IPerformanceBll>();
+            _Kpi = io.ServiceProvider.GetRequiredService<IKpiBll>();
         }
 
         #endregion
@@ -39,7 +39,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performance.GetList();
+                var response = _Kpi.GetList();
                 Console.WriteLine(response);
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performance.GetDetail(id);
+                var response = _Kpi.GetDetail(id);
                 Console.WriteLine(response);
             }
             catch (Exception ex)
@@ -64,14 +64,14 @@ namespace EVF.UnitTest.MasterTest
         }
 
         [Theory]
-        [InlineData("UnitTest Performance")]
-        public void Save(string performanceName)
+        [InlineData("UnitTest Kpi")]
+        public void Save(string KpiName)
         {
             try
             {
-                var response = _performance.Save(new Master.Bll.Models.PerformanceViewModel
+                var response = _Kpi.Save(new Master.Bll.Models.KpiViewModel
                 {
-                    PerformanceNameTh = performanceName
+                    KpiNameTh = KpiName
                 });
                 Console.WriteLine(response);
             }
@@ -82,15 +82,15 @@ namespace EVF.UnitTest.MasterTest
         }
 
         [Theory]
-        [InlineData(1, "UnitTest Performance Edit")]
-        public void Edit(int id, string performanceName)
+        [InlineData(1, "UnitTest Kpi Edit")]
+        public void Edit(int id, string KpiName)
         {
             try
             {
-                var response = _performance.Edit(new Master.Bll.Models.PerformanceViewModel
+                var response = _Kpi.Edit(new Master.Bll.Models.KpiViewModel
                 {
                     Id = id,
-                    PerformanceNameTh = performanceName
+                    KpiNameTh = KpiName
                 });
                 Console.WriteLine(response);
             }
@@ -106,7 +106,7 @@ namespace EVF.UnitTest.MasterTest
         {
             try
             {
-                var response = _performance.Delete(id);
+                var response = _Kpi.Delete(id);
                 Console.WriteLine(response);
             }
             catch (Exception ex)

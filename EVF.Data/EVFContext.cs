@@ -33,11 +33,11 @@ namespace EVF.Data
         public virtual DbSet<Hrorg> Hrorg { get; set; }
         public virtual DbSet<HrorgRelation> HrorgRelation { get; set; }
         public virtual DbSet<Hrposition> Hrposition { get; set; }
+        public virtual DbSet<Kpi> Kpi { get; set; }
+        public virtual DbSet<KpiGroup> KpiGroup { get; set; }
+        public virtual DbSet<KpiGroupItem> KpiGroupItem { get; set; }
         public virtual DbSet<LevelPoint> LevelPoint { get; set; }
         public virtual DbSet<LevelPointItem> LevelPointItem { get; set; }
-        public virtual DbSet<Performance> Performance { get; set; }
-        public virtual DbSet<PerformanceGroup> PerformanceGroup { get; set; }
-        public virtual DbSet<PerformanceGroupItem> PerformanceGroupItem { get; set; }
         public virtual DbSet<Period> Period { get; set; }
         public virtual DbSet<PeriodItem> PeriodItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }

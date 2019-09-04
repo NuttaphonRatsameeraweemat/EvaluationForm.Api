@@ -32,12 +32,12 @@ namespace EVF.Api.Extensions
         /// </summary>
         public void MappingMasterModel()
         {
-            CreateMap<Performance, PerformanceViewModel>();
-            CreateMap<PerformanceViewModel, Performance>();
-            CreateMap<PerformanceGroup, PerformanceGroupViewModel>();
-            CreateMap<PerformanceGroupViewModel, PerformanceGroup>();
-            CreateMap<PerformanceGroupItem, PerformanceGroupItemViewModel>();
-            CreateMap<PerformanceGroupItemViewModel, PerformanceGroupItem>();
+            CreateMap<Kpi, KpiViewModel>();
+            CreateMap<KpiViewModel, Kpi>();
+            CreateMap<KpiGroup, KpiGroupViewModel>();
+            CreateMap<KpiGroupViewModel, KpiGroup>();
+            CreateMap<KpiGroupItem, KpiGroupItemViewModel>();
+            CreateMap<KpiGroupItemViewModel, KpiGroupItem>();
             CreateMap<Period, PeriodViewModel>();
             CreateMap<PeriodViewModel, Period>();
             CreateMap<PeriodItem, PeriodItemViewModel>();
@@ -50,6 +50,12 @@ namespace EVF.Api.Extensions
             CreateMap<LevelPointViewModel, LevelPoint>();
             CreateMap<LevelPointItem, LevelPointItemViewModel>();
             CreateMap<LevelPointItemViewModel, LevelPointItem>();
+            CreateMap<Criteria, CriteriaViewModel>();
+            CreateMap<CriteriaViewModel, Criteria>();
+            CreateMap<CriteriaGroup, CriteriaGroupViewModel>();
+            CreateMap<CriteriaGroupViewModel, CriteriaGroup>();
+            CreateMap<CriteriaItem, CriteriaItemViewModel>();
+            CreateMap<CriteriaItemViewModel, CriteriaItem>();
         }
 
         /// <summary>

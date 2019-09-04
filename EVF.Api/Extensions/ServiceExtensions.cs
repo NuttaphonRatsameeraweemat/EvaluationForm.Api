@@ -66,11 +66,12 @@ namespace EVF.Api.Extensions
         /// <param name="services">The service collection.</param>
         public static void ConfigureMasterBll(this IServiceCollection services)
         {
-            services.AddScoped<IPerformanceBll, PerformanceBll>();
-            services.AddScoped<IPerformanceGroupBll, PerformanceGroupBll>();
+            services.AddScoped<IKpiBll, KpiBll>();
+            services.AddScoped<IKpiGroupBll, KpiGroupBll>();
             services.AddScoped<IPeriodBll, PeriodBll>();
             services.AddScoped<IGradeBll, GradeBll>();
             services.AddScoped<ILevelPointBll, LevelPointBll>();
+            services.AddScoped<ICriteriaBll, CriteriaBll>();
         }
 
         /// <summary>
