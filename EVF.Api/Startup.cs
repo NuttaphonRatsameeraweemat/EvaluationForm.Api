@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace EVF.Api
 {
@@ -38,11 +39,8 @@ namespace EVF.Api
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();
-            services.AddMvc(opt =>
-            {
-                opt.UseApiGlobalConfigRoutePrefix(new RouteAttribute("api"));
-                opt.Filters.Add(typeof(ValidateModelStateAttribute));
-            });
+            services.ConfigureCustomResponseBadRequest();
+            services.ConfigureMvc();
             services.ConfigureSwagger();
         }
 

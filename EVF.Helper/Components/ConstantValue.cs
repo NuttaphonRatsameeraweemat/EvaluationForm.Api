@@ -38,5 +38,6 @@ namespace EVF.Helper.Components
         public const string DateIncorrectFormat = "The date value can't be empty and support only 'yyyy-MM-dd' format.";
         public const string YearIncorrectFormat = "The year value can't be empty and support only 'yyyy' format.";
         public const string ArgullmentNullOrEmptyMessage = "parameter can't be null or empty.";
+        public const string HttpBadRequestMessage = "The request model is invalid.";
     }
 }

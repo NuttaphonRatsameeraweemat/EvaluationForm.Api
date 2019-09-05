@@ -8,26 +8,31 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 using Swashbuckle.AspNetCore.Swagger;
+using System.Net;
+using System.Linq;
 using System.Collections.Generic;
 
-using EVF.Helper.Interfaces;
 using EVF.Helper;
+using EVF.Helper.Interfaces;
+using EVF.Helper.Models;
+using EVF.Helper.Components;
+
 using EVF.Data;
 using EVF.Data.Repository.Interfaces;
-using EVF.Helper.Models;
-using Microsoft.AspNetCore.Authentication;
+
 using EVF.Authorization.Bll.Interfaces;
 using EVF.Authorization.Bll;
 using EVF.Master.Bll.Interfaces;
 using EVF.CentralSetting.Bll.Interfaces;
 using EVF.Master.Bll;
 using EVF.CentralSetting.Bll;
-using EVF.Helper.Components;
+
 using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll;
 
@@ -142,12 +147,47 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
+        /// Custom resposse when model state invalid.
+        /// </summary>
+        /// <param name="services"></param>
+        public static void ConfigureCustomResponseBadRequest(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(o =>
+            {
+                o.InvalidModelStateResponseFactory = actionContext =>
+                    new BadRequestObjectResult(new
+                    {
+                        result = UtilityService.InitialResultError(ConstantValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest),
+                        modelError = actionContext.ModelState
+                    });
+            });
+        }
+
+        /// <summary>
         /// Dependency Injection Email Service. 
         /// </summary>
         /// <param name="services">The service collection.</param>
         public static void ConfigureEmailService(this IServiceCollection services)
         {
             services.AddSingleton<IEmailService, EmailService>();
+        }
+
+        public static void ConfigureMvc(this IServiceCollection services)
+        {
+            services.AddMvc(opt =>
+            {
+                opt.UseApiGlobalConfigRoutePrefix(new RouteAttribute("api"));
+                opt.Filters.Add(typeof(ValidateModelStateAttribute));
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    return new BadRequestObjectResult(
+                        UtilityService.InitialResultError(ConstantValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest,
+                                        actionContext.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)));
+                };
+            });
         }
 
         /// <summary>
@@ -224,6 +264,10 @@ namespace EVF.Api.Extensions
             });
         }
 
+        /// <summary>
+        /// Configuration Basic Authentication type.
+        /// </summary>
+        /// <param name="services"></param>
         public static void ConfigureBasicAuthen(this IServiceCollection services)
         {
             // configure basic authentication 
@@ -267,7 +311,7 @@ namespace EVF.Api.Extensions
                          {
                              IsError = true,
                              StatusCode = context.Response.StatusCode,
-                             Message = $"{MessageValue.InternalServerError}"
+                             Message = $"{MessageValue.Unauthorized}"
                          };
                          string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                          {
@@ -314,7 +358,7 @@ namespace EVF.Api.Extensions
                             {
                                 IsError = true,
                                 StatusCode = context.Response.StatusCode,
-                                Message = $"{MessageValue.InternalServerError}"
+                                Message = $"{MessageValue.Unauthorized}"
                             };
                             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                             {
