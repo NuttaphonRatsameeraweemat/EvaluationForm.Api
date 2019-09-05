@@ -72,6 +72,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IGradeBll, GradeBll>();
             services.AddScoped<ILevelPointBll, LevelPointBll>();
             services.AddScoped<ICriteriaBll, CriteriaBll>();
+            services.AddScoped<IEvaluationTemplateBll, EvaluationTemplateBll>();
         }
 
         /// <summary>

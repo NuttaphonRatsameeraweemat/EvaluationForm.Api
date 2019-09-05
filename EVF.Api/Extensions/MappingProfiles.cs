@@ -56,6 +56,8 @@ namespace EVF.Api.Extensions
             CreateMap<CriteriaGroupViewModel, CriteriaGroup>();
             CreateMap<CriteriaItem, CriteriaItemViewModel>();
             CreateMap<CriteriaItemViewModel, CriteriaItem>();
+            CreateMap<EvaluationTemplate, EvaluationTemplateViewModel>();
+            CreateMap<EvaluationTemplateViewModel, EvaluationTemplate>();
         }
 
         /// <summary>
