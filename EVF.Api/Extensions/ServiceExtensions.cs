@@ -172,6 +172,10 @@ namespace EVF.Api.Extensions
             services.AddSingleton<IEmailService, EmailService>();
         }
 
+        /// <summary>
+        /// Configure adding mvc and configure prefix route and filter.
+        /// </summary>
+        /// <param name="services"></param>
         public static void ConfigureMvc(this IServiceCollection services)
         {
             services.AddMvc(opt =>
@@ -185,7 +189,7 @@ namespace EVF.Api.Extensions
                 {
                     return new BadRequestObjectResult(
                         UtilityService.InitialResultError(ConstantValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest,
-                                        actionContext.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)));
+                                        actionContext.ModelState.Keys));
                 };
             });
         }

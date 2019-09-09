@@ -22,5 +22,17 @@ namespace EVF.Helper.Interfaces
         /// Get Encrypt value from payload token.
         /// </summary>
         string Encrypt { get; }
+        /// <summary>
+        /// Get Org identity value from payload token.
+        /// </summary>
+        string OrgId { get; }
+        /// <summary>
+        /// Get Position identity value from payload token.
+        /// </summary>
+        string PositionId { get; }
+        /// <summary>
+        /// Get Company code value from payload token.
+        /// </summary>
+        string ComCode { get; }
     }
 }

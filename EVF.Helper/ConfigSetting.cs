@@ -108,6 +108,10 @@ namespace EVF.Helper
         /// Get K2 Process Folder.
         /// </summary>
         public string K2ProcessFolder => this.GetAppSetting("K2:ProcessFolder");
+        /// <summary>
+        /// Get K2 Spe Evaluation Process workflow.
+        /// </summary>
+        public string SpeEvaluationProcess => this.GetAppSetting("K2:SpeEvaluationProcess");
 
         #endregion
 

@@ -48,6 +48,18 @@ namespace EVF.Helper
         /// Get Encrypt value from payload token.
         /// </summary>
         public string Encrypt => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisEncrypt)?.Value;
+        /// <summary>
+        /// Get Org identity value from payload token.
+        /// </summary>
+        public string OrgId => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisOrg)?.Value;
+        /// <summary>
+        /// Get Position identity value from payload token.
+        /// </summary>
+        public string PositionId => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisPosition)?.Value;
+        /// <summary>
+        /// Get Company code value from payload token.
+        /// </summary>
+        public string ComCode => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisComCode)?.Value;
 
         #endregion
 

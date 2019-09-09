@@ -8,7 +8,10 @@ namespace EVF.Helper.Components
     {
         //Claims Type
         public const string ClamisName = "EmpName";
-        public const string ClamisEmpNo = "EmpName";
+        public const string ClamisEmpNo = "EmpNo";
+        public const string ClamisOrg = "OrgId";
+        public const string ClamisPosition = "PositionId";
+        public const string ClamisComCode = "ComCode";
         public const string ClamisEncrypt = "UlZaR1gxTkZRMUpGVkE9PQ==";
         //Response Header Content Type Format
         public const string ContentTypeJson = "application/json";
@@ -32,6 +35,15 @@ namespace EVF.Helper.Components
         public const string ItemMenuCode = "ITEM";
         public const string RoleDisplay = "Role_DS_";
         public const string RoleManage = "Role_MA_";
+        //Activity Workflow
+        public const string ActivityRequest = "SendRequest";
+        public const string ActivityApprove = "Approve";
+        public const string WorkflowStatusInWorkflowProcess = "InWfProcess";
+        public const string WorkflowStatusComplete = "Complete";
+        //Workflow Action
+        public const string WorkflowActionSendRequest = "SendRequest";
+        //Workflow Process Code
+        public const string EvaluationProcessCode = "EvaluationProcess";
         //Error Log Messages.
         public const string HrEmployeeArgumentNullExceptionMessage = "The {0} hasn't in HrEmployee Table.";
         public const string HttpRequestFailedMessage = "Response StatusCode {0}, {1}";

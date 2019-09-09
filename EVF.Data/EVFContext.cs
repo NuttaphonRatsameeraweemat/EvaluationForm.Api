@@ -43,6 +43,11 @@ namespace EVF.Data
         public virtual DbSet<PeriodItem> PeriodItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
+        public virtual DbSet<WorkflowActivityLog> WorkflowActivityLog { get; set; }
+        public virtual DbSet<WorkflowActivityStep> WorkflowActivityStep { get; set; }
+        public virtual DbSet<WorkflowDelegate> WorkflowDelegate { get; set; }
+        public virtual DbSet<WorkflowProcess> WorkflowProcess { get; set; }
+        public virtual DbSet<WorkflowProcessInstance> WorkflowProcessInstance { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -98,6 +103,26 @@ namespace EVF.Data
             {
                 entity.HasKey(e => new { e.ValueType, e.ValueKey })
                     .HasName("ValueHelp_pkey");
+            });
+
+            modelBuilder.Entity<WorkflowActivityLog>(entity =>
+            {
+                entity.HasKey(e => new { e.ProcessInstanceId, e.SerialNo });
+            });
+
+            modelBuilder.Entity<WorkflowActivityStep>(entity =>
+            {
+                entity.HasKey(e => new { e.ProcessInstanceId, e.Step, e.ActionUser });
+            });
+
+            modelBuilder.Entity<WorkflowProcess>(entity =>
+            {
+                entity.Property(e => e.ProcessCode).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<WorkflowProcessInstance>(entity =>
+            {
+                entity.Property(e => e.ProcessInstanceId).ValueGeneratedNever();
             });
         }
     }

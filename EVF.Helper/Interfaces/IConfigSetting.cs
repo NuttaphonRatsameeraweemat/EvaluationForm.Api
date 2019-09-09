@@ -74,5 +74,9 @@ namespace EVF.Helper.Interfaces
         /// Get K2 Process Folder.
         /// </summary>
         string K2ProcessFolder { get; }
+        /// <summary>
+        /// Get K2 Spe Evaluation Process workflow.
+        /// </summary>
+        string SpeEvaluationProcess { get; }
     }
 }

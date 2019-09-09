@@ -126,6 +126,9 @@ namespace EVF.Authorization.Bll
             _identity.AddClaim(new Claim(ConstantValue.ClamisEncrypt, UtilityService.EncryptString(login.Password, _config.EncryptionKey)));
             _identity.AddClaim(new Claim(ConstantValue.ClamisEmpNo, data.EmpNo));
             _identity.AddClaim(new Claim(ConstantValue.ClamisName, string.Format(ConstantValue.EmpTemplate, data.FirstnameTh, data.LastnameTh)));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisOrg, data.OrgId));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisPosition, data.PositionId));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, data.ComCode));
             foreach (var item in roleList)
             {
                 _identity.AddClaim(new Claim(ClaimTypes.Role, item.RoleMenu));
