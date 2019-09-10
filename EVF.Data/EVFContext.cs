@@ -25,6 +25,10 @@ namespace EVF.Data
         public virtual DbSet<Criteria> Criteria { get; set; }
         public virtual DbSet<CriteriaGroup> CriteriaGroup { get; set; }
         public virtual DbSet<CriteriaItem> CriteriaItem { get; set; }
+        public virtual DbSet<Evaluation> Evaluation { get; set; }
+        public virtual DbSet<EvaluationAssign> EvaluationAssign { get; set; }
+        public virtual DbSet<EvaluationLog> EvaluationLog { get; set; }
+        public virtual DbSet<EvaluationLogItem> EvaluationLogItem { get; set; }
         public virtual DbSet<EvaluationTemplate> EvaluationTemplate { get; set; }
         public virtual DbSet<Grade> Grade { get; set; }
         public virtual DbSet<GradeItem> GradeItem { get; set; }

@@ -3,6 +3,7 @@ using EVF.Data.Repository.Interfaces;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Workflow.Bll.Interfaces;
+using EVF.Workflow.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -108,6 +109,34 @@ namespace EVF.Workflow.Bll
             _k2Service.ActionWorkflow(serialNo, action, dataFields);
             this.UpdateWorkflowProcessInstance(processIntanceId, nextStep, processInstanceStatus);
             this.SaveWorkflowLog(this.InitialWorkflowLog(processIntanceId, step, serialNo, action, comment));
+        }
+
+        /// <summary>
+        /// Action mutiple task.
+        /// </summary>
+        /// <param name="models">The task list information.</param>
+        public void MultipleTaskAction(IEnumerable<WorkflowViewModel> models)
+        {
+            foreach (var item in models)
+            {
+                int nextStep = item.Step + 1;
+                Dictionary<string, object> dataFields = new Dictionary<string, object>();
+                if (this.IsWorkflowFisnish(item.ProcessInstanceId, nextStep))
+                {
+                    dataFields.Add("GoNextActivity", false);
+                    dataFields.Add("ActionUser", this.GetCurrentApprove(item.ProcessInstanceId, nextStep));
+                    dataFields.Add("CurrentStep", nextStep);
+                    item.SetStatus(ConstantValue.WorkflowStatusInWorkflowProcess);
+                }
+                else
+                {
+                    dataFields.Add("GoNextActivity", true);
+                    nextStep = 0;
+                    item.SetStatus(ConstantValue.WorkflowStatusComplete);
+                }
+                item.SetDataFields(dataFields);
+            }
+            throw new NotImplementedException();
         }
 
         /// <summary>
