@@ -327,7 +327,47 @@ namespace EVF.Api.Extensions
                              await context.Response.WriteAsync(json);
                          });
                          return System.Threading.Tasks.Task.CompletedTask;
+                     },  
+                     OnChallenge = context =>
+                     {
+                         context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                         var model = new ResultViewModel
+                         {
+                             IsError = true,
+                             StatusCode = context.Response.StatusCode,
+                             Message = $"{MessageValue.Unauthorized}"
+                         };
+                         string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                         {
+                             ContractResolver = new CamelCasePropertyNamesContractResolver()
+                         });
+                         context.Response.OnStarting(async () =>
+                         {
+                             context.Response.ContentType = "application/json";
+                             await context.Response.WriteAsync(json);
+                         });
+                         return System.Threading.Tasks.Task.CompletedTask;
                      },
+                     OnTokenValidated = context =>
+                     {
+                         context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
+                         var model = new ResultViewModel
+                         {
+                             IsError = true,
+                             StatusCode = context.Response.StatusCode,
+                             Message = $"{MessageValue.UserRoleIsEmpty}"
+                         };
+                         string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                         {
+                             ContractResolver = new CamelCasePropertyNamesContractResolver()
+                         });
+                         context.Response.OnStarting(async () =>
+                         {
+                             context.Response.ContentType = "application/json";
+                             await context.Response.WriteAsync(json);
+                         });
+                         return System.Threading.Tasks.Task.CompletedTask;
+                     }
                  };
              });
         }

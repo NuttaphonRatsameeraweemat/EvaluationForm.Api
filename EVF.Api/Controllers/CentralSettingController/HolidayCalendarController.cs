@@ -4,7 +4,7 @@ using EVF.CentralSetting.Bll.Interfaces;
 using EVF.CentralSetting.Bll.Models;
 using EVF.Helper;
 using EVF.Helper.Components;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +12,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = HolidayCalendarViewModel.RoleForManageData, AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Roles = HolidayCalendarViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class HolidayCalendarController : ControllerBase
     {
 
