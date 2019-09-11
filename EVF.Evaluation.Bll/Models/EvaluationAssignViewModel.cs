@@ -4,7 +4,15 @@ using System.Text;
 
 namespace EVF.Evaluation.Bll.Models
 {
-    class EvaluationAssignViewModel
+    public class EvaluationAssignViewModel
     {
+        public int Id { get; set; }
+        public int? EvaluationId { get; set; }
+        public string EmpNo { get; set; }
+        public string AdUser { get; set; }
+        public string UserType { get; set; }
+        public bool IsReject { get; set; }
+
+        public string FullName { get; set; }
     }
 }

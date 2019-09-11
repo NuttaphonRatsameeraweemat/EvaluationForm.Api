@@ -48,6 +48,7 @@ namespace EVF.Api
             {
                 app.UseSwaager();
             }
+            app.ConfigureHandlerStatusPages();
             app.UseAuthentication();
             app.ConfigureMiddleware();
             app.UseCors("CorsPolicy");

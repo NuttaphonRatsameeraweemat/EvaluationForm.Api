@@ -16,6 +16,9 @@ namespace EVF.Helper.Components
         //Response Header Content Type Format
         public const string ContentTypeJson = "application/json";
         public const string BasicAuthentication = "BasicAuthentication";
+        //User Evaluator Type
+        public const string UserTypePurchasing = "P";
+        public const string UserTypeEvaluator = "U";
         //Date format
         public const string DateTimeFormat = "yyyy-MM-dd";
         //Template format.

@@ -7,6 +7,15 @@ namespace EVF.Evaluation.Bll.Models
 {
     public class EvaluationViewModel
     {
+
+        public EvaluationViewModel()
+        {
+
+        }
+
+        public const string RoleForManageData = "Role_MA_Evaluation";
+        public const string RoleForDisplayData = "Role_DS_Evaluation";
+
         public int Id { get; set; }
         [Required]
         public int EvaluationTemplateId { get; set; }
@@ -21,6 +30,8 @@ namespace EVF.Evaluation.Bll.Models
         public int PeriodId { get; set; }
 
         public string[] VendorList { get; set; }
+        public string[] EvaluatorList { get; set; }
+        public string PurchasingEmpNo { get; set; }
 
         //Display
         public string VendorName { get; set; }

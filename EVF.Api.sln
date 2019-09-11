@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVF.Evaluation.Bll", "EVF.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVF.Workflow.Bll", "EVF.Workflow.Bll\EVF.Workflow.Bll.csproj", "{F095B504-9A8B-4F09-8FF6-1294858C9699}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVF.Vendor.Bll", "EVF.Vendor.Bll\EVF.Vendor.Bll.csproj", "{0B0ECF13-F29E-4A29-97D3-100B4A59DC76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{F095B504-9A8B-4F09-8FF6-1294858C9699}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F095B504-9A8B-4F09-8FF6-1294858C9699}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F095B504-9A8B-4F09-8FF6-1294858C9699}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B0ECF13-F29E-4A29-97D3-100B4A59DC76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B0ECF13-F29E-4A29-97D3-100B4A59DC76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B0ECF13-F29E-4A29-97D3-100B4A59DC76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B0ECF13-F29E-4A29-97D3-100B4A59DC76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{B929F945-B5A7-4748-B35F-3269E01E6F0C} = {BE1871D8-D6CA-4A47-A2F9-9C5DB00E3CD8}
 		{0963EC14-F570-4615-A84C-9BC859B7AB26} = {BE1871D8-D6CA-4A47-A2F9-9C5DB00E3CD8}
 		{F095B504-9A8B-4F09-8FF6-1294858C9699} = {BE1871D8-D6CA-4A47-A2F9-9C5DB00E3CD8}
+		{0B0ECF13-F29E-4A29-97D3-100B4A59DC76} = {BE1871D8-D6CA-4A47-A2F9-9C5DB00E3CD8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {942D11EA-8847-4919-9FF9-933895E1575B}

@@ -281,6 +281,32 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
+        /// Config handle message status code 403.
+        /// </summary>
+        /// <param name="app"></param>
+        public static void ConfigureHandlerStatusPages(this IApplicationBuilder app)
+        {
+            app.UseStatusCodePages(async context =>
+            {
+                if (context.HttpContext.Response.StatusCode == 403)
+                {
+                    var model = new ResultViewModel
+                    {
+                        IsError = true,
+                        StatusCode = context.HttpContext.Response.StatusCode,
+                        Message = $"{MessageValue.UserRoleIsEmpty}"
+                    };
+                    string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
+                    context.HttpContext.Response.ContentType = ConstantValue.ContentTypeJson;
+                    await context.HttpContext.Response.WriteAsync(json);
+                }
+            });
+        }
+
+        /// <summary>
         /// Configuration Authentication Jwt type.
         /// </summary>
         /// <param name="services">The services conllection.</param>
@@ -323,7 +349,7 @@ namespace EVF.Api.Extensions
                          });
                          context.Response.OnStarting(async () =>
                          {
-                             context.Response.ContentType = "application/json";
+                             context.Response.ContentType = ConstantValue.ContentTypeJson;
                              await context.Response.WriteAsync(json);
                          });
                          return System.Threading.Tasks.Task.CompletedTask;
@@ -343,31 +369,11 @@ namespace EVF.Api.Extensions
                          });
                          context.Response.OnStarting(async () =>
                          {
-                             context.Response.ContentType = "application/json";
+                             context.Response.ContentType = ConstantValue.ContentTypeJson;
                              await context.Response.WriteAsync(json);
                          });
                          return System.Threading.Tasks.Task.CompletedTask;
                      },
-                     OnTokenValidated = context =>
-                     {
-                         context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
-                         var model = new ResultViewModel
-                         {
-                             IsError = true,
-                             StatusCode = context.Response.StatusCode,
-                             Message = $"{MessageValue.UserRoleIsEmpty}"
-                         };
-                         string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                         {
-                             ContractResolver = new CamelCasePropertyNamesContractResolver()
-                         });
-                         context.Response.OnStarting(async () =>
-                         {
-                             context.Response.ContentType = "application/json";
-                             await context.Response.WriteAsync(json);
-                         });
-                         return System.Threading.Tasks.Task.CompletedTask;
-                     }
                  };
              });
         }
@@ -410,7 +416,7 @@ namespace EVF.Api.Extensions
                             });
                             context.Response.OnStarting(async () =>
                             {
-                                context.Response.ContentType = "application/json";
+                                context.Response.ContentType = ConstantValue.ContentTypeJson;
                                 await context.Response.WriteAsync(json);
                             });
                             return System.Threading.Tasks.Task.CompletedTask;
@@ -430,7 +436,7 @@ namespace EVF.Api.Extensions
                             });
                             context.Response.OnStarting(async () =>
                             {
-                                context.Response.ContentType = "application/json";
+                                context.Response.ContentType = ConstantValue.ContentTypeJson;
                                 await context.Response.WriteAsync(json);
                             });
                             return System.Threading.Tasks.Task.CompletedTask;
