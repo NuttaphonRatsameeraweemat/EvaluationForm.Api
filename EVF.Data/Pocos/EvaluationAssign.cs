@@ -18,5 +18,6 @@ namespace EVF.Data.Pocos
         [StringLength(1)]
         public string UserType { get; set; }
         public bool? IsReject { get; set; }
+        public bool? IsAction { get; set; }
     }
 }

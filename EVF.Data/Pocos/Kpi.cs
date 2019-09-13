@@ -13,6 +13,10 @@ namespace EVF.Data.Pocos
         public string KpiNameTh { get; set; }
         [StringLength(255)]
         public string KpiNameEn { get; set; }
+        [StringLength(20)]
+        public string KpiShortTextTh { get; set; }
+        [StringLength(20)]
+        public string KpiShortTextEn { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }

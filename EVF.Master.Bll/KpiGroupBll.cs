@@ -162,9 +162,11 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetById(model.Id);
+                var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
                 kpiGroup.KpiGroupNameTh = model.KpiGroupNameTh;
                 kpiGroup.KpiGroupNameEn = model.KpiGroupNameEn;
+                kpiGroup.KpiGroupShortTextTh = model.KpiGroupShortTextTh;
+                kpiGroup.KpiGroupShortTextEn = model.KpiGroupShortTextEn;
                 kpiGroup.SapScoreField = model.SapScoreField;
                 kpiGroup.LastModifyBy = _token.EmpNo;
                 kpiGroup.LastModifyDate = DateTime.Now;

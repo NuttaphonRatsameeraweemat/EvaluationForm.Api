@@ -7,6 +7,7 @@ using EVF.Master.Bll.Interfaces;
 using EVF.Master.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 
 namespace EVF.Master.Bll
@@ -101,9 +102,11 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var kpi = _unitOfWork.GetRepository<Kpi>().GetById(model.Id);
+                var kpi = _unitOfWork.GetRepository<Kpi>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
                 kpi.KpiNameTh = model.KpiNameTh;
                 kpi.KpiNameEn = model.KpiNameEn;
+                kpi.KpiShortTextTh = model.KpiShortTextTh;
+                kpi.KpiShortTextEn = model.KpiShortTextEn;
                 kpi.LastModifyBy = _token.EmpNo;
                 kpi.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Kpi>().Update(kpi);

@@ -19,6 +19,12 @@ namespace EVF.Master.Bll.Models
         [Required]
         public string KpiGroupNameEn { get; set; }
         [Required]
+        [MaxLength(20)]
+        public string KpiGroupShortTextTh { get; set; }
+        [Required]
+        [MaxLength(20)]
+        public string KpiGroupShortTextEn { get; set; }
+        [Required]
         public string SapScoreField { get; set; }
         public bool IsUse { get; set; }
         public List<KpiGroupItemViewModel> KpiGroupItems { get; set; }
