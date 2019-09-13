@@ -52,8 +52,21 @@ namespace EVF.Evaluation.Bll
         #region [Methods]
 
         /// <summary>
+        /// Get EvaluationAssign.
+        /// </summary>
+        /// <param name="evaluationAssignId">The identity evaluation and assign.</param>
+        /// <returns></returns>
+        public EvaluationAssignViewModel GetEvaluator(int evaluationAssignId)
+        {
+            var data = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.Id == evaluationAssignId).FirstOrDefault();
+            return this.InitialEvaluationAssignViewModel(data,
+                _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.EmpNo == data.EmpNo).FirstOrDefault());
+        }
+
+        /// <summary>
         /// Get EvaluationAssign list.
         /// </summary>
+        /// <param name="evaluationId">The identity of evaluation.</param>
         /// <returns></returns>
         public IEnumerable<EvaluationAssignViewModel> GetEvaluators(int evaluationId)
         {
@@ -62,19 +75,30 @@ namespace EVF.Evaluation.Bll
             var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
             foreach (var item in data)
             {
-                var temp = empList.FirstOrDefault(x => x.EmpNo == item.EmpNo);
-                result.Add(new EvaluationAssignViewModel
-                {
-                    Id = item.Id,
-                    EmpNo = item.EmpNo,
-                    AdUser = item.AdUser,
-                    EvaluationId = item.EvaluationId,
-                    IsReject = item.IsReject.Value,
-                    UserType = item.UserType,
-                    FullName = string.Format(ConstantValue.EmpTemplate, temp?.FirstnameTh, temp?.LastnameTh)
-                });
+                result.Add(this.InitialEvaluationAssignViewModel(item, empList.FirstOrDefault(x => x.EmpNo == item.EmpNo)));
             }
             return result;
+        }
+
+        /// <summary>
+        /// Initial Evaluation Assign Viewmodel.
+        /// </summary>
+        /// <param name="item">The evaluation entity model.</param>
+        /// <param name="emp">The employee entity model.</param>
+        /// <returns></returns>
+        private EvaluationAssignViewModel InitialEvaluationAssignViewModel(EvaluationAssign item, Hremployee emp)
+        {
+            return new EvaluationAssignViewModel
+            {
+                Id = item.Id,
+                EmpNo = item.EmpNo,
+                AdUser = item.AdUser,
+                EvaluationId = item.EvaluationId,
+                IsReject = item.IsReject.Value,
+                IsAction = item.IsAction.Value,
+                UserType = item.UserType,
+                FullName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh)
+            };
         }
 
         /// <summary>
