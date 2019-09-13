@@ -77,13 +77,25 @@ namespace EVF.Evaluation.Bll
             return result;
         }
 
+        /// <summary>
+        /// Insert new evaluation assign list.
+        /// </summary>
+        /// <param name="evaluationId">The evaluation id.</param>
+        /// <param name="purchasingAdUser">The purchasing aduser.</param>
+        /// <param name="userList">The evaluator user list.</param>
         public void Save(int evaluationId, string purchasingAdUser, string[] userList)
         {
             var result = new List<EvaluationAssign>();
             var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
 
             result.Add(this.InitialEvaluationAssign(evaluationId, empList.FirstOrDefault(x => x.Aduser == purchasingAdUser), ConstantValue.UserTypePurchasing));
+            foreach (var item in userList)
+            {
+                var temp = empList.FirstOrDefault(x => x.Aduser == item);
+                result.Add(this.InitialEvaluationAssign(evaluationId, temp, ConstantValue.UserTypeEvaluator));
+            }
 
+            _unitOfWork.GetRepository<EvaluationAssign>().AddRange(result);
         }
 
         /// <summary>
