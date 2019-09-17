@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EVF.Data\EVF.Data.csproj" />
+    <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
+    <ProjectReference Include="..\EVF.Tranfer.Service.Data\EVF.Tranfer.Service.Data.csproj" />
+  </ItemGroup>
+
+</Project>

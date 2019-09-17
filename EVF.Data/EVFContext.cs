@@ -29,6 +29,7 @@ namespace EVF.Data
         public virtual DbSet<EvaluationAssign> EvaluationAssign { get; set; }
         public virtual DbSet<EvaluationLog> EvaluationLog { get; set; }
         public virtual DbSet<EvaluationLogItem> EvaluationLogItem { get; set; }
+        public virtual DbSet<EvaluationSapResult> EvaluationSapResult { get; set; }
         public virtual DbSet<EvaluationTemplate> EvaluationTemplate { get; set; }
         public virtual DbSet<Grade> Grade { get; set; }
         public virtual DbSet<GradeItem> GradeItem { get; set; }
@@ -128,6 +129,23 @@ namespace EVF.Data
             {
                 entity.Property(e => e.ProcessInstanceId).ValueGeneratedNever();
             });
+
+            modelBuilder.Entity<EvaluationSapResult>(entity =>
+            {
+                entity.HasKey(e => new { e.ComCode, e.PurOrg, e.Vendor, e.YearMonth, e.WeightKey })
+                    .HasName("PK__Evaluati__123CF657B3391254");
+
+                entity.Property(e => e.ComCode).IsUnicode(false);
+
+                entity.Property(e => e.PurOrg).IsUnicode(false);
+
+                entity.Property(e => e.Vendor).IsUnicode(false);
+
+                entity.Property(e => e.YearMonth).IsUnicode(false);
+
+                entity.Property(e => e.WeightKey).IsUnicode(false);
+            });
+
         }
     }
 }

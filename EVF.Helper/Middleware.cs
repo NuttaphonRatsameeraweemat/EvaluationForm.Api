@@ -8,11 +8,10 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Threading.Tasks;
 
-namespace EVF.Api
+namespace EVF.Helper
 {
     public class Middleware
     {
-
         #region [Fields]
 
         /// <summary>
@@ -105,6 +104,5 @@ namespace EVF.Api
         }
 
         #endregion
-
     }
 }

@@ -168,7 +168,7 @@ namespace EVF.Helper
                 };
             }
 
-            if (apiUser != null && (apiUser.Username != username || apiUser.Password != password))
+            if (apiUser != null && (apiUser.Username != username || apiUser.Password != Convert.ToBase64String(Encoding.UTF8.GetBytes(password))))
             {
                 // Sets to be null if it is unauthorized.
                 apiUser = null;

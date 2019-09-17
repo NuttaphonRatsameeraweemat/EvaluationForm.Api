@@ -78,5 +78,9 @@ namespace EVF.Helper.Interfaces
         /// Get K2 Spe Evaluation Process workflow.
         /// </summary>
         string SpeEvaluationProcess { get; }
+        /// <summary>
+        /// Get Application Name.
+        /// </summary>
+        string AppName { get; }
     }
 }

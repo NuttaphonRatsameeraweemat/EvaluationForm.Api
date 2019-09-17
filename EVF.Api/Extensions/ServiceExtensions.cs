@@ -259,7 +259,7 @@ namespace EVF.Api.Extensions
         /// Setup Application Builder using Swagger and Swagger Ui.
         /// </summary>
         /// <param name="services">The service collection.</param>
-        public static void UseSwaager(this IApplicationBuilder app)
+        public static void ConfigureUseSwagger(this IApplicationBuilder app)
         {
             app.UseSwagger();
             app.UseSwaggerUI(c =>

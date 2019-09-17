@@ -112,6 +112,10 @@ namespace EVF.Helper
         /// Get K2 Spe Evaluation Process workflow.
         /// </summary>
         public string SpeEvaluationProcess => this.GetAppSetting("K2:SpeEvaluationProcess");
+        /// <summary>
+        /// Get Application Name.
+        /// </summary>
+        public string AppName => this.GetAppSetting("AppName");
 
         #endregion
 

@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using EVF.Api.Extensions;
+using EVF.Tranfer.Service.Api.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EVF.Api
+namespace EVF.Tranfer.Service.Api
 {
     public class Startup
     {
@@ -18,37 +18,30 @@ namespace EVF.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             //Add Configure Extension and Bll class.
-            services.ConfigureRepository(Configuration);
-            services.ConfigureRedisCache(Configuration);
-            services.ConfigureMasterBll();
-            services.ConfigureAuthorizationBll();
-            services.ConfigureCentralSettingBll();
-            services.ConfigureHrBll();
+            services.ConfigureEvfCoreRepository(Configuration);
+            services.ConfigureEvfTranferRepository(Configuration);
+            services.ConfigureBll();
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();
-            services.ConfigureJwtAuthen(Configuration);
-            services.ConfigureCookieAuthen(Configuration);
             services.ConfigureBasicAuthen();
-            services.ConfigureEmailService();
             services.ConfigureComponent();
-            services.AddAutoMapper();
             services.ConfigureCustomResponseBadRequest();
+            services.ConfigureServiceResolver();
             services.ConfigureMvc();
+            services.AddAutoMapper();
             services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
                 app.ConfigureUseSwagger();
-            }
-            app.ConfigureHandlerStatusPages();
+
             app.UseAuthentication();
             app.ConfigureMiddleware();
             app.UseCors("CorsPolicy");
