@@ -22,4 +22,10 @@
     <ProjectReference Include="..\EVF.Master.Bll\EVF.Master.Bll.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EvaluationTest\" />
+    <Folder Include="WorkflowTest\" />
+    <Folder Include="VendorTest\" />
+  </ItemGroup>
+
 </Project>

@@ -22,7 +22,7 @@ namespace EVF.UnitTest.CentralSettingTest
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HolidayCalendarBllTest" /> class.
+        /// Initializes a new instance of the <see cref="ValueHelpBllTest" /> class.
         /// </summary>
         /// <param name="io">The IoCConfig class provide installing all components needed to use.</param>
         public ValueHelpBllTest(IoCConfig io)
