@@ -14,8 +14,8 @@ namespace EVF.Tranfer.Service.Api.Extensions
         /// </summary>
         public MappingProfiles()
         {
-            CreateMap<ZNCR_02, EvaluationSapResult>();
-            CreateMap<EvaluationSapResult, ZNCR_02>();
+            CreateMap<ZSPE_02, EvaluationSapResult>();
+            CreateMap<EvaluationSapResult, ZSPE_02>();
         }
 
         #endregion

@@ -70,7 +70,7 @@ namespace EVF.Tranfer.Service.Bll
         {
             var result = new ResultViewModel();
             var evfData = _evfUnitOfWork.GetRepository<EvaluationSapResult>().Get(x => !x.SendToSap);
-            this.SaveToZncr(_mapper.Map<IEnumerable<EvaluationSapResult>, IEnumerable<ZNCR_02>>(evfData));
+            this.SaveToZncr(_mapper.Map<IEnumerable<EvaluationSapResult>, IEnumerable<ZSPE_02>>(evfData));
             this.UpdateEvaluationSapResult(evfData);
             System.Threading.Tasks.Task.Run(() =>
             {
@@ -83,12 +83,12 @@ namespace EVF.Tranfer.Service.Bll
         /// Insert new sap result to zncr 02 table.
         /// </summary>
         /// <param name="dmData">The sap score result.</param>
-        private void SaveToZncr(IEnumerable<ZNCR_02> dmData)
+        private void SaveToZncr(IEnumerable<ZSPE_02> dmData)
         {
             var now = DateTime.Now;
             dmData.Select(c => { c.UpdateBy = _config.AppName; return c; }).ToList();
             dmData.Select(c => { c.UpdateOn = now; return c; }).ToList();
-            _dmUnitOfWork.GetRepository<ZNCR_02>().AddRange(dmData);
+            _dmUnitOfWork.GetRepository<ZSPE_02>().AddRange(dmData);
             _dmUnitOfWork.Complete();
         }
 
@@ -119,9 +119,9 @@ namespace EVF.Tranfer.Service.Bll
         /// Try to connect zncr db.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<ZNCR_02> TryToConnect()
+        public IEnumerable<ZSPE_02> TryToConnect()
         {
-            return _dmUnitOfWork.GetRepository<ZNCR_02>().Get();
+            return _dmUnitOfWork.GetRepository<ZSPE_02>().Get();
         }
 
         #endregion

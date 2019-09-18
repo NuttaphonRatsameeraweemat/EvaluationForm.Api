@@ -17,6 +17,6 @@ namespace EVF.Tranfer.Service.Bll.Interfaces
         /// Try to connect zncr db.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<ZNCR_02> TryToConnect();
+        IEnumerable<ZSPE_02> TryToConnect();
     }
 }
