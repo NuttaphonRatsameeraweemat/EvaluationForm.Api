@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Tranfer.Service.Data.Pocos
 {
-    public partial class ZNCR_02
+    public partial class ZSPE_02
     {
         [Column("COM_CODE")]
         [StringLength(4)]
