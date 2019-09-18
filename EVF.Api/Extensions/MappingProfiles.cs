@@ -4,6 +4,7 @@ using EVF.CentralSetting.Bll.Models;
 using EVF.Hr.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Master.Bll.Models;
+using EVF.Workflow.Bll.Models;
 
 namespace EVF.Api.Extensions
 {
@@ -21,6 +22,7 @@ namespace EVF.Api.Extensions
             this.MappingAuthorizationModel();
             this.MappingCentralSettingModel();
             this.MappingHrModel();
+            this.MappingWorkflowModel();
         }
 
         #endregion
@@ -95,6 +97,15 @@ namespace EVF.Api.Extensions
             CreateMap<RoleViewModel, AppCompositeRole>();
             CreateMap<Hremployee, UserRoleViewModel>();
             CreateMap<UserRoleViewModel, Hremployee>();
+        }
+
+        /// <summary>
+        /// Create auto mapper profile authorization model.
+        /// </summary>
+        public void MappingWorkflowModel()
+        {
+            CreateMap<WorkflowDelegate, WorkflowDelegateViewModel>();
+            CreateMap<WorkflowDelegateViewModel, WorkflowDelegate>();
         }
 
         #endregion

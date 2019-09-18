@@ -1,13 +1,17 @@
-﻿using EVF.Data.Pocos;
+﻿using AutoMapper;
+using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
+using EVF.Helper.Models;
 using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace EVF.Workflow.Bll
 {
@@ -32,6 +36,10 @@ namespace EVF.Workflow.Bll
         /// The config value in appsetting.json
         /// </summary>
         private readonly IConfigSetting _config;
+        /// <summary>
+        /// The auto mapper.
+        /// </summary>
+        private readonly IMapper _mapper;
 
         #endregion
 
@@ -42,12 +50,13 @@ namespace EVF.Workflow.Bll
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="k2Service">The k2 service provides k2 service functionality.</param>
-        public WorkflowBll(IUnitOfWork unitOfWork, IK2Service k2Service, IManageToken token, IConfigSetting config)
+        public WorkflowBll(IUnitOfWork unitOfWork, IK2Service k2Service, IManageToken token, IConfigSetting config, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _k2Service = k2Service;
             _token = token;
             _config = config;
+            _mapper = mapper;
         }
 
         #endregion
@@ -138,7 +147,7 @@ namespace EVF.Workflow.Bll
             }
             throw new NotImplementedException();
         }
-
+        
         /// <summary>
         /// Insert workflow task first to last step approve.
         /// </summary>

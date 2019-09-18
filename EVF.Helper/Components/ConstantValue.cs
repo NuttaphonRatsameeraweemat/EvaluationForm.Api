@@ -43,6 +43,10 @@ namespace EVF.Helper.Components
         public const string ActivityApprove = "Approve";
         public const string WorkflowStatusInWorkflowProcess = "InWfProcess";
         public const string WorkflowStatusComplete = "Complete";
+        //K2 set out of office action
+        public const string K2SharingCreate = "CREATE";
+        public const string K2SharingEdit = "EDIT";
+        public const string K2SharingDelete = "DELETE";
         //Workflow Action
         public const string WorkflowActionSendRequest = "SendRequest";
         //Workflow Process Code
