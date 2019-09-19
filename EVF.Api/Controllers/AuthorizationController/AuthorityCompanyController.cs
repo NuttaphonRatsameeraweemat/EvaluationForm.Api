@@ -11,7 +11,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = AuthorityCompanyViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = AuthorityCompanyViewModel.RoleForManageData)]
     public class AuthorityCompanyController : ControllerBase
     {
 

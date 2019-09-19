@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]
     public class EvaluationTemplateController : ControllerBase
     {
 

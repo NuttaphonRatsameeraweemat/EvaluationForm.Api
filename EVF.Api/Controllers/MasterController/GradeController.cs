@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = GradeViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = GradeViewModel.RoleForManageData)]
     public class GradeController : ControllerBase
     {
 

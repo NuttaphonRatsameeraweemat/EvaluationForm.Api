@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = ApprovalViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = ApprovalViewModel.RoleForManageData)]
     public class ApprovalController : ControllerBase
     {
 

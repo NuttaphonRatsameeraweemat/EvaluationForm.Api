@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.HrController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class HrEmployeeController : ControllerBase
     {
 

@@ -37,6 +37,8 @@ using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll;
 using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EVF.Api.Extensions
 {
@@ -156,23 +158,6 @@ namespace EVF.Api.Extensions
         public static void ConfigureLoggerService(this IServiceCollection services)
         {
             services.AddSingleton<ILoggerManager, LoggerManager>();
-        }
-
-        /// <summary>
-        /// Custom resposse when model state invalid.
-        /// </summary>
-        /// <param name="services"></param>
-        public static void ConfigureCustomResponseBadRequest(this IServiceCollection services)
-        {
-            services.Configure<ApiBehaviorOptions>(o =>
-            {
-                o.InvalidModelStateResponseFactory = actionContext =>
-                    new BadRequestObjectResult(new
-                    {
-                        result = UtilityService.InitialResultError(ConstantValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest),
-                        modelError = actionContext.ModelState
-                    });
-            });
         }
 
         /// <summary>
@@ -365,7 +350,7 @@ namespace EVF.Api.Extensions
                              await context.Response.WriteAsync(json);
                          });
                          return System.Threading.Tasks.Task.CompletedTask;
-                     },  
+                     },
                      OnChallenge = context =>
                      {
                          context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
@@ -408,53 +393,57 @@ namespace EVF.Api.Extensions
                 ValidAudience = Configuration["Jwt:Issuer"],
                 IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
             };
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(options =>
-                    {
-                        options.Cookie.Name = "access_token";
-                        options.SlidingExpiration = true;
-                        options.Events.OnRedirectToLogin = context =>
-                        {
-                            context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
-                            var model = new ResultViewModel
-                            {
-                                IsError = true,
-                                StatusCode = context.Response.StatusCode,
-                                Message = $"{MessageValue.Unauthorized}"
-                            };
-                            string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                            {
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
-                            context.Response.OnStarting(async () =>
-                            {
-                                context.Response.ContentType = ConstantValue.ContentTypeJson;
-                                await context.Response.WriteAsync(json);
-                            });
-                            return System.Threading.Tasks.Task.CompletedTask;
-                        };
-                        options.Events.OnRedirectToAccessDenied = context =>
-                        {
-                            context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
-                            var model = new ResultViewModel
-                            {
-                                IsError = true,
-                                StatusCode = context.Response.StatusCode,
-                                Message = $"{MessageValue.UserRoleIsEmpty}"
-                            };
-                            string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                            {
-                                ContractResolver = new CamelCasePropertyNamesContractResolver()
-                            });
-                            context.Response.OnStarting(async () =>
-                            {
-                                context.Response.ContentType = ConstantValue.ContentTypeJson;
-                                await context.Response.WriteAsync(json);
-                            });
-                            return System.Threading.Tasks.Task.CompletedTask;
-                        };
-                        options.TicketDataFormat = new CookieAuthenticateFormat(SecurityAlgorithms.HmacSha256, option);
-                    });
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+             .AddCookie(options =>
+             {
+                 options.Cookie.Name = "access_token";
+                 options.SlidingExpiration = true;
+                 options.Events.OnRedirectToLogin = context =>
+                 {
+                     context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                     var model = new ResultViewModel
+                     {
+                         IsError = true,
+                         StatusCode = context.Response.StatusCode,
+                         Message = $"{MessageValue.Unauthorized}"
+                     };
+                     string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                     {
+                         ContractResolver = new CamelCasePropertyNamesContractResolver()
+                     });
+                     context.Response.OnStarting(async () =>
+                     {
+                         context.Response.ContentType = ConstantValue.ContentTypeJson;
+                         await context.Response.WriteAsync(json);
+                     });
+                     return System.Threading.Tasks.Task.CompletedTask;
+                 };
+                 options.Events.OnRedirectToAccessDenied = context =>
+                 {
+                     context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
+                     var model = new ResultViewModel
+                     {
+                         IsError = true,
+                         StatusCode = context.Response.StatusCode,
+                         Message = $"{MessageValue.UserRoleIsEmpty}"
+                     };
+                     string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
+                     {
+                         ContractResolver = new CamelCasePropertyNamesContractResolver()
+                     });
+                     context.Response.OnStarting(async () =>
+                     {
+                         context.Response.ContentType = ConstantValue.ContentTypeJson;
+                         await context.Response.WriteAsync(json);
+                     });
+                     return System.Threading.Tasks.Task.CompletedTask;
+                 };
+                 options.TicketDataFormat = new CookieAuthenticateFormat(SecurityAlgorithms.HmacSha256, option);
+             })
+             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(ConstantValue.BasicAuthentication, null);
         }
 
     }

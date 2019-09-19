@@ -33,13 +33,10 @@ namespace EVF.Api
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();
-            services.ConfigureJwtAuthen(Configuration);
             services.ConfigureCookieAuthen(Configuration);
-            services.ConfigureBasicAuthen();
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();
-            services.ConfigureCustomResponseBadRequest();
             services.ConfigureMvc();
             services.ConfigureSwagger();
         }

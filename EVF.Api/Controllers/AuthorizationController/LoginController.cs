@@ -56,7 +56,7 @@ namespace EVF.Api.Controllers
                     Menu = _menu.GenerateMenu(auth.Username),
                     Token = token
                 };
-
+                _login.SetupCookie(HttpContext, token);
                 response = Ok(responseMessage);
             }
             else response = Unauthorized(result);

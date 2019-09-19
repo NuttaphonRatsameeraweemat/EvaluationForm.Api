@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = CriteriaViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = CriteriaViewModel.RoleForManageData)]
     public class CriteriaController : ControllerBase
     {
 

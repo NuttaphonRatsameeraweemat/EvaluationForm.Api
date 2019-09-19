@@ -12,7 +12,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = HolidayCalendarViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = HolidayCalendarViewModel.RoleForManageData)]
     public class HolidayCalendarController : ControllerBase
     {
 

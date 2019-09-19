@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = PeriodViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = PeriodViewModel.RoleForManageData)]
     public class PeriodController : ControllerBase
     {
 

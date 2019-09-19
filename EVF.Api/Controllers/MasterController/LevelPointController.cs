@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = LevelPointViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = LevelPointViewModel.RoleForManageData)]
     public class LevelPointController : ControllerBase
     {
 

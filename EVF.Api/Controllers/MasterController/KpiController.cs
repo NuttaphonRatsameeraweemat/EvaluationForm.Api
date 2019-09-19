@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = KpiViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = KpiViewModel.RoleForManageData)]
     public class KpiController : ControllerBase
     {
 

@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = RoleViewModel.RoleForManageData, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = RoleViewModel.RoleForManageData)]
     public class RoleController : ControllerBase
     {
 

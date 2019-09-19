@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.WorkflowController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class WorkflowDelegateController : ControllerBase
     {
 
