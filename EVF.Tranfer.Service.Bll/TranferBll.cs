@@ -136,6 +136,15 @@ namespace EVF.Tranfer.Service.Bll
             return result;
         }
 
+        /// <summary>
+        /// Get Evaluation Sap Result Score.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<EvaluationSapResult> GetEvaluationSapResult()
+        {
+            return _evfUnitOfWork.GetRepository<EvaluationSapResult>().Get();
+        }
+
         #endregion
 
     }

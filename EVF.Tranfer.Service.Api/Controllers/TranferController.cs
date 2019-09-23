@@ -57,6 +57,13 @@ namespace EVF.Tranfer.Service.Api.Controllers
             return Ok(_tranfer.TryToConnect());
         }
 
+        [HttpGet]
+        [Route("GetEvaluationSapResult")]
+        public IActionResult GetEvaluationSapResult()
+        {
+            return Ok(_tranfer.GetEvaluationSapResult());
+        }
+
         #endregion
     }
 }

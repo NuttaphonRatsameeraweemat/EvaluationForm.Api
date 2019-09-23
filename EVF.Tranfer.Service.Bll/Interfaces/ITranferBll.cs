@@ -24,5 +24,10 @@ namespace EVF.Tranfer.Service.Bll.Interfaces
         /// </summary>
         /// <returns></returns>
         ResultViewModel TryToInsertSapResult(IEnumerable<EvaluationSapResult> model);
+        /// <summary>
+        /// Get Evaluation Sap Result Score.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<EvaluationSapResult> GetEvaluationSapResult();
     }
 }
