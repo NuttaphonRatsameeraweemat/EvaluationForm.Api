@@ -1,4 +1,5 @@
-﻿using EVF.Helper.Models;
+﻿using EVF.Data.Pocos;
+using EVF.Helper.Models;
 using EVF.Tranfer.Service.Data.Pocos;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,10 @@ namespace EVF.Tranfer.Service.Bll.Interfaces
         /// </summary>
         /// <returns></returns>
         IEnumerable<ZSPE_02> TryToConnect();
+        /// <summary>
+        /// Try to insert sap result score to evf db.
+        /// </summary>
+        /// <returns></returns>
+        ResultViewModel TryToInsertSapResult(IEnumerable<EvaluationSapResult> model);
     }
 }

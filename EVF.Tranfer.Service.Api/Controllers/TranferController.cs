@@ -1,7 +1,9 @@
-﻿using EVF.Helper.Components;
+﻿using EVF.Data.Pocos;
+using EVF.Helper.Components;
 using EVF.Tranfer.Service.Bll.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace EVF.Tranfer.Service.Api.Controllers
 {
@@ -39,6 +41,13 @@ namespace EVF.Tranfer.Service.Api.Controllers
         public IActionResult TranferToDataMart()
         {
             return Ok(_tranfer.TranferToDataMart());
+        }
+
+        [HttpPost]
+        [Route("TryToInsertSapResult")]
+        public IActionResult TryToInsertSapResult(IEnumerable<EvaluationSapResult> model)
+        {
+            return Ok(_tranfer.TryToInsertSapResult(model));
         }
 
         [HttpGet]

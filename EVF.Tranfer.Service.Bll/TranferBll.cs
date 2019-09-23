@@ -124,6 +124,18 @@ namespace EVF.Tranfer.Service.Bll
             return _dmUnitOfWork.GetRepository<ZSPE_02>().Get();
         }
 
+        /// <summary>
+        /// Try to insert sap result score to evf db.
+        /// </summary>
+        /// <returns></returns>
+        public ResultViewModel TryToInsertSapResult(IEnumerable<EvaluationSapResult> model)
+        {
+            var result = new ResultViewModel();
+            model.Select(c => { c.SendToSap = false; return c; }).ToList();
+            _evfUnitOfWork.GetRepository<EvaluationSapResult>().AddRange(model);
+            return result;
+        }
+
         #endregion
 
     }

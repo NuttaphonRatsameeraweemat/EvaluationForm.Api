@@ -15,7 +15,6 @@ using Newtonsoft.Json.Serialization;
 
 using Swashbuckle.AspNetCore.Swagger;
 using System.Net;
-using System.Linq;
 using System.Collections.Generic;
 
 using EVF.Helper;
@@ -37,8 +36,6 @@ using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll;
 using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Authorization;
 
 namespace EVF.Api.Extensions
 {
