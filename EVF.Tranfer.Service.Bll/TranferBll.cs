@@ -133,6 +133,7 @@ namespace EVF.Tranfer.Service.Bll
             var result = new ResultViewModel();
             model.Select(c => { c.SendToSap = false; return c; }).ToList();
             _evfUnitOfWork.GetRepository<EvaluationSapResult>().AddRange(model);
+            _evfUnitOfWork.Complete();
             return result;
         }
 
