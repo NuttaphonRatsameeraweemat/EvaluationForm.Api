@@ -86,8 +86,8 @@ namespace EVF.Tranfer.Service.Bll
         private void SaveToZncr(IEnumerable<ZSPE_02> dmData)
         {
             var now = DateTime.Now;
-            dmData.Select(c => { c.UpdateBy = _config.AppName; return c; }).ToList();
-            dmData.Select(c => { c.UpdateOn = now; return c; }).ToList();
+            dmData.Select(c => { c.CteDb = _config.AppName; return c; }).ToList();
+            dmData.Select(c => { c.CteDo = now; return c; }).ToList();
             _dmUnitOfWork.GetRepository<ZSPE_02>().AddRange(dmData);
             _dmUnitOfWork.Complete();
         }
