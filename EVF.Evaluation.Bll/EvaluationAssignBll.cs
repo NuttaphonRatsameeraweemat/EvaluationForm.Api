@@ -130,7 +130,7 @@ namespace EVF.Evaluation.Bll
         /// <param name="userType">The user type.</param>
         /// <param name="isReject">The reject is true or not.</param>
         /// <returns></returns>
-        private EvaluationAssign InitialEvaluationAssign(int evaluationId, Hremployee emp, string userType, bool isReject = false)
+        private EvaluationAssign InitialEvaluationAssign(int evaluationId, Hremployee emp, string userType, bool isReject = false, bool isAction = false)
         {
             return new EvaluationAssign
             {
@@ -138,6 +138,7 @@ namespace EVF.Evaluation.Bll
                 AdUser = emp?.Aduser,
                 EmpNo = emp?.EmpNo,
                 IsReject = isReject,
+                IsAction = isAction,
                 UserType = userType
             };
         }
