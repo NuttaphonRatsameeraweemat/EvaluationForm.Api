@@ -27,13 +27,19 @@ namespace EVF.Evaluation.Bll.Models
         [Required]
         public string PurchasingOrg { get; set; }
         [Required]
-        public int PeriodId { get; set; }
+        public int PeriodItemId { get; set; }
+        public string Status { get; set; }
 
-        public string[] VendorList { get; set; }
         public string[] EvaluatorList { get; set; }
-        public string PurchasingEmpNo { get; set; }
+        public string EvaluatorPurchasing { get; set; }
 
         //Display
         public string VendorName { get; set; }
+        public string EvaluationTemplateName { get; set; }
+        public string CompanyName { get; set; }
+        public string PurchasingOrgName { get; set; }
+        public string StartEvaDateString { get; set; }
+        public string EndEvaDateString { get; set; }
+        public string StatusName { get; set; }
     }
 }

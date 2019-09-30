@@ -5,6 +5,7 @@ using EVF.Hr.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Master.Bll.Models;
 using EVF.Workflow.Bll.Models;
+using EVF.Evaluation.Bll.Models;
 
 namespace EVF.Api.Extensions
 {
@@ -32,7 +33,7 @@ namespace EVF.Api.Extensions
         /// <summary>
         /// Create auto mapper profile master model.
         /// </summary>
-        public void MappingMasterModel()
+        private void MappingMasterModel()
         {
             CreateMap<Kpi, KpiViewModel>();
             CreateMap<KpiViewModel, Kpi>();
@@ -65,7 +66,7 @@ namespace EVF.Api.Extensions
         /// <summary>
         /// Create auto mapper profile central setting model.
         /// </summary>
-        public void MappingCentralSettingModel()
+        private void MappingCentralSettingModel()
         {
             CreateMap<Approval, ApprovalViewModel>();
             CreateMap<ApprovalViewModel, Approval>();
@@ -78,7 +79,7 @@ namespace EVF.Api.Extensions
         /// <summary>
         /// Create auto mapper profile humam resource model.
         /// </summary>
-        public void MappingHrModel()
+        private void MappingHrModel()
         {
             CreateMap<Hrcompany, HrCompanyViewModel>();
             CreateMap<HrCompanyViewModel, Hrcompany>();
@@ -91,7 +92,7 @@ namespace EVF.Api.Extensions
         /// <summary>
         /// Create auto mapper profile authorization model.
         /// </summary>
-        public void MappingAuthorizationModel()
+        private void MappingAuthorizationModel()
         {
             CreateMap<AppCompositeRole, RoleViewModel>();
             CreateMap<RoleViewModel, AppCompositeRole>();
@@ -102,10 +103,21 @@ namespace EVF.Api.Extensions
         /// <summary>
         /// Create auto mapper profile authorization model.
         /// </summary>
-        public void MappingWorkflowModel()
+        private void MappingWorkflowModel()
         {
             CreateMap<WorkflowDelegate, WorkflowDelegateViewModel>();
             CreateMap<WorkflowDelegateViewModel, WorkflowDelegate>();
+        }
+
+        /// <summary>
+        /// Create auto mapper profile authorization model.
+        /// </summary>
+        private void MappingEvaluationModel()
+        {
+            CreateMap<EvaluationLogItem, EvaluationLogItemViewModel>();
+            CreateMap<EvaluationLogItemViewModel, EvaluationLogItem>();
+            CreateMap<EvaluationViewModel, Data.Pocos.Evaluation>();
+            CreateMap<Data.Pocos.Evaluation, EvaluationViewModel>();
         }
 
         #endregion

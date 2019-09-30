@@ -36,6 +36,8 @@ using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll;
 using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
+using EVF.Evaluation.Bll.Interfaces;
+using EVF.Evaluation.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -114,6 +116,17 @@ namespace EVF.Api.Extensions
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
             services.AddScoped<IApprovalBll, ApprovalBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Central Setting Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureEvaluationBll(this IServiceCollection services)
+        {
+            services.AddScoped<IEvaluationBll, EvaluationBll>();
+            services.AddScoped<IEvaluationAssignBll, EvaluationAssignBll>();
+            services.AddScoped<IEvaluationLogBll, EvaluationLogBll>();
         }
 
         /// <summary>

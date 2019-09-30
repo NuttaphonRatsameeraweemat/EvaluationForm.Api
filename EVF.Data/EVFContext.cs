@@ -51,6 +51,7 @@ namespace EVF.Data
         public virtual DbSet<PurchaseOrgItem> PurchaseOrgItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
+        public virtual DbSet<Vendor> Vendor { get; set; }
         public virtual DbSet<VendorTransection> VendorTransection { get; set; }
         public virtual DbSet<WorkflowActivityLog> WorkflowActivityLog { get; set; }
         public virtual DbSet<WorkflowActivityStep> WorkflowActivityStep { get; set; }
@@ -150,6 +151,14 @@ namespace EVF.Data
             {
                 entity.HasKey(e => new { e.ValueType, e.ValueKey })
                     .HasName("ValueHelp_pkey");
+            });
+
+            modelBuilder.Entity<Vendor>(entity =>
+            {
+                entity.HasKey(e => e.VendorNo)
+                    .HasName("PK__Vendor__FC8600A8EBBBDA33");
+
+                entity.Property(e => e.VendorNo).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<VendorTransection>(entity =>

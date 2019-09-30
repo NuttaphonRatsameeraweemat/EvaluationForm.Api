@@ -29,6 +29,7 @@ namespace EVF.Helper.Components
         public const string ValueTypeActiveStatus = "ACTIVE_STATUS";
         public const string ValueTypeSAPScoreFields = "SAPScoreFields";
         public const string ValueTypePeriodRound = "PeriodRound";
+        public const string ValueTypeEvaStatus = "EvaStatus";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";
@@ -38,6 +39,10 @@ namespace EVF.Helper.Components
         public const string ItemMenuCode = "ITEM";
         public const string RoleDisplay = "Role_DS_";
         public const string RoleManage = "Role_MA_";
+        //Evaluation Status
+        public const string EvaWaiting = "EvaWaiting";
+        public const string EvaComplete = "EvaComplete";
+        public const string EvaExpire = "EvaExpire";
         //Activity Workflow
         public const string ActivityRequest = "SendRequest";
         public const string ActivityApprove = "Approve";
