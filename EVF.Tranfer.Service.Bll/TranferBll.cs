@@ -28,6 +28,10 @@ namespace EVF.Tranfer.Service.Bll
         /// </summary>
         private readonly IUnitOfWork _evfUnitOfWork;
         /// <summary>
+        /// The utilities unit of work for manipulating utilities data in brb util database.
+        /// </summary>
+        private readonly IUnitOfWork _brbUnitOfWork;
+        /// <summary>
         /// The auto mapper.
         /// </summary>
         private readonly IMapper _mapper;
@@ -53,6 +57,7 @@ namespace EVF.Tranfer.Service.Bll
         {
             _dmUnitOfWork = unitOfWork("DM");
             _evfUnitOfWork = unitOfWork("EVF");
+            _brbUnitOfWork = unitOfWork("BRB");
             _mapper = mapper;
             _config = config;
             _logger = logger;

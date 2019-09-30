@@ -16,6 +16,7 @@ namespace EVF.Data.Pocos
         [Column("PerformanceID")]
         public int? PerformanceId { get; set; }
         public int? Score { get; set; }
+        public int? LevelPoint { get; set; }
         [StringLength(255)]
         public string Reason { get; set; }
     }

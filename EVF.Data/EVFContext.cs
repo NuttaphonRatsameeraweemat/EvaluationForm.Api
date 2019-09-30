@@ -46,8 +46,12 @@ namespace EVF.Data
         public virtual DbSet<LevelPointItem> LevelPointItem { get; set; }
         public virtual DbSet<Period> Period { get; set; }
         public virtual DbSet<PeriodItem> PeriodItem { get; set; }
+        public virtual DbSet<PurGroupWeightingKey> PurGroupWeightingKey { get; set; }
+        public virtual DbSet<PurchaseOrg> PurchaseOrg { get; set; }
+        public virtual DbSet<PurchaseOrgItem> PurchaseOrgItem { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
+        public virtual DbSet<VendorTransection> VendorTransection { get; set; }
         public virtual DbSet<WorkflowActivityLog> WorkflowActivityLog { get; set; }
         public virtual DbSet<WorkflowActivityStep> WorkflowActivityStep { get; set; }
         public virtual DbSet<WorkflowDelegate> WorkflowDelegate { get; set; }
@@ -64,6 +68,22 @@ namespace EVF.Data
                     .HasName("AppMenu_pkey");
 
                 entity.Property(e => e.MenuCode).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<EvaluationSapResult>(entity =>
+            {
+                entity.HasKey(e => new { e.ComCode, e.PurOrg, e.Vendor, e.YearMonth, e.WeightKey })
+                    .HasName("PK__Evaluati__123CF657B3391254");
+
+                entity.Property(e => e.ComCode).IsUnicode(false);
+
+                entity.Property(e => e.PurOrg).IsUnicode(false);
+
+                entity.Property(e => e.Vendor).IsUnicode(false);
+
+                entity.Property(e => e.YearMonth).IsUnicode(false);
+
+                entity.Property(e => e.WeightKey).IsUnicode(false);
             });
 
             modelBuilder.Entity<Hrcompany>(entity =>
@@ -104,10 +124,65 @@ namespace EVF.Data
                 entity.Property(e => e.PosId).ValueGeneratedNever();
             });
 
+            modelBuilder.Entity<PurGroupWeightingKey>(entity =>
+            {
+                entity.HasKey(e => new { e.PurGroup, e.WeightingKey })
+                    .HasName("PK__PurGroup__2B0B1E1E853E2023");
+            });
+
+            modelBuilder.Entity<PurchaseOrg>(entity =>
+            {
+                entity.HasKey(e => e.PurchaseOrg1)
+                    .HasName("PK__Purchase__59DCBB309AE37431");
+
+                entity.Property(e => e.PurchaseOrg1).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<PurchaseOrgItem>(entity =>
+            {
+                entity.HasKey(e => e.PuchaseOrg)
+                    .HasName("PK__Purchase__A58DDCA0F9A98ACA");
+
+                entity.Property(e => e.PuchaseOrg).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<ValueHelp>(entity =>
             {
                 entity.HasKey(e => new { e.ValueType, e.ValueKey })
                     .HasName("ValueHelp_pkey");
+            });
+
+            modelBuilder.Entity<VendorTransection>(entity =>
+            {
+                entity.Property(e => e.Condition).IsUnicode(false);
+
+                entity.Property(e => e.Datatype).IsUnicode(false);
+
+                entity.Property(e => e.DocNumber).IsUnicode(false);
+
+                entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.Free).IsUnicode(false);
+
+                entity.Property(e => e.Intercomp).IsUnicode(false);
+
+                entity.Property(e => e.K2Key).IsUnicode(false);
+
+                entity.Property(e => e.LineId).IsUnicode(false);
+
+                entity.Property(e => e.MaterialCode).IsUnicode(false);
+
+                entity.Property(e => e.MaterialGrp).IsUnicode(false);
+
+                entity.Property(e => e.PurgropCode).IsUnicode(false);
+
+                entity.Property(e => e.PurorgCode).IsUnicode(false);
+
+                entity.Property(e => e.PurorgName).IsUnicode(false);
+
+                entity.Property(e => e.UnitCode).IsUnicode(false);
+
+                entity.Property(e => e.Vendor).IsUnicode(false);
             });
 
             modelBuilder.Entity<WorkflowActivityLog>(entity =>
@@ -128,22 +203,6 @@ namespace EVF.Data
             modelBuilder.Entity<WorkflowProcessInstance>(entity =>
             {
                 entity.Property(e => e.ProcessInstanceId).ValueGeneratedNever();
-            });
-
-            modelBuilder.Entity<EvaluationSapResult>(entity =>
-            {
-                entity.HasKey(e => new { e.ComCode, e.PurOrg, e.Vendor, e.YearMonth, e.WeightKey })
-                    .HasName("PK__Evaluati__123CF657B3391254");
-
-                entity.Property(e => e.ComCode).IsUnicode(false);
-
-                entity.Property(e => e.PurOrg).IsUnicode(false);
-
-                entity.Property(e => e.Vendor).IsUnicode(false);
-
-                entity.Property(e => e.YearMonth).IsUnicode(false);
-
-                entity.Property(e => e.WeightKey).IsUnicode(false);
             });
 
         }

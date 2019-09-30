@@ -53,6 +53,24 @@ namespace EVF.Tranfer.Service.Api.Extensions
             services.AddTransient<DMUnitOfWork>();
         }
 
+        /// <summary>
+        /// Dependency Injection Repository and UnitOfWork.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="Configuration">The configuration from settinfile.</param>
+        public static void ConfigureBrbUtilRepository(this IServiceCollection services, IConfiguration Configuration)
+        {
+            services.AddEntityFrameworkSqlServer()
+             .AddDbContext<BrbUtilContext>(options =>
+              options.UseSqlServer(Configuration["ConnectionStrings:BrbUtilConnection"]));
+
+            services.AddTransient<BrbUtilUnitOfWork>();
+        }
+
+        /// <summary>
+        /// Control dependency injection unit of work.
+        /// </summary>
+        /// <param name="services"></param>
         public static void ConfigureServiceResolver(this IServiceCollection services)
         {
             services.AddTransient<ServiceResolver>(serviceProvider => key =>
@@ -63,6 +81,8 @@ namespace EVF.Tranfer.Service.Api.Extensions
                         return serviceProvider.GetService<DMUnitOfWork>();
                     case "EVF":
                         return serviceProvider.GetService<EVFUnitOfWork>();
+                    case "BRB":
+                        return serviceProvider.GetService<BrbUtilUnitOfWork>();
                     default:
                         throw new KeyNotFoundException();
                 }

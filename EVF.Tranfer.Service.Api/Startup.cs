@@ -24,6 +24,7 @@ namespace EVF.Tranfer.Service.Api
             //Add Configure Extension and Bll class.
             services.ConfigureEvfCoreRepository(Configuration);
             services.ConfigureEvfTranferRepository(Configuration);
+            services.ConfigureBrbUtilRepository(Configuration);
             services.ConfigureBll();
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
@@ -40,7 +41,7 @@ namespace EVF.Tranfer.Service.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-                app.ConfigureUseSwagger();
+            app.ConfigureUseSwagger();
 
             app.UseAuthentication();
             app.ConfigureMiddleware();
