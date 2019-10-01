@@ -44,5 +44,11 @@ namespace EVF.Master.Bll.Interfaces
         /// <param name="ids">The kpi identity list.</param>
         /// <param name="isUse">The flag is using.</param>
         void SetIsUse(int[] ids, bool isUse);
+        /// <summary>
+        /// Validate kpi is using in kpi group or not.
+        /// </summary>
+        /// <param name="id">The kpi identity.</param>
+        /// <returns></returns>
+        bool IsUse(int id);
     }
 }

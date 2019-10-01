@@ -137,6 +137,17 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Validate kpi is using in kpi group or not.
+        /// </summary>
+        /// <param name="id">The kpi identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var kpi = _unitOfWork.GetRepository<Kpi>().GetCache(x => x.Id == id).FirstOrDefault();
+            return kpi.IsUse.Value;
+        }
+
+        /// <summary>
         /// Set flag is use in kpi.
         /// </summary>
         /// <param name="ids">The kpi identity list.</param>
