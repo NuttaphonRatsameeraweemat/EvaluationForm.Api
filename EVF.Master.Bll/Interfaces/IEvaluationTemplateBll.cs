@@ -49,5 +49,17 @@ namespace EVF.Master.Bll.Interfaces
         /// <param name="id">The identity of evaluation template.</param>
         /// <returns></returns>
         EvaluationTemplateDisplayViewModel LoadTemplate(int id);
+        /// <summary>
+        /// Validate grade is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The grade identity.</param>
+        /// <returns></returns>
+        bool IsUse(int id);
+        /// <summary>
+        /// Set flag is use in grade.
+        /// </summary>
+        /// <param name="ids">The grade identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        void SetIsUse(int id);
     }
 }

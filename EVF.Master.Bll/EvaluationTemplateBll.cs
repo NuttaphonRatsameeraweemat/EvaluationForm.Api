@@ -101,6 +101,11 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(EvaluationTemplateViewModel model)
         {
             var result = new ResultViewModel();
+            if (this.IsUse(model.Id))
+            {
+                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.EvaluationTemplateMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest);
+            }
             return result;
         }
 
@@ -118,6 +123,8 @@ namespace EVF.Master.Bll
                 evaluationTemplate.CreateBy = _token.EmpNo;
                 evaluationTemplate.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluationTemplate>().Add(evaluationTemplate);
+                this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value, 
+                                     evaluationTemplate.LevelPointId.Value, true);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
@@ -142,6 +149,8 @@ namespace EVF.Master.Bll
                 evaluationTemplate.LastModifyBy = _token.EmpNo;
                 evaluationTemplate.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluationTemplate);
+                this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
+                                     evaluationTemplate.LevelPointId.Value, true);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
@@ -158,12 +167,51 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                _unitOfWork.GetRepository<EvaluationTemplate>().Remove(
-                    _unitOfWork.GetRepository<EvaluationTemplate>().GetById(id));
+                var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetById(id);
+                _unitOfWork.GetRepository<EvaluationTemplate>().Remove(evaluationTemplate);
+                this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
+                                     evaluationTemplate.LevelPointId.Value, false);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
             return result;
+        }
+
+        /// <summary>
+        /// Set flag criteria, grade and levelpoint using in evaluation template.
+        /// </summary>
+        /// <param name="criteriaId">The criteria identity.</param>
+        /// <param name="gradeId">The grade identity.</param>
+        /// <param name="levelPointId">The level point identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        private void UpdateFlagUsing(int criteriaId, int gradeId, int levelPointId, bool isUse)
+        {
+            _criteria.SetIsUse(criteriaId, isUse);
+            _grade.SetIsUse(gradeId, isUse);
+            _levelPoint.SetIsUse(levelPointId, isUse);
+        }
+
+        /// <summary>
+        /// Validate grade is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The grade identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var evaTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == id).FirstOrDefault();
+            return evaTemplate.IsUse.Value;
+        }
+
+        /// <summary>
+        /// Set flag is use in grade.
+        /// </summary>
+        /// <param name="ids">The grade identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int id)
+        {
+            var data = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == id).FirstOrDefault();
+            data.IsUse = true;
+            _unitOfWork.GetRepository<EvaluationTemplate>().Update(data);
         }
 
         /// <summary>
@@ -172,6 +220,9 @@ namespace EVF.Master.Bll
         private void ReloadCacheEvaluationTemplate()
         {
             _unitOfWork.GetRepository<EvaluationTemplate>().ReCache();
+            _unitOfWork.GetRepository<Criteria>().ReCache();
+            _unitOfWork.GetRepository<LevelPoint>().ReCache();
+            _unitOfWork.GetRepository<Grade>().ReCache();
         }
 
         /// <summary>

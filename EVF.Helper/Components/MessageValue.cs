@@ -21,6 +21,7 @@ namespace EVF.Helper.Components
         public const string KpiMessage = "ตัวชี้วัด";
         public const string KpiGroupMessage = "กลุ่มตัวชี้วัด";
         public const string CriteriaMessage = "หลักเกณฑ์";
+        public const string EvaluationTemplateMessage = "Template แบบประเมิน";
         public const string LevelPointMessage = "ระดับคะแนน";
         public const string GradeMessage = "เกณฑ์การประเมิน";
     }
