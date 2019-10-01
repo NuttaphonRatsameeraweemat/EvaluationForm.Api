@@ -14,5 +14,6 @@ namespace EVF.Data.Pocos
         [StringLength(100)]
         public string LevelPointName { get; set; }
         public int? PercentPoint { get; set; }
+        public int? Sequence { get; set; }
     }
 }

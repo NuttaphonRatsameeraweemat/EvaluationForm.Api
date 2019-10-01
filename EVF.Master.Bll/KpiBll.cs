@@ -154,6 +154,10 @@ namespace EVF.Master.Bll
         /// <param name="isUse">The flag is using.</param>
         public void SetIsUse(int[] ids, bool isUse)
         {
+            if (!isUse)
+            {
+
+            }
             var data = _unitOfWork.GetRepository<Kpi>().GetCache(x => ids.Contains(x.Id));
             data.Select(c => { c.IsUse = isUse; return c; }).ToList();
             _unitOfWork.GetRepository<Kpi>().UpdateRange(data);

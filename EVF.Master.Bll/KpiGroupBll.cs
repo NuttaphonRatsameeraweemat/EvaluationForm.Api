@@ -178,14 +178,14 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Insert Kpi group item list.
         /// </summary>
-        /// <param name="KpiGroupId">The identity of Kpi group.</param>
-        /// <param name="KpiItems">The identity of Kpi items.</param>
-        private void SaveItem(int KpiGroupId, IEnumerable<KpiGroupItemViewModel> KpiItems)
+        /// <param name="kpiGroupId">The identity of Kpi group.</param>
+        /// <param name="kpiItems">The identity of Kpi items.</param>
+        private void SaveItem(int kpiGroupId, IEnumerable<KpiGroupItemViewModel> kpiItems)
         {
-            var data = _mapper.Map<IEnumerable<KpiGroupItemViewModel>, IEnumerable<KpiGroupItem>>(KpiItems);
-            data.Select(c => { c.KpiGroupId = KpiGroupId; return c; }).ToList();
+            var data = _mapper.Map<IEnumerable<KpiGroupItemViewModel>, IEnumerable<KpiGroupItem>>(kpiItems);
+            data.Select(c => { c.KpiGroupId = kpiGroupId; return c; }).ToList();
             _unitOfWork.GetRepository<KpiGroupItem>().AddRange(data);
-            _kpi.SetIsUse(data.Select(x => x.KpiId.Value).ToArray(), true);
+            this.UpdateKpiUsingFlag(kpiGroupId, kpiItems.Select(x => x.KpiId).ToArray(), true);
         }
 
         /// <summary>
@@ -261,7 +261,32 @@ namespace EVF.Master.Bll
         private void DeleteItem(IEnumerable<KpiGroupItem> model)
         {
             _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(model);
-            _kpi.SetIsUse(model.Select(x => x.KpiId.Value).ToArray(), false);
+            this.UpdateKpiUsingFlag(model.FirstOrDefault() != null ? model.FirstOrDefault().KpiGroupId.Value : 0, 
+                                 model.Select(x => x.KpiId.Value).ToArray(), false);
+        }
+
+        /// <summary>
+        /// Update kpi flag is use.
+        /// </summary>
+        /// <param name="kpiGroupId">The kpi group identity.</param>
+        /// <param name="ids">The kpi identity list.</param>
+        /// <param name="isUse">Flag is using</param>
+        private void UpdateKpiUsingFlag(int kpiGroupId, int[] ids, bool isUse)
+        {
+            var kpiIds = new List<int>();
+            if (!isUse)
+            {
+                foreach (var item in ids)
+                {
+                    var temp = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId != kpiGroupId && x.KpiId == item);
+                    if (temp.Count() <= 0)
+                    {
+                        kpiIds.Add(item);
+                    }
+                }
+            }
+            else kpiIds.AddRange(ids);
+            _kpi.SetIsUse(kpiIds.ToArray(), isUse);
         }
 
         /// <summary>

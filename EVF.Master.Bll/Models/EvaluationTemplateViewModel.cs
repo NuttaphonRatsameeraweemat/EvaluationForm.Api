@@ -21,7 +21,7 @@ namespace EVF.Master.Bll.Models
         public int GradeId { get; set; }
         [Required]
         public int LevelPointId { get; set; }
-        public bool? IsUse { get; set; }
+        public bool IsUse { get; set; }
     }
 
     public class EvaluationTemplateDisplayViewModel

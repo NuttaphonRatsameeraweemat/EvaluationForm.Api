@@ -68,12 +68,22 @@ namespace EVF.Api.Controllers.MasterController
         [Route("Edit")]
         public IActionResult Edit([FromBody]CriteriaViewModel model)
         {
-            var response = _criteria.ValidateData(model);
-            if (response.IsError)
+            IActionResult response;
+            if (_criteria.IsUse(model.Id))
             {
-                return BadRequest(response);
+                response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.CriteriaMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest));
             }
-            else return Ok(_criteria.Edit(model));
+            else
+            {
+                var validate = _criteria.ValidateData(model);
+                if (validate.IsError)
+                {
+                    response = BadRequest(validate);
+                }
+                else response = Ok(_criteria.Edit(model));
+            }
+            return response;
         }
 
         [HttpPost]

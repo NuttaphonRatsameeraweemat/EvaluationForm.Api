@@ -20,7 +20,7 @@ namespace EVF.Master.Bll.Models
         [MaxLength(200)]
         public string Name { get; set; }
         public bool IsDefault { get; set; }
-
+        public bool IsUse { get; set; }
         public List<GradeItemViewModel> GradeItems { get; set; }
     }
 }

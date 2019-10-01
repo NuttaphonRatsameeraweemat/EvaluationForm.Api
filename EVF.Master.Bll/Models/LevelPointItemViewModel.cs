@@ -14,5 +14,7 @@ namespace EVF.Master.Bll.Models
         public string LevelPointName { get; set; }
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int PercentPoint { get; set; }
+        [Required]
+        public int Sequence { get; set; }
     }
 }

@@ -87,7 +87,7 @@ namespace EVF.Master.Bll
         {
             return _mapper.Map<IEnumerable<LevelPointItem>, IEnumerable<LevelPointItemViewModel>>(
                    _unitOfWork.GetRepository<LevelPointItem>().GetCache(x => x.LevelPointId == levelpointId,
-                                                                        x => x.OrderBy(y => y.PercentPoint)));
+                                                                        x => x.OrderBy(y => y.Sequence)));
         }
 
         /// <summary>
@@ -156,6 +156,7 @@ namespace EVF.Master.Bll
         /// <param name="levelPointItems">The identity of level point items.</param>
         private void EditItem(int levelPointId, IEnumerable<LevelPointItemViewModel> levelPointItems)
         {
+            levelPointItems.Select(c => { c.LevelPointId = levelPointId; return c; }).ToList();
             var data = _unitOfWork.GetRepository<LevelPointItem>().GetCache(x => x.LevelPointId == levelPointId);
 
             var levelPointItemAdd = levelPointItems.Where(x => x.Id == 0);

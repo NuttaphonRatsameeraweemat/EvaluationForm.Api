@@ -132,12 +132,6 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(CriteriaViewModel model)
         {
             var result = new ResultViewModel();
-            if (this.IsUse(model.Id))
-            {
-                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.CriteriaMessage),
-                                      (int)System.Net.HttpStatusCode.BadRequest);
-                return result;
-            }
             if (model.CriteriaGroups.Count == 0)
             {
                 result = UtilityService.InitialResultError(MessageValue.CriteriaKpiGroupEmpty, (int)HttpStatusCode.BadRequest);
@@ -206,7 +200,7 @@ namespace EVF.Master.Bll
                     this.SaveCriteriaItem(data.Id, item.CriteriaItems);
                 }
             }
-            _kpiGroup.SetIsUse(criteriaGroups.Select(x => x.KpiGroupId).ToArray(), true);
+            this.UpdateKpiGroupUsingFlag(criteriaId, criteriaGroups.Select(x => x.KpiGroupId).ToArray(), true);
         }
 
         /// <summary>
@@ -333,7 +327,8 @@ namespace EVF.Master.Bll
                 this.DeleteCriteriaItems(data);
             }
             _unitOfWork.GetRepository<CriteriaGroup>().RemoveRange(model);
-            _kpiGroup.SetIsUse(model.Select(x => x.KpiGroupId.Value).ToArray(), false);
+            this.UpdateKpiGroupUsingFlag(model.FirstOrDefault() != null ? model.FirstOrDefault().CriteriaId.Value : 0,
+                                         model.Select(x => x.KpiGroupId.Value).ToArray(), false);
         }
 
         /// <summary>
@@ -366,6 +361,30 @@ namespace EVF.Master.Bll
             var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == id).FirstOrDefault();
             criteria.IsUse = isUse;
             _unitOfWork.GetRepository<Criteria>().Update(criteria);
+        }
+
+        /// <summary>
+        /// Update criteria flag is use.
+        /// </summary>
+        /// <param name="kpiGroupId">The criteria identity.</param>
+        /// <param name="ids">The kpi group identity list.</param>
+        /// <param name="isUse">Flag is using</param>
+        private void UpdateKpiGroupUsingFlag(int criteriaId, int[] ids, bool isUse)
+        {
+            var kpiGroupIds = new List<int>();
+            if (!isUse)
+            {
+                foreach (var item in ids)
+                {
+                    var temp = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId != criteriaId && x.KpiGroupId == item);
+                    if (temp.Count() <= 0)
+                    {
+                        kpiGroupIds.Add(item);
+                    }
+                }
+            }
+            else kpiGroupIds.AddRange(ids);
+            _kpiGroup.SetIsUse(kpiGroupIds.ToArray(), isUse);
         }
 
         /// <summary>

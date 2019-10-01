@@ -57,7 +57,7 @@ namespace EVF.Master.Bll
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
         /// <param name="kpiGroup">The criteria manager provides criteria functionality.</param>
-        public EvaluationTemplateBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, 
+        public EvaluationTemplateBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token,
                                     ICriteriaBll criteria, ILevelPointBll levelPoint, IGradeBll grade)
         {
             _unitOfWork = unitOfWork;
@@ -101,11 +101,6 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(EvaluationTemplateViewModel model)
         {
             var result = new ResultViewModel();
-            if (this.IsUse(model.Id))
-            {
-                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.EvaluationTemplateMessage),
-                                      (int)System.Net.HttpStatusCode.BadRequest);
-            }
             return result;
         }
 
@@ -123,8 +118,9 @@ namespace EVF.Master.Bll
                 evaluationTemplate.CreateBy = _token.EmpNo;
                 evaluationTemplate.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluationTemplate>().Add(evaluationTemplate);
-                this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value, 
-                                     evaluationTemplate.LevelPointId.Value, true);
+                _unitOfWork.Complete();
+                this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
+                                     evaluationTemplate.LevelPointId.Value, evaluationTemplate.Id, true);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
@@ -150,7 +146,7 @@ namespace EVF.Master.Bll
                 evaluationTemplate.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluationTemplate);
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
-                                     evaluationTemplate.LevelPointId.Value, true);
+                                     evaluationTemplate.LevelPointId.Value, evaluationTemplate.Id, true);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
@@ -170,7 +166,7 @@ namespace EVF.Master.Bll
                 var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetById(id);
                 _unitOfWork.GetRepository<EvaluationTemplate>().Remove(evaluationTemplate);
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
-                                     evaluationTemplate.LevelPointId.Value, false);
+                                     evaluationTemplate.LevelPointId.Value, id, false);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluationTemplate();
@@ -184,11 +180,26 @@ namespace EVF.Master.Bll
         /// <param name="gradeId">The grade identity.</param>
         /// <param name="levelPointId">The level point identity.</param>
         /// <param name="isUse">The flag is using.</param>
-        private void UpdateFlagUsing(int criteriaId, int gradeId, int levelPointId, bool isUse)
+        private void UpdateFlagUsing(int criteriaId, int gradeId, int levelPointId, int evaluationTemplateId, bool isUse)
         {
-            _criteria.SetIsUse(criteriaId, isUse);
-            _grade.SetIsUse(gradeId, isUse);
-            _levelPoint.SetIsUse(levelPointId, isUse);
+            var criterias = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id != evaluationTemplateId &&
+                                                                                          x.CriteriaId == criteriaId);
+            var grades = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id != evaluationTemplateId &&
+                                                                                         x.GradeId == gradeId);
+            var levelPoints = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id != evaluationTemplateId &&
+                                                                                         x.LevelPointId == levelPointId);
+            if (criterias.Count() <= 0)
+            {
+                _criteria.SetIsUse(criteriaId, isUse);
+            }
+            if (grades.Count() <= 0)
+            {
+                _grade.SetIsUse(gradeId, isUse);
+            }
+            if (levelPoints.Count() <= 0)
+            {
+                _levelPoint.SetIsUse(levelPointId, isUse);
+            }
         }
 
         /// <summary>

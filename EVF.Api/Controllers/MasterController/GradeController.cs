@@ -68,12 +68,22 @@ namespace EVF.Api.Controllers.MasterController
         [Route("Edit")]
         public IActionResult Edit([FromBody]GradeViewModel model)
         {
-            var response = _grade.ValidateData(model);
-            if (response.IsError)
+            IActionResult response;
+            if (_grade.IsUse(model.Id))
             {
-                return BadRequest(response);
+                response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.GradeMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest));
             }
-            else return Ok(_grade.Edit(model));
+            else
+            {
+                var validate = _grade.ValidateData(model);
+                if (validate.IsError)
+                {
+                    response = BadRequest(validate);
+                }
+                else response = Ok(_grade.Edit(model));
+            }
+            return response;
         }
 
         [HttpPost]

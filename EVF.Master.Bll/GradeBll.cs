@@ -97,12 +97,6 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(GradeViewModel model)
         {
             var result = new ResultViewModel();
-            if (this.IsUse(model.Id))
-            {
-                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.GradeMessage),
-                                      (int)System.Net.HttpStatusCode.BadRequest);
-                return result;
-            }
             int oldEnd = int.MinValue;
             foreach (var item in model.GradeItems)
             {
@@ -187,6 +181,7 @@ namespace EVF.Master.Bll
         /// <param name="gradeItems">The identity of grade items.</param>
         private void EditItem(int gradeId, IEnumerable<GradeItemViewModel> gradeItems)
         {
+            gradeItems.Select(c => { c.GradeId = gradeId; return c; }).ToList();
             var data = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
 
             var gradeItemAdd = gradeItems.Where(x => x.Id == 0);

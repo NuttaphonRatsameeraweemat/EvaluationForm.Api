@@ -19,6 +19,7 @@ namespace EVF.Master.Bll.Models
         [MaxLength(100)]
         public string Name { get; set; }
         public bool IsDefault { get; set; }
+        public bool IsUse { get; set; }
         public List<LevelPointItemViewModel> LevelPointItems { get; set; }
     }
 }
