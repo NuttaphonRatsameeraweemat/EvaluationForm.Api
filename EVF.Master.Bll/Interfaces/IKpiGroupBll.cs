@@ -46,5 +46,17 @@ namespace EVF.Master.Bll.Interfaces
         /// <param name="id">The identity of Kpi group.</param>
         /// <returns></returns>
         ResultViewModel Delete(int id);
+        /// <summary>
+        /// Set flag is use in kpi group.
+        /// </summary>
+        /// <param name="ids">The kpi group identity list.</param>
+        /// <param name="isUse">The flag is using.</param>
+        void SetIsUse(int[] ids, bool isUse);
+        /// <summary>
+        /// Validate kpi group is using in criteria or not.
+        /// </summary>
+        /// <param name="id">The kpi group identity.</param>
+        /// <returns></returns>
+        bool IsUse(int id);
     }
 }

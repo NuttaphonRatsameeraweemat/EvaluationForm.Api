@@ -265,6 +265,29 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Validate kpi group is using in criteria or not.
+        /// </summary>
+        /// <param name="id">The kpi group identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetCache(x => x.Id == id).FirstOrDefault();
+            return kpiGroup.IsUse.Value;
+        }
+
+        /// <summary>
+        /// Set flag is use in kpi group.
+        /// </summary>
+        /// <param name="ids">The kpi group identity list.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int[] ids, bool isUse)
+        {
+            var data = _unitOfWork.GetRepository<KpiGroup>().GetCache(x => ids.Contains(x.Id));
+            data.Select(c => { c.IsUse = isUse; return c; }).ToList();
+            _unitOfWork.GetRepository<KpiGroup>().UpdateRange(data);
+        }
+
+        /// <summary>
         /// Get Sap fields id.
         /// </summary>
         /// <returns></returns>
@@ -300,6 +323,7 @@ namespace EVF.Master.Bll
             _unitOfWork.GetRepository<KpiGroup>().ReCache();
             _unitOfWork.GetRepository<KpiGroupItem>().ReCache();
             _unitOfWork.GetRepository<Kpi>().ReCache();
+            _unitOfWork.GetRepository<SapFields>().ReCache();
         }
 
         #endregion

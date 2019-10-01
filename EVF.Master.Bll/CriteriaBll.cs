@@ -132,18 +132,27 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(CriteriaViewModel model)
         {
             var result = new ResultViewModel();
+            if (model.CriteriaGroups.Count == 0)
+            {
+                result = UtilityService.InitialResultError(MessageValue.CriteriaKpiGroupEmpty, (int)HttpStatusCode.BadRequest);
+                return result;
+            }
             int totalScore = model.CriteriaGroups.Sum(x => x.MaxScore);
-            if (totalScore > 100)
+            if (totalScore > 100 || totalScore != 100)
             {
                 result = UtilityService.InitialResultError(MessageValue.CriteriaOverScore, (int)HttpStatusCode.BadRequest);
                 return result;
             }
             foreach (var item in model.CriteriaGroups)
             {
-                int scoreGroup = item.CriteriaItems.Sum(x => x.MaxScore);
-                if (scoreGroup > item.MaxScore || scoreGroup < item.MaxScore)
+                if (item.CriteriaItems.Count > 0)
                 {
-                    result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, (int)HttpStatusCode.BadRequest);
+                    int scoreGroup = item.CriteriaItems.Sum(x => x.MaxScore);
+                    if (scoreGroup > item.MaxScore || scoreGroup < item.MaxScore)
+                    {
+                        result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, (int)HttpStatusCode.BadRequest);
+                        break;
+                    }
                 }
             }
             return result;
@@ -190,7 +199,7 @@ namespace EVF.Master.Bll
                     this.SaveCriteriaItem(data.Id, item.CriteriaItems);
                 }
             }
-
+            _kpiGroup.SetIsUse(criteriaGroups.Select(x => x.KpiGroupId).ToArray(), true);
         }
 
         /// <summary>
@@ -237,6 +246,7 @@ namespace EVF.Master.Bll
         /// <param name="criteriaGroups">The criteria groups information value.</param>
         private void EditCriteriaGroup(int criteriaId, IEnumerable<CriteriaGroupViewModel> criteriaGroups)
         {
+            criteriaGroups.Select(c => { c.CriteriaId = criteriaId; return c; }).ToList();
             var data = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId);
 
             var criteriaGroupAdd = criteriaGroups.Where(x => x.Id == 0);
@@ -252,6 +262,7 @@ namespace EVF.Master.Bll
             criteriaGroups = criteriaGroups.Where(x => criteriaGroupUpdate.Any(y => y.Id == x.Id));
             foreach (var item in criteriaGroups)
             {
+                item.CriteriaItems.Select(c => { c.CriteriaGroupId = item.Id; return c; }).ToList();
                 this.EditCriteriaItem(item.CriteriaItems);
             }
 
@@ -315,6 +326,7 @@ namespace EVF.Master.Bll
                 this.DeleteCriteriaItems(data);
             }
             _unitOfWork.GetRepository<CriteriaGroup>().RemoveRange(model);
+            _kpiGroup.SetIsUse(model.Select(x => x.KpiGroupId.Value).ToArray(), false);
         }
 
         /// <summary>
@@ -334,6 +346,7 @@ namespace EVF.Master.Bll
             _unitOfWork.GetRepository<Criteria>().ReCache();
             _unitOfWork.GetRepository<CriteriaGroup>().ReCache();
             _unitOfWork.GetRepository<CriteriaItem>().ReCache();
+            _unitOfWork.GetRepository<KpiGroup>().ReCache();
         }
 
         #endregion
