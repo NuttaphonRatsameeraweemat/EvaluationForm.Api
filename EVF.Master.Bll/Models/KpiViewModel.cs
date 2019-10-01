@@ -5,8 +5,8 @@ namespace EVF.Master.Bll.Models
     public class KpiViewModel
     {
 
-        public const string RoleForManageData = "Role_MA_Performance";
-        public const string RoleForDisplayData = "Role_DS_Performance";
+        public const string RoleForManageData = "Role_MA_Kpi";
+        public const string RoleForDisplayData = "Role_DS_Kpi";
 
         public int Id { get; set; }
         [Required]

@@ -137,6 +137,18 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Set flag is use in kpi.
+        /// </summary>
+        /// <param name="ids">The kpi identity list.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int[] ids, bool isUse)
+        {
+            var data = _unitOfWork.GetRepository<Kpi>().GetCache(x => ids.Contains(x.Id));
+            data.Select(c => { c.IsUse = isUse; return c; }).ToList();
+            _unitOfWork.GetRepository<Kpi>().UpdateRange(data);
+        }
+
+        /// <summary>
         /// Reload Cache when Kpi is change.
         /// </summary>
         private void ReloadCacheKpi()

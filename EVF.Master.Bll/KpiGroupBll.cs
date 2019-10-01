@@ -31,6 +31,10 @@ namespace EVF.Master.Bll
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
+        /// <summary>
+        /// The kpi manager provides kpi functionality.
+        /// </summary>
+        private readonly IKpiBll _kpi;
 
         #endregion
 
@@ -42,11 +46,12 @@ namespace EVF.Master.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public KpiGroupBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token)
+        public KpiGroupBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IKpiBll kpi)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
+            _kpi = kpi;
         }
 
         #endregion
@@ -66,6 +71,7 @@ namespace EVF.Master.Bll
             {
                 var kpiGroup = _mapper.Map<KpiGroup, KpiGroupViewModel>(item);
                 kpiGroup.SapScoreField = sapFields.FirstOrDefault(x => x.Id == item.SapFieldsId)?.SapFields1;
+                result.Add(kpiGroup);
             }
             return result;
         }
@@ -77,10 +83,12 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public KpiGroupViewModel GetDetail(int id)
         {
-            var data = _mapper.Map<KpiGroup, KpiGroupViewModel>(
-                   _unitOfWork.GetRepository<KpiGroup>().GetById(id));
-            data.KpiGroupItems = this.GetKpiGroupItem(id).ToList();
-            return data;
+            var result = new KpiGroupViewModel();
+            var data = _unitOfWork.GetRepository<KpiGroup>().GetById(id);
+            result = _mapper.Map<KpiGroup, KpiGroupViewModel>(data);
+            result.SapScoreField = _unitOfWork.GetRepository<SapFields>().GetCache(x => x.Id == data.SapFieldsId).FirstOrDefault()?.SapFields1;
+            result.KpiGroupItems = this.GetKpiGroupItem(id).ToList();
+            return result;
         }
 
         /// <summary>
@@ -154,13 +162,13 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var KpiGroup = _mapper.Map<KpiGroupViewModel, KpiGroup>(model);
-                KpiGroup.SapFieldsId = this.GetSapFields();
-                KpiGroup.CreateBy = _token.EmpNo;
-                KpiGroup.CreateDate = DateTime.Now;
-                _unitOfWork.GetRepository<KpiGroup>().Add(KpiGroup);
+                var kpiGroup = _mapper.Map<KpiGroupViewModel, KpiGroup>(model);
+                kpiGroup.SapFieldsId = this.GetSapFields();
+                kpiGroup.CreateBy = _token.EmpNo;
+                kpiGroup.CreateDate = DateTime.Now;
+                _unitOfWork.GetRepository<KpiGroup>().Add(kpiGroup);
                 _unitOfWork.Complete();
-                this.SaveItem(KpiGroup.Id, model.KpiGroupItems);
+                this.SaveItem(kpiGroup.Id, model.KpiGroupItems);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheKpiGroup();
@@ -177,6 +185,7 @@ namespace EVF.Master.Bll
             var data = _mapper.Map<IEnumerable<KpiGroupItemViewModel>, IEnumerable<KpiGroupItem>>(KpiItems);
             data.Select(c => { c.KpiGroupId = KpiGroupId; return c; }).ToList();
             _unitOfWork.GetRepository<KpiGroupItem>().AddRange(data);
+            _kpi.SetIsUse(data.Select(x => x.KpiId.Value).ToArray(), true);
         }
 
         /// <summary>
@@ -207,22 +216,22 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Update Kpi group items.
         /// </summary>
-        /// <param name="KpiGroupId">The identity of Kpi group.</param>
-        /// <param name="KpiGroupItems">The identity of Kpi items.</param>
-        private void EditItem(int KpiGroupId, IEnumerable<KpiGroupItemViewModel> KpiGroupItems)
+        /// <param name="kpiGroupId">The identity of Kpi group.</param>
+        /// <param name="kpiGroupItems">The identity of Kpi items.</param>
+        private void EditItem(int kpiGroupId, IEnumerable<KpiGroupItemViewModel> kpiGroupItems)
         {
-            KpiGroupItems.Select(c => { c.KpiGroupId = KpiGroupId; return c; }).ToList();
-            var data = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == KpiGroupId);
+            kpiGroupItems.Select(c => { c.KpiGroupId = kpiGroupId; return c; }).ToList();
+            var data = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == kpiGroupId);
 
-            var KpiItemAdd = KpiGroupItems.Where(x => x.Id == 0);
-            var KpiItemDelete = data.Where(x => !KpiGroupItems.Any(y => x.Id == y.Id));
+            var kpiItemAdd = kpiGroupItems.Where(x => x.Id == 0);
+            var kpiItemDelete = data.Where(x => !kpiGroupItems.Any(y => x.Id == y.Id));
 
-            var KpiItemUpdate = _mapper.Map<IEnumerable<KpiGroupItemViewModel>, IEnumerable<KpiGroupItem>>(KpiGroupItems);
-            KpiItemUpdate = KpiItemUpdate.Where(x => data.Any(y => x.Id == y.Id));
+            var kpiItemUpdate = _mapper.Map<IEnumerable<KpiGroupItemViewModel>, IEnumerable<KpiGroupItem>>(kpiGroupItems);
+            kpiItemUpdate = kpiItemUpdate.Where(x => data.Any(y => x.Id == y.Id));
 
-            this.SaveItem(KpiGroupId, KpiItemAdd);
-            this.DeleteItem(KpiItemDelete);
-            _unitOfWork.GetRepository<KpiGroupItem>().UpdateRange(KpiItemUpdate);
+            this.SaveItem(kpiGroupId, kpiItemAdd);
+            this.DeleteItem(kpiItemDelete);
+            _unitOfWork.GetRepository<KpiGroupItem>().UpdateRange(kpiItemUpdate);
         }
 
         /// <summary>
@@ -252,6 +261,7 @@ namespace EVF.Master.Bll
         private void DeleteItem(IEnumerable<KpiGroupItem> model)
         {
             _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(model);
+            _kpi.SetIsUse(model.Select(x => x.KpiId.Value).ToArray(), false);
         }
 
         /// <summary>
@@ -289,6 +299,7 @@ namespace EVF.Master.Bll
         {
             _unitOfWork.GetRepository<KpiGroup>().ReCache();
             _unitOfWork.GetRepository<KpiGroupItem>().ReCache();
+            _unitOfWork.GetRepository<Kpi>().ReCache();
         }
 
         #endregion
