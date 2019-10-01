@@ -1,4 +1,6 @@
-﻿using EVF.Master.Bll.Interfaces;
+﻿using EVF.Helper;
+using EVF.Helper.Components;
+using EVF.Master.Bll.Interfaces;
 using EVF.Master.Bll.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -61,14 +63,28 @@ namespace EVF.Api.Controllers.MasterController
         [Route("Edit")]
         public IActionResult Edit([FromBody]LevelPointViewModel model)
         {
-            return Ok(_levelPoint.Edit(model));
+            IActionResult response;
+            if (_levelPoint.IsUse(model.Id))
+            {
+                response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.LevelPointMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest));
+            }
+            else response = Ok(_levelPoint.Edit(model));
+            return response;
         }
 
         [HttpPost]
         [Route("Delete")]
         public IActionResult Delete(int id)
         {
-            return Ok(_levelPoint.Delete(id));
+            IActionResult response;
+            if (_levelPoint.IsUse(id))
+            {
+                response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.LevelPointMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest));
+            }
+            else response = Ok(_levelPoint.Delete(id));
+            return response;
         }
 
         #endregion

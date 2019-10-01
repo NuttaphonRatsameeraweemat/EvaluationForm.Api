@@ -97,6 +97,12 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(GradeViewModel model)
         {
             var result = new ResultViewModel();
+            if (this.IsUse(model.Id))
+            {
+                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.GradeMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest);
+                return result;
+            }
             int oldEnd = int.MinValue;
             foreach (var item in model.GradeItems)
             {
@@ -211,6 +217,29 @@ namespace EVF.Master.Bll
             }
             this.ReloadCacheGrade();
             return result;
+        }
+
+        /// <summary>
+        /// Validate grade is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The grade identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var grade = _unitOfWork.GetRepository<Grade>().GetCache(x => x.Id == id).FirstOrDefault();
+            return grade.IsUse.Value;
+        }
+
+        /// <summary>
+        /// Set flag is use in grade.
+        /// </summary>
+        /// <param name="ids">The grade identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int id, bool isUse)
+        {
+            var data = _unitOfWork.GetRepository<Grade>().GetCache(x => x.Id == id).FirstOrDefault();
+            data.IsUse = isUse;
+            _unitOfWork.GetRepository<Grade>().Update(data);
         }
 
         /// <summary>

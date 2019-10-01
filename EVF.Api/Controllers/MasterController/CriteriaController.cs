@@ -1,4 +1,6 @@
-﻿using EVF.Master.Bll.Interfaces;
+﻿using EVF.Helper;
+using EVF.Helper.Components;
+using EVF.Master.Bll.Interfaces;
 using EVF.Master.Bll.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -78,7 +80,14 @@ namespace EVF.Api.Controllers.MasterController
         [Route("Delete")]
         public IActionResult Delete(int id)
         {
-            return Ok(_criteria.Delete(id));
+            IActionResult response;
+            if (_criteria.IsUse(id))
+            {
+                response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.CriteriaMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest));
+            }
+            else response = Ok(_criteria.Delete(id));
+            return response;
         }
 
         #endregion

@@ -214,6 +214,31 @@ namespace EVF.Master.Bll
             }
         }
 
+
+        /// <summary>
+        /// Validate level point is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The level point identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var levelPoint = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.Id == id).FirstOrDefault();
+            return levelPoint.IsUse.Value;
+        }
+
+        /// <summary>
+        /// Set flag is use in level point.
+        /// </summary>
+        /// <param name="ids">The level point identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int id, bool isUse)
+        {
+            var data = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.Id == id).FirstOrDefault();
+            data.IsUse = isUse;
+            _unitOfWork.GetRepository<LevelPoint>().Update(data);
+        }
+
+
         /// <summary>
         /// Reload Cache when levelPoint and levelPointItem is change.
         /// </summary>

@@ -43,5 +43,17 @@ namespace EVF.Master.Bll.Interfaces
         /// <param name="model">The grade information value.</param>
         /// <returns></returns>
         ResultViewModel ValidateData(GradeViewModel model);
+        /// <summary>
+        /// Set flag is use in grade.
+        /// </summary>
+        /// <param name="ids">The grade identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        void SetIsUse(int id, bool isUse);
+        /// <summary>
+        /// Validate grade is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The grade identity.</param>
+        /// <returns></returns>
+        bool IsUse(int id);
     }
 }
