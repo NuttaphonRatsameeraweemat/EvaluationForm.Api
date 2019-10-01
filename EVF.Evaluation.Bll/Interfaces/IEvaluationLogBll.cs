@@ -14,6 +14,11 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<EvaluationLogViewModel> GetEvaluationLog(int evaluationId);
         /// <summary>
+        /// Get Evaluation Log.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<EvaluationLogViewModel> GetListEvaluationLogs(int evaluationId);
+        /// <summary>
         /// Insert new evaluation log.
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>

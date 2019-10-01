@@ -13,5 +13,6 @@ namespace EVF.Data.Pocos
         public string ValueKey { get; set; }
         [StringLength(100)]
         public string ValueText { get; set; }
+        public int? Sequence { get; set; }
     }
 }

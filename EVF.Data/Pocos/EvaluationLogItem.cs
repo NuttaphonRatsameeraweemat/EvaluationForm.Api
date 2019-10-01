@@ -11,10 +11,10 @@ namespace EVF.Data.Pocos
         public int Id { get; set; }
         [Column("EvaluationLogID")]
         public int? EvaluationLogId { get; set; }
-        [Column("PerformanceGroupID")]
-        public int? PerformanceGroupId { get; set; }
-        [Column("PerformanceID")]
-        public int? PerformanceId { get; set; }
+        [Column("KpiGroupID")]
+        public int? KpiGroupId { get; set; }
+        [Column("KpiID")]
+        public int? KpiId { get; set; }
         public int? Score { get; set; }
         public int? LevelPoint { get; set; }
         [StringLength(255)]

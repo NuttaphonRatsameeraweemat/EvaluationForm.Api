@@ -12,11 +12,17 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// Get Evaluation List.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<EvaluationViewModel> GetEvaluator();
+        IEnumerable<EvaluationViewModel> GetList();
         /// <summary>
         /// Insert new evaluation.
         /// </summary>
         /// <param name="model">The evaluation information value.</param>
-        ResultViewModel Save(EvaluationViewModel model);
+        ResultViewModel Save(EvaluationRequestViewModel model);
+        /// <summary>
+        /// Reject evaluation task.
+        /// </summary>
+        /// <param name="model">The evaluation reject information.</param>
+        /// <returns></returns>
+        ResultViewModel Reject(EvaluationRejectViewModel model);
     }
 }

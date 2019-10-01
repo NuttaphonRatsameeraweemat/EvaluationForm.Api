@@ -14,5 +14,6 @@ namespace EVF.Helper.Components
         public const string GradePointOverRange = "กรุณาระบุช่วงคะแนน 0 ถึง 100 เท่านั้น";
         public const string CriteriaOverScore = "ขออภัย คะแนนเต็ม ทั้งหมดรวมกัน ไม่สามารถเกิน 100 คะแนนได้";
         public const string CriteriaItemScoreGreatethanScoreGroup = "ขออภัย คะแนนกลุ่มตัวชี้วัด ไม่สามารถน้อยกว่าหรือมากกว่า คะแนนตัวชี้วัดรวมกันได้";
+        public const string EvaluationRejectTaskIsAction = "ขออภัย ไม่สามารถปฎิเสธงานที่ทำการประเมินแล้วได้";
     }
 }

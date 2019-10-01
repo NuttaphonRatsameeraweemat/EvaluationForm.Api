@@ -5,10 +5,12 @@ using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
+using EVF.Helper.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace EVF.Evaluation.Bll
 {
@@ -107,7 +109,7 @@ namespace EVF.Evaluation.Bll
         /// <param name="evaluationId">The evaluation id.</param>
         /// <param name="purchasingAdUser">The purchasing aduser.</param>
         /// <param name="userList">The evaluator user list.</param>
-        public void Save(int evaluationId, string purchasingAdUser, string[] userList)
+        public void SaveList(int evaluationId, string purchasingAdUser, string[] userList)
         {
             var result = new List<EvaluationAssign>();
             var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
@@ -120,6 +122,62 @@ namespace EVF.Evaluation.Bll
             }
 
             _unitOfWork.GetRepository<EvaluationAssign>().AddRange(result);
+        }
+        
+        /// <summary>
+        /// Add new evaluator to evaluation form task.
+        /// </summary>
+        /// <param name="model">The information value evaluator.</param>
+        /// <returns></returns>
+        public ResultViewModel Save(EvaluationAssignRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var data = this.InitialEvaluationAssign(model.EvaluationId, 
+                    _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == model.ToAdUser).FirstOrDefault(), 
+                    ConstantValue.UserTypeEvaluator);
+                _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+        
+        /// <summary>
+        /// Edit new evaluator to evaluation form task.
+        /// </summary>
+        /// <param name="model">The information value evaluator.</param>
+        /// <returns></returns>
+        public ResultViewModel Edit(EvaluationAssignRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<EvaluationAssign>().GetById(model.Id);
+                var emp = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == model.ToAdUser).FirstOrDefault();
+                data.EmpNo = emp?.EmpNo;
+                data.AdUser = emp?.Aduser;
+                _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+        
+        /// <summary>
+        /// Remove evaluation assign task.
+        /// </summary>
+        /// <param name="id">The evaluation assign identity.</param>
+        /// <returns></returns>
+        public ResultViewModel Delete(int id)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                _unitOfWork.GetRepository<EvaluationAssign>().Remove(
+                    _unitOfWork.GetRepository<EvaluationAssign>().GetById(id));
+                _unitOfWork.Complete(scope);
+            }
+            return result;
         }
 
         /// <summary>

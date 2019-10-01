@@ -12,6 +12,8 @@ namespace EVF.Evaluation.Bll.Models
             EvaluationLogs = new List<EvaluationLogItemViewModel>();
         }
 
+        public string EmpNo { get; set; }
+        public string AdUser { get; set; }
         public DateTime? ActionDate { get; set; }
         public List<EvaluationLogItemViewModel> EvaluationLogs { get; set; }
     }
@@ -20,9 +22,9 @@ namespace EVF.Evaluation.Bll.Models
     {
         public int Id { get; set; }
         [Required]
-        public int? PerformanceGroupId { get; set; }
+        public int? KpiGroupId { get; set; }
         [Required]
-        public int? PerformanceId { get; set; }
+        public int? KpiId { get; set; }
         [Required]
         public int? Score { get; set; }
         [Required]

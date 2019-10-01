@@ -110,6 +110,8 @@ namespace EVF.Master.Bll
                         KpiId = temp.Id,
                         KpiNameTh = temp.KpiNameTh,
                         KpiNameEn = temp.KpiNameEn,
+                        KpiShortTextTh = temp.KpiShortTextTh,
+                        KpiShortTextEn = temp.KpiShortTextEn,
                         Sequence = item.Sequence.Value
                     });
                 }

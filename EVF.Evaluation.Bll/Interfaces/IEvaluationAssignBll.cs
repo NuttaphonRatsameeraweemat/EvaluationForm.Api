@@ -1,4 +1,5 @@
 ﻿using EVF.Evaluation.Bll.Models;
+using EVF.Helper.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,6 +26,24 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <param name="evaluationId">The evaluation id.</param>
         /// <param name="purchasingAdUser">The purchasing aduser.</param>
         /// <param name="userList">The evaluator user list.</param>
-        void Save(int evaluationId, string purchasingAdUser, string[] userList);
+        void SaveList(int evaluationId, string purchasingAdUser, string[] userList);
+        /// <summary>
+        /// Add new evaluator to evaluation form task.
+        /// </summary>
+        /// <param name="model">The information value evaluator.</param>
+        /// <returns></returns>
+        ResultViewModel Save(EvaluationAssignRequestViewModel model);
+        /// <summary>
+        /// Edit new evaluator to evaluation form task.
+        /// </summary>
+        /// <param name="model">The information value evaluator.</param>
+        /// <returns></returns>
+        ResultViewModel Edit(EvaluationAssignRequestViewModel model);
+        /// <summary>
+        /// Remove evaluation assign task.
+        /// </summary>
+        /// <param name="id">The evaluation assign identity.</param>
+        /// <returns></returns>
+        ResultViewModel Delete(int id);
     }
 }

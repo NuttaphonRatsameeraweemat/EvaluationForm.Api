@@ -3,6 +3,7 @@ using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -59,9 +60,9 @@ namespace EVF.Evaluation.Bll
         /// Get Evaluation List.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<EvaluationViewModel> GetEvaluator()
+        public IEnumerable<EvaluationViewModel> GetList()
         {
-            var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.AdUser == _token.AdUser);
+            var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.AdUser == _token.AdUser && (x.IsReject == null || !x.IsReject.Value));
             var evaluationActionIds = evaluationAssign.Where(x => x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
             var evaluationWaitingIds = evaluationAssign.Where(x => !x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
             return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationActionIds.Contains(x.Id)),
@@ -161,16 +162,43 @@ namespace EVF.Evaluation.Bll
         /// Insert new evaluation.
         /// </summary>
         /// <param name="model">The evaluation information value.</param>
-        public ResultViewModel Save(EvaluationViewModel model)
+        public ResultViewModel Save(EvaluationRequestViewModel model)
         {
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var evaluation = _mapper.Map<EvaluationViewModel, Data.Pocos.Evaluation>(model);
+                var evaluation = _mapper.Map<EvaluationRequestViewModel, Data.Pocos.Evaluation>(model);
+                evaluation.Status = ConstantValue.EvaWaiting;
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
-                _evaluationAssign.Save(evaluation.Id, model.EvaluatorPurchasing, model.EvaluatorList);
+                _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, model.EvaluatorList);
                 _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Reject evaluation task.
+        /// </summary>
+        /// <param name="model">The evaluation reject information.</param>
+        /// <returns></returns>
+        public ResultViewModel Reject(EvaluationRejectViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == model.Id && x.AdUser == _token.AdUser).FirstOrDefault();
+                if (data.IsAction.Value)
+                {
+                    result = UtilityService.InitialResultError(MessageValue.EvaluationRejectTaskIsAction, (int)System.Net.HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    data.IsReject = true;
+                    data.ReasonReject = model.Reason;
+                    _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                    _unitOfWork.Complete(scope);
+                }
             }
             return result;
         }

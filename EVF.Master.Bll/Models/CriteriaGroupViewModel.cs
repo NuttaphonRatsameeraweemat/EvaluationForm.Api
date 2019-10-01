@@ -34,6 +34,8 @@ namespace EVF.Master.Bll.Models
         public int? KpiId { get; set; }
         public string KpiNameTh { get; set; }
         public string KpiNameEn { get; set; }
+        public string KpiShortTextTh { get; set; }
+        public string KpiShortTextEn { get; set; }
         [Required]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int MaxScore { get; set; }

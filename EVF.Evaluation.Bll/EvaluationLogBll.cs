@@ -3,6 +3,7 @@ using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using System;
@@ -63,6 +64,15 @@ namespace EVF.Evaluation.Bll
         }
 
         /// <summary>
+        /// Get Evaluation Log.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<EvaluationLogViewModel> GetListEvaluationLogs(int evaluationId)
+        {
+            return this.InitialEvaluationLogViewModel(_unitOfWork.GetRepository<EvaluationLog>().Get(x => x.EvaluationId == evaluationId));
+        }
+
+        /// <summary>
         /// Initial Evaluation Viewmodel.
         /// </summary>
         /// <param name="data">The evaluation log entity model.</param>
@@ -77,6 +87,8 @@ namespace EVF.Evaluation.Bll
 
                 result.Add(new EvaluationLogViewModel
                 {
+                    EmpNo = item.EmpNo,
+                    AdUser = item.AdUser,
                     ActionDate = item.ActionDate,
                     EvaluationLogs = logItems
                 });
@@ -100,9 +112,11 @@ namespace EVF.Evaluation.Bll
                     EmpNo = _token.EmpNo,
                     AdUser = _token.AdUser
                 };
+                this.SetIsAction(evaluationId);
                 _unitOfWork.GetRepository<EvaluationLog>().Add(evaluationLog);
                 _unitOfWork.Complete();
                 this.SaveItem(evaluationLog.Id, model);
+                this.IsEvaluationFinish(evaluationId);
                 _unitOfWork.Complete(scope);
             }
             return result;
@@ -118,6 +132,32 @@ namespace EVF.Evaluation.Bll
             var evaluationLogItems = _mapper.Map<IEnumerable<EvaluationLogItemViewModel>, IEnumerable<EvaluationLogItem>>(model);
             evaluationLogItems.Select(c => { c.EvaluationLogId = evaluationLogId; return c; }).ToList();
             _unitOfWork.GetRepository<EvaluationLogItem>().AddRange(evaluationLogItems);
+        }
+
+        /// <summary>
+        /// Validate evaluation all user is action or not.
+        /// </summary>
+        /// <param name="evaluationId">The evaluation identity.</param>
+        private void IsEvaluationFinish(int evaluationId)
+        {
+            var evaluationAssigns = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId);
+            if (!evaluationAssigns.Any(x => !x.IsAction.Value))
+            {
+                var evaluation = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => x.Id == evaluationId).FirstOrDefault();
+                evaluation.Status = ConstantValue.EvaComplete;
+                _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(evaluation);
+            }
+        }
+
+        /// <summary>
+        /// Set assign user action to true.
+        /// </summary>
+        /// <param name="evaluationId">The evaluation identity.</param>
+        private void SetIsAction(int evaluationId)
+        {
+            var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId && x.AdUser == _token.AdUser).FirstOrDefault();
+            evaluationAssign.IsAction = true;
+            _unitOfWork.GetRepository<EvaluationAssign>().Update(evaluationAssign);
         }
 
         #endregion

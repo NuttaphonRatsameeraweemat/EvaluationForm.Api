@@ -7,26 +7,15 @@ namespace EVF.Evaluation.Bll.Models
 {
     public class EvaluationViewModel
     {
-
-        public EvaluationViewModel()
-        {
-
-        }
-
         public const string RoleForManageData = "Role_MA_Evaluation";
         public const string RoleForDisplayData = "Role_DS_Evaluation";
 
         public int Id { get; set; }
-        [Required]
         public int EvaluationTemplateId { get; set; }
         public string VendorNo { get; set; }
-        [Required]
         public string WeightingKey { get; set; }
-        [Required]
         public string ComCode { get; set; }
-        [Required]
         public string PurchasingOrg { get; set; }
-        [Required]
         public int PeriodItemId { get; set; }
         public string Status { get; set; }
 
@@ -41,5 +30,25 @@ namespace EVF.Evaluation.Bll.Models
         public string StartEvaDateString { get; set; }
         public string EndEvaDateString { get; set; }
         public string StatusName { get; set; }
+    }
+
+    public class EvaluationRequestViewModel
+    {
+        public int Id { get; set; }
+        [Required]
+        public int EvaluationTemplateId { get; set; }
+        [Required]
+        public string VendorNo { get; set; }
+        [Required]
+        public string WeightingKey { get; set; }
+        [Required]
+        public string ComCode { get; set; }
+        [Required]
+        public string PurchasingOrg { get; set; }
+        [Required]
+        public int PeriodItemId { get; set; }
+
+        public string[] EvaluatorList { get; set; }
+        public string EvaluatorPurchasing { get; set; }
     }
 }
