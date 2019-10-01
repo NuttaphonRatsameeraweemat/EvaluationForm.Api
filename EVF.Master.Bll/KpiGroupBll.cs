@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using EVF.Master.Bll.Interfaces;
@@ -57,8 +59,15 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public IEnumerable<KpiGroupViewModel> GetList()
         {
-            return _mapper.Map<IEnumerable<KpiGroup>, IEnumerable<KpiGroupViewModel>>(
-                   _unitOfWork.GetRepository<KpiGroup>().GetCache());
+            var result = new List<KpiGroupViewModel>();
+            var data = _unitOfWork.GetRepository<KpiGroup>().GetCache();
+            var sapFields = _unitOfWork.GetRepository<SapFields>().GetCache();
+            foreach (var item in data)
+            {
+                var kpiGroup = _mapper.Map<KpiGroup, KpiGroupViewModel>(item);
+                kpiGroup.SapScoreField = sapFields.FirstOrDefault(x => x.Id == item.SapFieldsId)?.SapFields1;
+            }
+            return result;
         }
 
         /// <summary>
@@ -120,6 +129,21 @@ namespace EVF.Master.Bll
             return result;
         }
 
+        /// <summary>
+        /// Validate Data before insert and update kpi group.
+        /// </summary>
+        /// <returns></returns>
+        public ResultViewModel ValidateData()
+        {
+            var result = new ResultViewModel();
+            var sapFields = _unitOfWork.GetRepository<SapFields>().GetCache(x => !x.IsUse).FirstOrDefault();
+            if (sapFields == null)
+            {
+                result = UtilityService.InitialResultError(MessageValue.KpiGroupOverFiftySapFields, (int)System.Net.HttpStatusCode.BadRequest);
+            }
+            return result;
+        }
+
         /// <summary>   
         /// Insert new Kpi group.
         /// </summary>
@@ -131,6 +155,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var KpiGroup = _mapper.Map<KpiGroupViewModel, KpiGroup>(model);
+                KpiGroup.SapFieldsId = this.GetSapFields();
                 KpiGroup.CreateBy = _token.EmpNo;
                 KpiGroup.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<KpiGroup>().Add(KpiGroup);
@@ -164,12 +189,11 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
+                var kpiGroup = _unitOfWork.GetRepository<KpiGroup>().GetCache(x => x.Id == model.Id).FirstOrDefault();
                 kpiGroup.KpiGroupNameTh = model.KpiGroupNameTh;
                 kpiGroup.KpiGroupNameEn = model.KpiGroupNameEn;
                 kpiGroup.KpiGroupShortTextTh = model.KpiGroupShortTextTh;
                 kpiGroup.KpiGroupShortTextEn = model.KpiGroupShortTextEn;
-                kpiGroup.SapScoreField = model.SapScoreField;
                 kpiGroup.LastModifyBy = _token.EmpNo;
                 kpiGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<KpiGroup>().Update(kpiGroup);
@@ -187,6 +211,7 @@ namespace EVF.Master.Bll
         /// <param name="KpiGroupItems">The identity of Kpi items.</param>
         private void EditItem(int KpiGroupId, IEnumerable<KpiGroupItemViewModel> KpiGroupItems)
         {
+            KpiGroupItems.Select(c => { c.KpiGroupId = KpiGroupId; return c; }).ToList();
             var data = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == KpiGroupId);
 
             var KpiItemAdd = KpiGroupItems.Where(x => x.Id == 0);
@@ -210,8 +235,9 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                _unitOfWork.GetRepository<KpiGroup>().Remove(
-                    _unitOfWork.GetRepository<KpiGroup>().GetById(id));
+                var data = _unitOfWork.GetRepository<KpiGroup>().GetById(id);
+                this.SetSapFields(data.SapFieldsId.Value, false);
+                _unitOfWork.GetRepository<KpiGroup>().Remove(data);
                 this.DeleteItem(_unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == id));
                 _unitOfWork.Complete(scope);
             }
@@ -226,6 +252,34 @@ namespace EVF.Master.Bll
         private void DeleteItem(IEnumerable<KpiGroupItem> model)
         {
             _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(model);
+        }
+
+        /// <summary>
+        /// Get Sap fields id.
+        /// </summary>
+        /// <returns></returns>
+        private int GetSapFields()
+        {
+            int result = 0;
+            var sapFields = _unitOfWork.GetRepository<SapFields>().GetCache(x => !x.IsUse, x => x.OrderBy(y => y.Id)).FirstOrDefault();
+            if (sapFields != null)
+            {
+                result = sapFields.Id;
+                this.SetSapFields(sapFields.Id, true);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Set sap fields using is true or false.
+        /// </summary>
+        /// <param name="sapFieldsId">The identity sap fields.</param>
+        /// <param name="isUse">Flag is using sap fields.</param>
+        private void SetSapFields(int sapFieldsId, bool isUse)
+        {
+            var sapFieldData = _unitOfWork.GetRepository<SapFields>().GetCache(x => x.Id == sapFieldsId).FirstOrDefault();
+            sapFieldData.IsUse = isUse;
+            _unitOfWork.GetRepository<SapFields>().Update(sapFieldData);
         }
 
         /// <summary>

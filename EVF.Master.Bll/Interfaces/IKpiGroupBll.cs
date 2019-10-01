@@ -24,6 +24,11 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<CriteriaItemViewModel> GetKpiItemDisplayCriteria(int kpiGroupId);
         /// <summary>
+        /// Validate Data before insert and update kpi group.
+        /// </summary>
+        /// <returns></returns>
+        ResultViewModel ValidateData();
+        /// <summary>
         /// Insert new Kpi group.
         /// </summary>
         /// <param name="model">The Kpi information value.</param>

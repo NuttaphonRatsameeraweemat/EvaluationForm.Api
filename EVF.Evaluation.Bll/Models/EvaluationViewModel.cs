@@ -19,9 +19,6 @@ namespace EVF.Evaluation.Bll.Models
         public int PeriodItemId { get; set; }
         public string Status { get; set; }
 
-        public string[] EvaluatorList { get; set; }
-        public string EvaluatorPurchasing { get; set; }
-
         //Display
         public string VendorName { get; set; }
         public string EvaluationTemplateName { get; set; }

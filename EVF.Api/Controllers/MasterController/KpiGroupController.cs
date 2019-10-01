@@ -61,7 +61,14 @@ namespace EVF.Api.Controllers
         [Route("Save")]
         public IActionResult Save([FromBody]KpiGroupViewModel model)
         {
-            return Ok(_kpiGroup.Save(model));
+            IActionResult response;
+            var result = _kpiGroup.ValidateData();
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_kpiGroup.Save(model));
+            return response;
         }
 
         [HttpPost]

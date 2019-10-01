@@ -106,7 +106,7 @@ namespace EVF.Evaluation.Bll
             var result = new List<EvaluationViewModel>();
             foreach (var item in data)
             {
-                var periodTemp = periodList.FirstOrDefault(x => x.Id == item.PeriodId);
+                var periodTemp = periodList.FirstOrDefault(x => x.Id == item.PeriodItemId);
                 var status = this.GetStatus(isAction, periodTemp);
                 result.Add(new EvaluationViewModel
                 {
@@ -116,7 +116,7 @@ namespace EVF.Evaluation.Bll
                     PurchasingOrg = item.PurchasingOrg,
                     VendorNo = item.VendorNo,
                     WeightingKey = item.WeightingKey,
-                    PeriodItemId = item.PeriodId.Value,
+                    PeriodItemId = item.PeriodItemId.Value,
                     Status = status[0],
                     //Display Value.
                     CompanyName = comList.FirstOrDefault(x => x.SapcomCode == item.ComCode)?.LongText,
@@ -140,7 +140,7 @@ namespace EVF.Evaluation.Bll
         private string[] GetStatus(bool isAction, PeriodItem periodItem)
         {
             var valueHelp = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeEvaStatus);
-            string[] result = new string[2] { ConstantValue.EvaExpire, valueHelp.FirstOrDefault(x => x.ValueKey == ConstantValue.EvaExpire)?.ValueText };
+            string[] result = new string[2] { ConstantValue.EvaWaiting, valueHelp.FirstOrDefault(x => x.ValueKey == ConstantValue.EvaWaiting)?.ValueText };
             if (isAction)
             {
                 result[0] = ConstantValue.EvaComplete;
@@ -148,11 +148,10 @@ namespace EVF.Evaluation.Bll
             }
             else
             {
-                if (periodItem.StartEvaDate.Value.Date <= DateTime.Now.Date &&
-                    periodItem.EndEvaDate.Value.Date >= DateTime.Now.Date)
+                if (periodItem.EndEvaDate.Value.Date < DateTime.Now.Date)
                 {
-                    result[0] = ConstantValue.EvaWaiting;
-                    result[1] = valueHelp.FirstOrDefault(x => x.ValueKey == ConstantValue.EvaWaiting)?.ValueText;
+                    result[0] = ConstantValue.EvaExpire;
+                    result[1] = valueHelp.FirstOrDefault(x => x.ValueKey == ConstantValue.EvaExpire)?.ValueText;
                 }
             }
             return result;
@@ -169,6 +168,8 @@ namespace EVF.Evaluation.Bll
             {
                 var evaluation = _mapper.Map<EvaluationRequestViewModel, Data.Pocos.Evaluation>(model);
                 evaluation.Status = ConstantValue.EvaWaiting;
+                evaluation.CreateBy = _token.EmpNo;
+                evaluation.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
                 _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, model.EvaluatorList);

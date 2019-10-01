@@ -15,5 +15,6 @@ namespace EVF.Helper.Components
         public const string CriteriaOverScore = "ขออภัย คะแนนเต็ม ทั้งหมดรวมกัน ไม่สามารถเกิน 100 คะแนนได้";
         public const string CriteriaItemScoreGreatethanScoreGroup = "ขออภัย คะแนนกลุ่มตัวชี้วัด ไม่สามารถน้อยกว่าหรือมากกว่า คะแนนตัวชี้วัดรวมกันได้";
         public const string EvaluationRejectTaskIsAction = "ขออภัย ไม่สามารถปฎิเสธงานที่ทำการประเมินแล้วได้";
+        public const string KpiGroupOverFiftySapFields = "ขออภัย ไม่สามารถสร้างกลุ่มตัวชี้วัด เกิน 50 กลุ่มได้";
     }
 }

@@ -24,6 +24,7 @@ namespace EVF.Api.Extensions
             this.MappingCentralSettingModel();
             this.MappingHrModel();
             this.MappingWorkflowModel();
+            this.MappingEvaluationModel();
         }
 
         #endregion
@@ -116,8 +117,8 @@ namespace EVF.Api.Extensions
         {
             CreateMap<EvaluationLogItem, EvaluationLogItemViewModel>();
             CreateMap<EvaluationLogItemViewModel, EvaluationLogItem>();
-            CreateMap<EvaluationViewModel, Data.Pocos.Evaluation>();
-            CreateMap<Data.Pocos.Evaluation, EvaluationViewModel>();
+            CreateMap<EvaluationRequestViewModel, Data.Pocos.Evaluation>();
+            CreateMap<Data.Pocos.Evaluation, EvaluationRequestViewModel>();
         }
 
         #endregion

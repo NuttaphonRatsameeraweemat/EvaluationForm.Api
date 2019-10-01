@@ -49,6 +49,7 @@ namespace EVF.Data
         public virtual DbSet<PurGroupWeightingKey> PurGroupWeightingKey { get; set; }
         public virtual DbSet<PurchaseOrg> PurchaseOrg { get; set; }
         public virtual DbSet<PurchaseOrgItem> PurchaseOrgItem { get; set; }
+        public virtual DbSet<SapFields> SapFields { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
         public virtual DbSet<Vendor> Vendor { get; set; }

@@ -24,7 +24,7 @@ namespace EVF.Data.Pocos
         public string LastModifyBy { get; set; }
         public DateTime? LastModifyDate { get; set; }
         public bool? IsUse { get; set; }
-        [StringLength(100)]
-        public string SapScoreField { get; set; }
+        [Column("SapFieldsID")]
+        public int? SapFieldsId { get; set; }
     }
 }

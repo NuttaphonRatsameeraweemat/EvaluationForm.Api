@@ -19,8 +19,8 @@ namespace EVF.Data.Pocos
         public string ComCode { get; set; }
         [StringLength(8)]
         public string PurchasingOrg { get; set; }
-        [Column("PeriodID")]
-        public int? PeriodId { get; set; }
+        [Column("PeriodItemID")]
+        public int? PeriodItemId { get; set; }
         [StringLength(30)]
         public string Status { get; set; }
         [StringLength(11)]
