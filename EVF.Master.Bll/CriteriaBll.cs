@@ -132,6 +132,12 @@ namespace EVF.Master.Bll
         public ResultViewModel ValidateData(CriteriaViewModel model)
         {
             var result = new ResultViewModel();
+            if (this.IsUse(model.Id))
+            {
+                result = UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.CriteriaMessage),
+                                      (int)System.Net.HttpStatusCode.BadRequest);
+                return result;
+            }
             if (model.CriteriaGroups.Count == 0)
             {
                 result = UtilityService.InitialResultError(MessageValue.CriteriaKpiGroupEmpty, (int)HttpStatusCode.BadRequest);
@@ -150,7 +156,8 @@ namespace EVF.Master.Bll
                     int scoreGroup = item.CriteriaItems.Sum(x => x.MaxScore);
                     if (scoreGroup > item.MaxScore || scoreGroup < item.MaxScore)
                     {
-                        result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, (int)HttpStatusCode.BadRequest);
+                        result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, 
+                                                                (int)HttpStatusCode.BadRequest);
                         break;
                     }
                 }
@@ -336,6 +343,29 @@ namespace EVF.Master.Bll
         private void DeleteCriteriaItems(IEnumerable<CriteriaItem> model)
         {
             _unitOfWork.GetRepository<CriteriaItem>().RemoveRange(model);
+        }
+
+        /// <summary>
+        /// Validate criteria is using in evaluation template or not.
+        /// </summary>
+        /// <param name="id">The criteria identity.</param>
+        /// <returns></returns>
+        public bool IsUse(int id)
+        {
+            var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == id).FirstOrDefault();
+            return criteria.IsUse.Value;
+        }
+
+        /// <summary>
+        /// Set flag is use in criteria.
+        /// </summary>
+        /// <param name="ids">The criteria identity.</param>
+        /// <param name="isUse">The flag is using.</param>
+        public void SetIsUse(int id, bool isUse)
+        {
+            var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == id).FirstOrDefault();
+            criteria.IsUse = isUse;
+            _unitOfWork.GetRepository<Criteria>().Update(criteria);
         }
 
         /// <summary>

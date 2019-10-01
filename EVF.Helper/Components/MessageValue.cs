@@ -20,5 +20,6 @@ namespace EVF.Helper.Components
         public const string IsUseMessageFormat = "ขออภัย ไม่สามารถแก้ไข หรือ ลบ {0} เนื่องจากมีการนำไปใช้งานแล้ว";
         public const string KpiMessage = "ตัวชี้วัด";
         public const string KpiGroupMessage = "กลุ่มตัวชี้วัด";
+        public const string CriteriaMessage = "หลักเกณฑ์";
     }
 }
