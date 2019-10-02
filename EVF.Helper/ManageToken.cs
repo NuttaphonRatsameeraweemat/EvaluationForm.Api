@@ -1,6 +1,7 @@
 ﻿using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EVF.Helper
@@ -60,6 +61,22 @@ namespace EVF.Helper
         /// Get Company code value from payload token.
         /// </summary>
         public string ComCode => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisComCode)?.Value;
+        /// <summary>
+        /// Get Purchasing org value from payload token.
+        /// </summary>
+        public string[] PurchasingOrg
+        {
+            get
+            {
+                var result = new List<string>();
+                var purList = _httpContext.User.Claims.Where(x => x.Type == ConstantValue.ClamisPurchasing);
+                foreach (var item in purList)
+                {
+                    result.Add(item.Value);
+                }
+                return result.ToArray();
+            }
+        }
 
         #endregion
 

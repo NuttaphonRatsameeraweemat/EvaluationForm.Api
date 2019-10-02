@@ -129,6 +129,8 @@ namespace EVF.Authorization.Bll
             _identity.AddClaim(new Claim(ConstantValue.ClamisOrg, data.OrgId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisPosition, data.PositionId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, data.ComCode));
+            //For test
+            _identity.AddClaim(new Claim(ConstantValue.ClamisPurchasing, "1600"));
             foreach (var item in roleList)
             {
                 _identity.AddClaim(new Claim(ClaimTypes.Role, item.RoleMenu));

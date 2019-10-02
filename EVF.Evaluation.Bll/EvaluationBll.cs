@@ -57,24 +57,34 @@ namespace EVF.Evaluation.Bll
         #region [Methods]
 
         /// <summary>
-        /// Get Evaluation List.
+        /// Get Evaluation waiting List.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<EvaluationViewModel> GetList()
         {
             var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.AdUser == _token.AdUser && (x.IsReject == null || !x.IsReject.Value));
-            var evaluationActionIds = evaluationAssign.Where(x => x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
             var evaluationWaitingIds = evaluationAssign.Where(x => !x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
-            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationActionIds.Contains(x.Id)),
-                                     _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationWaitingIds.Contains(x.Id)));
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationWaitingIds.Contains(x.Id)), false);
         }
+
+        /// <summary>
+        /// Get Evaluation action List.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<EvaluationViewModel> GetListHistory()
+        {
+            var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.AdUser == _token.AdUser && (x.IsReject == null || !x.IsReject.Value));
+            var evaluationActionIds = evaluationAssign.Where(x => x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationActionIds.Contains(x.Id)), true);
+        }
+
 
         /// <summary>
         /// Initial Evaluation Viewmodel.
         /// </summary>
         /// <param name="data">The evaluation entity model.</param>
         /// <returns></returns>
-        private IEnumerable<EvaluationViewModel> MappingModel(IEnumerable<Data.Pocos.Evaluation> evaAction, IEnumerable<Data.Pocos.Evaluation> evaWaiting)
+        private IEnumerable<EvaluationViewModel> MappingModel(IEnumerable<Data.Pocos.Evaluation> evaluation, bool isAction)
         {
             var result = new List<EvaluationViewModel>();
             var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
@@ -82,8 +92,7 @@ namespace EVF.Evaluation.Bll
             var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache();
             var evaluationTemplateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
             var periodList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
-            result.AddRange(this.InitialEvaluationViewModel(comList, purList, periodList, vendorList, evaluationTemplateList, evaAction, true));
-            result.AddRange(this.InitialEvaluationViewModel(comList, purList, periodList, vendorList, evaluationTemplateList, evaWaiting, false));
+            result.AddRange(this.InitialEvaluationViewModel(comList, purList, periodList, vendorList, evaluationTemplateList, evaluation, isAction));
             return result.OrderByDescending(x => x.Id);
         }
 
@@ -173,9 +182,22 @@ namespace EVF.Evaluation.Bll
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
                 _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, model.EvaluatorList);
+                this.SetEvaluationTemplateFlagUsing(evaluation.EvaluationTemplateId.Value);
                 _unitOfWork.Complete(scope);
             }
+            _unitOfWork.GetRepository<EvaluationTemplate>().ReCache();
             return result;
+        }
+
+        /// <summary>
+        /// Set is using flag in evaluation template to true.
+        /// </summary>
+        /// <param name="evaluationTemplateId">The evaluation template id.</param>
+        private void SetEvaluationTemplateFlagUsing(int evaluationTemplateId)
+        {
+            var evaluation = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == evaluationTemplateId).FirstOrDefault();
+            evaluation.IsUse = true;
+            _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluation);
         }
 
         /// <summary>

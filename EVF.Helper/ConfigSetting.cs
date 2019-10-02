@@ -116,6 +116,14 @@ namespace EVF.Helper
         /// Get Application Name.
         /// </summary>
         public string AppName => this.GetAppSetting("AppName");
+        /// <summary>
+        /// Get K2 Spe Evaluation Process workflow.
+        /// </summary>
+        public int PurchasingPercentage => Convert.ToInt32(this.GetAppSetting("Calculate:Purchasing"));
+        /// <summary>
+        /// Get Application Name.
+        /// </summary>
+        public int UserPercentage => Convert.ToInt32(this.GetAppSetting("Calculate:User"));
 
         #endregion
 

@@ -34,5 +34,9 @@ namespace EVF.Helper.Interfaces
         /// Get Company code value from payload token.
         /// </summary>
         string ComCode { get; }
+        /// <summary>
+        /// Get Purchasing Org value from payload token.
+        /// </summary>
+        string[] PurchasingOrg { get; }
     }
 }

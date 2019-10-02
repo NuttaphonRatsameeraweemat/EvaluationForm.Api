@@ -23,7 +23,6 @@ namespace EVF.Evaluation.Bll.Models
         public int Id { get; set; }
         [Required]
         public int? KpiGroupId { get; set; }
-        [Required]
         public int? KpiId { get; set; }
         [Required]
         public int? Score { get; set; }

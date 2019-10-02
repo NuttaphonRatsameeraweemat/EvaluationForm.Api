@@ -14,6 +14,11 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<EvaluationViewModel> GetList();
         /// <summary>
+        /// Get Evaluation action List.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<EvaluationViewModel> GetListHistory();
+        /// <summary>
         /// Insert new evaluation.
         /// </summary>
         /// <param name="model">The evaluation information value.</param>

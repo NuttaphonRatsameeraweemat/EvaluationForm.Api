@@ -82,5 +82,13 @@ namespace EVF.Helper.Interfaces
         /// Get Application Name.
         /// </summary>
         string AppName { get; }
+        /// <summary>
+        /// Get Purchasing Percentage score.
+        /// </summary>
+        int PurchasingPercentage { get; }
+        /// <summary>
+        /// Get User Percentage score.
+        /// </summary>
+        int UserPercentage { get; }
     }
 }

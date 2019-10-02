@@ -12,6 +12,7 @@ namespace EVF.Helper.Components
         public const string ClamisOrg = "OrgId";
         public const string ClamisPosition = "PositionId";
         public const string ClamisComCode = "ComCode";
+        public const string ClamisPurchasing = "PurOrg";
         public const string ClamisEncrypt = "UlZaR1gxTkZRMUpGVkE9PQ==";
         //Response Header Content Type Format
         public const string ContentTypeJson = "application/json";

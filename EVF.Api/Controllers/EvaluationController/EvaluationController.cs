@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EVF.Evaluation.Bll.Interfaces;
+﻿using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers.EvaluationController
@@ -46,7 +41,14 @@ namespace EVF.Api.Controllers.EvaluationController
         {
             return Ok(_evaluation.GetList());
         }
-        
+
+        [HttpGet]
+        [Route("GetListHistory")]
+        public IActionResult GetListHistory()
+        {
+            return Ok(_evaluation.GetListHistory());
+        }
+
         [HttpPost]
         [Route("Save")]
         public IActionResult Save([FromBody]EvaluationRequestViewModel model)

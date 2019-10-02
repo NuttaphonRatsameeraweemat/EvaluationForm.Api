@@ -47,13 +47,6 @@ namespace EVF.Api.Controllers.EvaluationController
             return Ok(_evaluationLog.GetEvaluationLog(evaluationId));
         }
 
-        [HttpGet]
-        [Route("GetListEvaluationLogs")]
-        public IActionResult GetListEvaluationLogs(int evaluationId)
-        {
-            return Ok(_evaluationLog.GetListEvaluationLogs(evaluationId));
-        }
-
         [HttpPost]
         [Route("Save/{evaluationId}")]
         public IActionResult Save(int evaluationId, [FromBody]IEnumerable<EvaluationLogItemViewModel> model)
