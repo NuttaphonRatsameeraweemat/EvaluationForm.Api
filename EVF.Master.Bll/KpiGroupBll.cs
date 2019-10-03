@@ -111,13 +111,13 @@ namespace EVF.Master.Bll
         public IEnumerable<CriteriaItemViewModel> GetKpiItemDisplayCriteria(int kpiGroupId)
         {
             var result = new List<CriteriaItemViewModel>();
-            var KpiGroupItems = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(
+            var kpiGroupItems = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(
                                                                            x => x.KpiGroupId == kpiGroupId,
                                                                            y => y.OrderBy(x => x.Sequence));
-            var arrayIds = KpiGroupItems.Select(x => x.KpiId).ToArray();
+            var arrayIds = kpiGroupItems.Select(x => x.KpiId).ToArray();
             var KpiList = _unitOfWork.GetRepository<Kpi>().GetCache(x => arrayIds.Contains(x.Id));
 
-            foreach (var item in KpiGroupItems)
+            foreach (var item in kpiGroupItems)
             {
                 var temp = KpiList.FirstOrDefault(x => x.Id == item.KpiId);
                 if (temp != null)

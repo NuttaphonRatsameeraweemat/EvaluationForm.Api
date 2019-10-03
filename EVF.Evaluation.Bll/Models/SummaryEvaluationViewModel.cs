@@ -25,6 +25,7 @@ namespace EVF.Evaluation.Bll.Models
     {
         public int KpiGroupId { get; set; }
         public int? KpiId { get; set; }
+        public int Sequence { get; set; }
         public double Score { get; set; }
     }
 

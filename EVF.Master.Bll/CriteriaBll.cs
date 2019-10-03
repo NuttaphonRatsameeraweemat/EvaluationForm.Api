@@ -95,8 +95,17 @@ namespace EVF.Master.Bll
                    _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId));
             var groupIds = criteriaGroup.Select(x => x.Id).ToArray();
             var criteriaItems = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => groupIds.Contains(x.CriteriaGroupId.Value));
+            var kpiGroupInfo = _unitOfWork.GetRepository<KpiGroup>().GetCache();
             foreach (var item in criteriaGroup)
             {
+                var kpiGroupItem = kpiGroupInfo.FirstOrDefault(x => x.Id == item.KpiGroupId);
+                if (kpiGroupItem != null)
+                {
+                    item.KpiGroupNameTh = kpiGroupItem.KpiGroupNameTh;
+                    item.KpiGroupNameEn = kpiGroupItem.KpiGroupNameEn;
+                    item.KpiGroupShortTextTh = kpiGroupItem.KpiGroupShortTextTh;
+                    item.KpiGroupShortTextEn = kpiGroupItem.KpiGroupShortTextEn;
+                }
                 item.CriteriaItems = _kpiGroup.GetKpiItemDisplayCriteria(item.KpiGroupId).ToList();
                 this.GetCriteriaItems(item.CriteriaItems, criteriaItems.Where(x => x.CriteriaGroupId == item.Id));
             }
@@ -138,7 +147,7 @@ namespace EVF.Master.Bll
                 return result;
             }
             int totalScore = model.CriteriaGroups.Sum(x => x.MaxScore);
-            if (totalScore > 100 || totalScore != 100)
+            if (totalScore != 100)
             {
                 result = UtilityService.InitialResultError(MessageValue.CriteriaOverScore, (int)HttpStatusCode.BadRequest);
                 return result;

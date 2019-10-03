@@ -17,6 +17,10 @@ namespace EVF.Master.Bll.Models
         public int? CriteriaId { get; set; }
         [Required]
         public int KpiGroupId { get; set; }
+        public string KpiGroupNameTh { get; set; }
+        public string KpiGroupNameEn { get; set; }
+        public string KpiGroupShortTextTh { get; set; }
+        public string KpiGroupShortTextEn { get; set; }
         [Required]
         public int Sequence { get; set; }
         [Required]

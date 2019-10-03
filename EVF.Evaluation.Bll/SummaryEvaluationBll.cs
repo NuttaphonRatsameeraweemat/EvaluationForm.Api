@@ -147,8 +147,10 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         public SummaryEvaluationViewModel GetDetail(int id)
         {
-            var result = this.GetHeaderInformation(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id));
-            result.UserLists.AddRange(this.GetEvaluators(id));
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            var result = this.GetHeaderInformation(data);
+            result.UserLists.AddRange(this.GetEvaluators(data.Id,
+                _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault().CriteriaId.Value));
             result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists));
             return result;
         }
@@ -175,7 +177,7 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="evaluationId">The evaluation identity.</param>
         /// <returns></returns>
-        private IEnumerable<UserEvaluationViewModel> GetEvaluators(int evaluationId)
+        private IEnumerable<UserEvaluationViewModel> GetEvaluators(int evaluationId, int criteriaId)
         {
             var result = new List<UserEvaluationViewModel>();
             var data = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId);
@@ -185,7 +187,7 @@ namespace EVF.Evaluation.Bll
                 var evaluator = this.InitialEvaluationAssignViewModel(item, empList.FirstOrDefault(x => x.EmpNo == item.EmpNo));
                 if (evaluator.IsAction)
                 {
-                    evaluator.EvaluationLogs.AddRange(this.GetEvaluationLogs(evaluator.AdUser, evaluationId));
+                    evaluator.EvaluationLogs.AddRange(this.GetEvaluationLogs(evaluator.AdUser, evaluationId, criteriaId));
                 }
                 result.Add(evaluator);
             }
@@ -198,7 +200,7 @@ namespace EVF.Evaluation.Bll
         /// <param name="adUser">The owner result evaluation.</param>
         /// <param name="evaluationId">The evaluation identity.</param>
         /// <returns></returns>
-        private IEnumerable<UserEvaluationDetailViewModel> GetEvaluationLogs(string adUser, int evaluationId)
+        private IEnumerable<UserEvaluationDetailViewModel> GetEvaluationLogs(string adUser, int evaluationId, int criteriaId)
         {
             var result = new List<UserEvaluationDetailViewModel>();
             var evaluationLogs = _unitOfWork.GetRepository<EvaluationLog>().Get(x => x.AdUser == adUser && x.EvaluationId == evaluationId);
@@ -207,7 +209,19 @@ namespace EVF.Evaluation.Bll
                 var evaLog = new UserEvaluationDetailViewModel();
                 var log = _unitOfWork.GetRepository<EvaluationLogItem>().Get(x => x.EvaluationLogId == item.Id);
                 evaLog.ActionDate = item.ActionDate;
-                evaLog.EvaluationLogs.AddRange(_mapper.Map<IEnumerable<EvaluationLogItem>, IEnumerable<EvaluationLogItemViewModel>>(log));
+                foreach (var logItem in log)
+                {
+                    evaLog.EvaluationLogs.Add(new EvaluationLogItemViewModel
+                    {
+                        Id = logItem.Id,
+                        KpiGroupId = logItem.KpiGroupId,
+                        KpiId = logItem.KpiId,
+                        LevelPoint = logItem.LevelPoint,
+                        Reason = logItem.Reason,
+                        Score = logItem.Score,
+                        Sequence = this.GetSequence(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId)
+                    });
+                }
                 result.Add(evaLog);
             }
             return result;
@@ -256,11 +270,30 @@ namespace EVF.Evaluation.Bll
                         {
                             KpiGroupId = item.KpiGroupId.Value,
                             KpiId = item.KpiId,
-                            Score = item.Score.Value
+                            Score = item.Score.Value,
+                            Sequence = item.Sequence
                         });
                     }
                 }
             }
+            return result;
+        }
+
+        /// <summary>
+        /// Get Sequence kpi or kpigroup.
+        /// </summary>
+        /// <param name="kpiGroupId">The identity kpi group.</param>
+        /// <param name="kpiId">The identity kpi.</param>
+        /// <param name="criteriaId">The identity criteria.</param>
+        /// <returns></returns>
+        private int GetSequence(int kpiGroupId, int? kpiId, int criteriaId)
+        {
+            int result = 0;
+            if (kpiId.HasValue)
+            {
+                result = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == kpiGroupId && x.KpiId == kpiId).FirstOrDefault().Sequence.Value;
+            }
+            else result = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId && x.KpiGroupId == kpiGroupId).FirstOrDefault().Sequence.Value;
             return result;
         }
 
@@ -279,12 +312,7 @@ namespace EVF.Evaluation.Bll
             {
                 foreach (var item in userResult)
                 {
-                    result.Add(new SummaryEvaluationDetailViewModel
-                    {
-                        KpiGroupId = item.KpiGroupId,
-                        KpiId = item.KpiId,
-                        Score = this.CalculateScore(0, this.AverageScore(item.Score, userCount))
-                    });
+                    result.Add(this.InitialModel(item, this.CalculateScore(0, this.AverageScore(item.Score, userCount))));
                 }
             }
             else
@@ -297,12 +325,7 @@ namespace EVF.Evaluation.Bll
                     {
                         uPoint = this.AverageScore(userPoint.Score, userCount);
                     }
-                    result.Add(new SummaryEvaluationDetailViewModel
-                    {
-                        KpiGroupId = item.KpiGroupId,
-                        KpiId = item.KpiId,
-                        Score = this.CalculateScore(item.Score, uPoint)
-                    });
+                    result.Add(this.InitialModel(item, uPoint));
                 }
             }
             return result;
@@ -330,6 +353,23 @@ namespace EVF.Evaluation.Bll
             purScore = (purScore * _config.PurchasingPercentage) / 100;
             userScore = (userScore * _config.UserPercentage) / 100;
             return Math.Round(purScore + userScore);
+        }
+
+        /// <summary>
+        /// Initial Summary Evaluation Detail ViewModel.
+        /// </summary>
+        /// <param name="item">The summary evaluation detail viewmodel.</param>
+        /// <param name="score">The score.</param>
+        /// <returns></returns>
+        private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score)
+        {
+            return new SummaryEvaluationDetailViewModel
+            {
+                KpiGroupId = item.KpiGroupId,
+                KpiId = item.KpiId,
+                Score = this.CalculateScore(item.Score, score),
+                Sequence = item.Sequence
+            };
         }
 
         /// <summary>
