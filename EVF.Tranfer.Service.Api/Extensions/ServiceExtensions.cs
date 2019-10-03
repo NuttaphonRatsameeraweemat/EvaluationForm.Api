@@ -95,7 +95,8 @@ namespace EVF.Tranfer.Service.Api.Extensions
         /// <param name="services">The service collection.</param>
         public static void ConfigureBll(this IServiceCollection services)
         {
-            services.AddScoped<ITranferBll, TranferBll>();
+            services.AddScoped<ISapTranferBll, SapTranferBll>();
+            services.AddScoped<IVendorTranferBll, VendorTranferBll>();
         }
 
         /// <summary>

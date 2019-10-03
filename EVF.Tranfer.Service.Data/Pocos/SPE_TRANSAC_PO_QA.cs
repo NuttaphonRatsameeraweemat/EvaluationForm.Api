@@ -8,6 +8,7 @@ namespace EVF.Tranfer.Service.Data.Pocos
 {
     public class SPE_TRANSAC_PO_QA
     {
+        [Key]
         [Column("Receipt_Date", TypeName = "datetime")]
         public DateTime? ReceiptDate { get; set; }
         [StringLength(30)]

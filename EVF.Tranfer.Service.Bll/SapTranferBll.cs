@@ -14,7 +14,7 @@ using static EVF.Tranfer.Service.Data.UnitOfWorkControl;
 
 namespace EVF.Tranfer.Service.Bll
 {
-    public class TranferBll : ITranferBll
+    public class SapTranferBll : ISapTranferBll
     {
 
         #region [Fields]
@@ -27,10 +27,6 @@ namespace EVF.Tranfer.Service.Bll
         /// The utilities unit of work for manipulating utilities data in spe database.
         /// </summary>
         private readonly IUnitOfWork _evfUnitOfWork;
-        /// <summary>
-        /// The utilities unit of work for manipulating utilities data in brb util database.
-        /// </summary>
-        private readonly IUnitOfWork _brbUnitOfWork;
         /// <summary>
         /// The auto mapper.
         /// </summary>
@@ -49,15 +45,14 @@ namespace EVF.Tranfer.Service.Bll
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TranferBll" /> class.
+        /// Initializes a new instance of the <see cref="SapTranferBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work control.</param>
         /// <param name="mapper">The auto mapper.</param>
-        public TranferBll(ServiceResolver unitOfWork, IMapper mapper, IConfigSetting config, ILoggerManager logger)
+        public SapTranferBll(ServiceResolver unitOfWork, IMapper mapper, IConfigSetting config, ILoggerManager logger)
         {
             _dmUnitOfWork = unitOfWork("DM");
             _evfUnitOfWork = unitOfWork("EVF");
-            _brbUnitOfWork = unitOfWork("BRB");
             _mapper = mapper;
             _config = config;
             _logger = logger;
@@ -75,7 +70,7 @@ namespace EVF.Tranfer.Service.Bll
         {
             var result = new ResultViewModel();
             var evfData = _evfUnitOfWork.GetRepository<EvaluationSapResult>().Get(x => !x.SendToSap);
-            this.SaveToZncr(_mapper.Map<IEnumerable<EvaluationSapResult>, IEnumerable<ZSPE_02>>(evfData));
+            this.SaveToZspe(_mapper.Map<IEnumerable<EvaluationSapResult>, IEnumerable<ZSPE_02>>(evfData));
             this.UpdateEvaluationSapResult(evfData);
             System.Threading.Tasks.Task.Run(() =>
             {
@@ -88,7 +83,7 @@ namespace EVF.Tranfer.Service.Bll
         /// Insert new sap result to zncr 02 table.
         /// </summary>
         /// <param name="dmData">The sap score result.</param>
-        private void SaveToZncr(IEnumerable<ZSPE_02> dmData)
+        private void SaveToZspe(IEnumerable<ZSPE_02> dmData)
         {
             var now = DateTime.Now;
             dmData.Select(c => { c.CteDb = _config.AppName; return c; }).ToList();

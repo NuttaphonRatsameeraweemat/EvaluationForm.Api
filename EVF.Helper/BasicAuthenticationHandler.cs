@@ -101,11 +101,7 @@ namespace EVF.Helper
         /// <returns></returns>
         protected override Task HandleChallengeAsync(AuthenticationProperties properties)
         {
-            var model = new ResultViewModel
-            {
-                IsError = true,
-                Message = $"Invalid Username or Password"
-            };
+            var model = UtilityService.InitialResultError($"Invalid Username or Password", (int)System.Net.HttpStatusCode.Unauthorized);
             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
@@ -125,11 +121,7 @@ namespace EVF.Helper
         /// <returns></returns>
         protected override Task HandleForbiddenAsync(AuthenticationProperties properties)
         {
-            var model = new ResultViewModel
-            {
-                IsError = true,
-                Message = $"You don't have permission to access."
-            };
+            var model = UtilityService.InitialResultError($"You don't have permission to access.", (int)System.Net.HttpStatusCode.Forbidden);
             string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()

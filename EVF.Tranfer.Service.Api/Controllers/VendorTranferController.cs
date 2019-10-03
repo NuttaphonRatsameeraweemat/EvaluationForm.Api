@@ -1,33 +1,37 @@
-﻿using EVF.Data.Pocos;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EVF.Helper.Components;
 using EVF.Tranfer.Service.Bll.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace EVF.Tranfer.Service.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize(Roles = "EVF", AuthenticationSchemes = ConstantValue.BasicAuthentication)]
-    public class TranferController : ControllerBase
+    public class VendorTranferController : ControllerBase
     {
+
         #region Fields
 
         /// <summary>
         /// The tranfer to datamart manager provides tranfer to datamart functionality.
         /// </summary>
-        private readonly ITranferBll _tranfer;
+        private readonly IVendorTranferBll _tranfer;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="TranferController" /> class.
+        ///  Initializes a new instance of the <see cref="VendorTranferController" /> class.
         /// </summary>
         /// <param name="valueHelp"></param>
-        public TranferController(ITranferBll tranfer)
+        public VendorTranferController(IVendorTranferBll tranfer)
         {
             _tranfer = tranfer;
         }
@@ -37,33 +41,20 @@ namespace EVF.Tranfer.Service.Api.Controllers
         #region Methods
 
         [HttpPost]
-        [Route("TranferToDataMart")]
-        public IActionResult TranferToDataMart()
+        [Route("TranferVendorTransection")]
+        public IActionResult TranferVendorTransection()
         {
-            return Ok(_tranfer.TranferToDataMart());
+            return Ok(_tranfer.TranferVendorTransection());
         }
 
         [HttpPost]
-        [Route("TryToInsertSapResult")]
-        public IActionResult TryToInsertSapResult(IEnumerable<EvaluationSapResult> model)
-        {
-            return Ok(_tranfer.TryToInsertSapResult(model));
-        }
-
-        [HttpGet]
         [Route("TryToConnect")]
         public IActionResult TryToConnect()
         {
             return Ok(_tranfer.TryToConnect());
         }
 
-        [HttpGet]
-        [Route("GetEvaluationSapResult")]
-        public IActionResult GetEvaluationSapResult()
-        {
-            return Ok(_tranfer.GetEvaluationSapResult());
-        }
-
         #endregion
+
     }
 }

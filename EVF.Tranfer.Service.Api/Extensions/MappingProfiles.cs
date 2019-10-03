@@ -16,6 +16,8 @@ namespace EVF.Tranfer.Service.Api.Extensions
         {
             CreateMap<ZSPE_02, EvaluationSapResult>();
             CreateMap<EvaluationSapResult, ZSPE_02>();
+            CreateMap<SPE_TRANSAC_PO_QA, VendorTransection>();
+            CreateMap<VendorTransection, SPE_TRANSAC_PO_QA>();
         }
 
         #endregion

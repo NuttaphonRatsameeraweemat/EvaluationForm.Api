@@ -7,7 +7,7 @@ using System.Text;
 
 namespace EVF.Tranfer.Service.Bll.Interfaces
 {
-    public interface ITranferBll
+    public interface ISapTranferBll
     {
         /// <summary>
         /// Tranfer data in evaluation sap result to zncr 02.
