@@ -148,10 +148,12 @@ namespace EVF.Evaluation.Bll
         public SummaryEvaluationViewModel GetDetail(int id)
         {
             var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            var templateInfo = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault();
             var result = this.GetHeaderInformation(data);
-            result.UserLists.AddRange(this.GetEvaluators(data.Id,
-                _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault().CriteriaId.Value));
+            result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
             result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists));
+            result.Total = this.GetTotalScore(result.Summarys);
+            result.GradeName = this.GetGrade(templateInfo.GradeId.Value, result.Total);
             return result;
         }
 
@@ -211,7 +213,7 @@ namespace EVF.Evaluation.Bll
                 evaLog.ActionDate = item.ActionDate;
                 foreach (var logItem in log)
                 {
-                    evaLog.EvaluationLogs.Add(new EvaluationLogItemViewModel
+                    evaLog.EvaluationLogs.Add(new UserEvaluationLogItemViewModel
                     {
                         Id = logItem.Id,
                         KpiGroupId = logItem.KpiGroupId,
@@ -353,6 +355,33 @@ namespace EVF.Evaluation.Bll
             purScore = (purScore * _config.PurchasingPercentage) / 100;
             userScore = (userScore * _config.UserPercentage) / 100;
             return Math.Round(purScore + userScore);
+        }
+
+
+        /// <summary>
+        /// Get total score summary.
+        /// </summary>
+        /// <param name="summaryEvaluations">The summary information.</param>
+        /// <returns></returns>
+        private double GetTotalScore(IEnumerable<SummaryEvaluationDetailViewModel> summaryEvaluations)
+        {
+            var groupSummary = summaryEvaluations.Where(x => !x.KpiId.HasValue);
+            double rawTotalScore = groupSummary.Sum(x => x.Score);
+            int countKpiGroup = groupSummary.Count();
+            return rawTotalScore / Convert.ToDouble(countKpiGroup);
+        }
+
+        /// <summary>
+        /// Get Grade name.
+        /// </summary>
+        /// <param name="gradeId">The grade identity using in template.</param>
+        /// <param name="totalScore">The total score.</param>
+        /// <returns></returns>
+        private string GetGrade(int gradeId, double totalScore)
+        {
+            var gradeInfo = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
+            var gradePoint = gradeInfo.FirstOrDefault(x => x.StartPoint <= totalScore && x.EndPoint >= totalScore);
+            return gradePoint.GradeNameTh;
         }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace EVF.Evaluation.Bll.Models
         public string VendorName { get; set; }
         public string WeightingKey { get; set; }
         public string PurchasingOrgName { get; set; }
-        public int Total { get; set; }
+        public double Total { get; set; }
         public string GradeName { get; set; }
         public List<SummaryEvaluationDetailViewModel> Summarys { get; set; }
         public List<UserEvaluationViewModel> UserLists { get; set; }
@@ -50,11 +50,22 @@ namespace EVF.Evaluation.Bll.Models
     {
         public UserEvaluationDetailViewModel()
         {
-            EvaluationLogs = new List<EvaluationLogItemViewModel>();
+            EvaluationLogs = new List<UserEvaluationLogItemViewModel>();
         }
 
         public DateTime? ActionDate { get; set; }
-        public List<EvaluationLogItemViewModel> EvaluationLogs { get; set; }
+        public List<UserEvaluationLogItemViewModel> EvaluationLogs { get; set; }
+    }
+
+    public class UserEvaluationLogItemViewModel
+    {
+        public int Id { get; set; }
+        public int? KpiGroupId { get; set; }
+        public int? KpiId { get; set; }
+        public int? Score { get; set; }
+        public int? LevelPoint { get; set; }
+        public string Reason { get; set; }
+        public int Sequence { get; set; }
     }
 
 }
