@@ -36,6 +36,7 @@ namespace EVF.Evaluation.Bll.Models
             EvaluationLogs = new List<UserEvaluationDetailViewModel>();
         }
 
+        public int Id { get; set; }
         public string EmpNo { get; set; }
         public string AdUser { get; set; }
         public string UserType { get; set; }
@@ -53,6 +54,7 @@ namespace EVF.Evaluation.Bll.Models
             EvaluationLogs = new List<UserEvaluationLogItemViewModel>();
         }
 
+        public int Id { get; set; }
         public DateTime? ActionDate { get; set; }
         public List<UserEvaluationLogItemViewModel> EvaluationLogs { get; set; }
     }

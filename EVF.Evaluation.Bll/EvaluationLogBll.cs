@@ -64,6 +64,16 @@ namespace EVF.Evaluation.Bll
         }
 
         /// <summary>
+        /// Get Evaluation Log with id.
+        /// </summary>
+        /// <param name="id">The evaluation log identity.</param>
+        /// <returns></returns>
+        public IEnumerable<EvaluationLogViewModel> GetEvaluationLogById(int id)
+        {
+            return this.InitialEvaluationLogViewModel(_unitOfWork.GetRepository<EvaluationLog>().Get(x=>x.Id == id));
+        }
+
+        /// <summary>
         /// Initial Evaluation Viewmodel.
         /// </summary>
         /// <param name="data">The evaluation log entity model.</param>

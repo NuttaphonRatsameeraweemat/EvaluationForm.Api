@@ -210,6 +210,7 @@ namespace EVF.Evaluation.Bll
             {
                 var evaLog = new UserEvaluationDetailViewModel();
                 var log = _unitOfWork.GetRepository<EvaluationLogItem>().Get(x => x.EvaluationLogId == item.Id);
+                evaLog.Id = item.Id;
                 evaLog.ActionDate = item.ActionDate;
                 foreach (var logItem in log)
                 {
@@ -411,6 +412,7 @@ namespace EVF.Evaluation.Bll
         {
             return new UserEvaluationViewModel
             {
+                Id = item.Id,
                 EmpNo = item.EmpNo,
                 AdUser = item.AdUser,
                 IsReject = item.IsReject.Value,
