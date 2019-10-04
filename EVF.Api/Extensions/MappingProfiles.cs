@@ -121,6 +121,8 @@ namespace EVF.Api.Extensions
         {
             CreateMap<Data.Pocos.Vendor, VendorViewModel>();
             CreateMap<VendorViewModel, Data.Pocos.Vendor>();
+            CreateMap<VendorTransection, VendorTransectionViewModel>();
+            CreateMap<VendorTransectionViewModel, VendorTransection>();
         }
 
         /// <summary>

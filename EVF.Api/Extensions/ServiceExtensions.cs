@@ -140,6 +140,7 @@ namespace EVF.Api.Extensions
         public static void ConfigureVendorBll(this IServiceCollection services)
         {
             services.AddScoped<IVendorBll, VendorBll>();
+            services.AddScoped<IVendorTransectionBll, VendorTransectionBll>();
         }
 
         /// <summary>
@@ -151,7 +152,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IWorkflowBll, WorkflowBll>();
             services.AddScoped<IWorkflowDelegateBll, WorkflowDelegateBll>();
         }
-
+        
         /// <summary>
         /// Register service components class.
         /// </summary>
@@ -161,6 +162,7 @@ namespace EVF.Api.Extensions
             services.AddSingleton<IConfigSetting, ConfigSetting>();
             services.AddSingleton<IAdService, AdService>();
             services.AddSingleton<IK2Service, K2Service>();
+            services.AddSingleton(typeof(IElasticSearch<>), typeof(ElasticSearch<>));
 
             services.AddTransient<IManageToken, ManageToken>();
         }

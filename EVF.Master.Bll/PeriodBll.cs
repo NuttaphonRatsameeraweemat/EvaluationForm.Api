@@ -61,7 +61,7 @@ namespace EVF.Master.Bll
         public IEnumerable<PeriodViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
-                   _unitOfWork.GetRepository<Period>().GetCache());
+                   _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderBy(y => y.Year)));
         }
 
         /// <summary>
@@ -157,6 +157,7 @@ namespace EVF.Master.Bll
         /// <param name="periodItems">The identity of period items.</param>
         private void EditItem(int periodGroupId, IEnumerable<PeriodItemViewModel> periodItems)
         {
+            periodItems.Select(c => { c.PeriodID = periodGroupId; return c; }).ToList();
             var data = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodGroupId);
 
             var periodItemAdd = periodItems.Where(x => x.Id == 0);
@@ -164,7 +165,7 @@ namespace EVF.Master.Bll
 
             var periodItemUpdate = _mapper.Map<IEnumerable<PeriodItemViewModel>, IEnumerable<PeriodItem>>(periodItems);
             periodItemUpdate = periodItemUpdate.Where(x => data.Any(y => x.Id == y.Id));
-           
+
             this.SaveItem(periodGroupId, periodItemAdd);
             this.DeleteItem(periodItemDelete);
             _unitOfWork.GetRepository<PeriodItem>().UpdateRange(periodItemUpdate);

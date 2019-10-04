@@ -124,7 +124,10 @@ namespace EVF.Helper
         /// Get Application Name.
         /// </summary>
         public int UserPercentage => Convert.ToInt32(this.GetAppSetting("Calculate:User"));
-
+        /// <summary>
+        /// Get Elastic Search Url.
+        /// </summary>
+        public string ElasticSearchUrl => this.GetAppSetting("ElasticSearch:Url");
         #endregion
 
     }

@@ -90,5 +90,9 @@ namespace EVF.Helper.Interfaces
         /// Get User Percentage score.
         /// </summary>
         int UserPercentage { get; }
+        /// <summary>
+        /// Get Elastic Search Url.
+        /// </summary>
+        string ElasticSearchUrl { get; }
     }
 }
