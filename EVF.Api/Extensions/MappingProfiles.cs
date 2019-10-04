@@ -75,6 +75,8 @@ namespace EVF.Api.Extensions
             CreateMap<ApprovalItemViewModel, ApprovalItem>();
             CreateMap<ValueHelp, ValueHelpViewModel>();
             CreateMap<ValueHelpViewModel, ValueHelp>();
+            CreateMap<EvaluatorGroup, EvaluatorGroupViewModel>();
+            CreateMap<EvaluatorGroupViewModel, EvaluatorGroup>();
         }
 
         /// <summary>

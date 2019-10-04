@@ -45,6 +45,7 @@ namespace EVF.Evaluation.Bll.Models
         [Required]
         public int PeriodItemId { get; set; }
 
+        public int EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }
         public string EvaluatorPurchasing { get; set; }
     }

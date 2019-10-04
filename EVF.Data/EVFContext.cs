@@ -31,6 +31,8 @@ namespace EVF.Data
         public virtual DbSet<EvaluationLogItem> EvaluationLogItem { get; set; }
         public virtual DbSet<EvaluationSapResult> EvaluationSapResult { get; set; }
         public virtual DbSet<EvaluationTemplate> EvaluationTemplate { get; set; }
+        public virtual DbSet<EvaluatorGroup> EvaluatorGroup { get; set; }
+        public virtual DbSet<EvaluatorGroupItem> EvaluatorGroupItem { get; set; }
         public virtual DbSet<Grade> Grade { get; set; }
         public virtual DbSet<GradeItem> GradeItem { get; set; }
         public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }

@@ -14,14 +14,11 @@ namespace EVF.CentralSetting.Bll.Models
 
         public const string RoleForManageData = "Role_MA_Approval";
         public const string RoleForDisplayData = "Role_DS_Approval";
-
+        
         public int Id { get; set; }
         [Required]
-        public string ComCode { get; set; }
-        public string CompanyName { get; set; }
-        [Required]
-        public string OrgId { get; set; }
-        public string OrgName { get; set; }
+        public string PurchasingOrg { get; set; }
+        public string PurchasingOrgName { get; set; }
         public List<ApprovalItemViewModel> ApprovalList { get; set; }
     }
 

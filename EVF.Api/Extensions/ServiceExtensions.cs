@@ -116,6 +116,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
             services.AddScoped<IApprovalBll, ApprovalBll>();
+            services.AddScoped<IEvaluatorGroupBll, EvaluatorGroupBll>();
         }
 
         /// <summary>

@@ -5,12 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Data.Pocos
 {
-    public partial class Approval
+    public partial class EvaluatorGroup
     {
         [Column("ID")]
         public int Id { get; set; }
-        [StringLength(8)]
-        public string PurchasingOrg { get; set; }
+        [StringLength(250)]
+        public string EvaluatorGroupName { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }

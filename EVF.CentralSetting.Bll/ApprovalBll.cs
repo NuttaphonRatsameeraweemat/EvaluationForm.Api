@@ -68,21 +68,17 @@ namespace EVF.CentralSetting.Bll
         /// <returns></returns>
         private IEnumerable<ApprovalViewModel> InitialList(IEnumerable<Approval> data)
         {
-            var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
-            var orgList = _unitOfWork.GetRepository<Hrorg>().GetCache();
+            var purList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
 
             var result = new List<ApprovalViewModel>();
             foreach (var item in data)
             {
-                var tempCom = comList.FirstOrDefault(x => x.ComCode == item.ComCode);
-                var tempOrg = orgList.FirstOrDefault(x => x.OrgId == item.OrgId);
+                var tempPur = purList.FirstOrDefault(x => x.PurchaseOrg1 == item.PurchasingOrg);
                 result.Add(new ApprovalViewModel
                 {
                     Id = item.Id,
-                    ComCode = item.ComCode,
-                    CompanyName = tempCom?.LongText,
-                    OrgId = item.OrgId,
-                    OrgName = tempOrg?.OrgName
+                    PurchasingOrg = item.PurchasingOrg,
+                    PurchasingOrgName = tempPur?.PurchaseName
                 });
             }
             return result;
@@ -145,8 +141,7 @@ namespace EVF.CentralSetting.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var data = _unitOfWork.GetRepository<Approval>().GetCache(x => x.Id == model.Id).FirstOrDefault();
-                data.ComCode = model.ComCode;
-                data.OrgId = model.OrgId;
+                data.PurchasingOrg = model.PurchasingOrg;
                 data.LastModifyBy = _token.EmpNo;
                 data.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Approval>().Update(data);
