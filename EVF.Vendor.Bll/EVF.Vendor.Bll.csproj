@@ -9,9 +9,4 @@
     <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>

@@ -6,6 +6,7 @@ using EVF.Data.Pocos;
 using EVF.Master.Bll.Models;
 using EVF.Workflow.Bll.Models;
 using EVF.Evaluation.Bll.Models;
+using EVF.Vendor.Bll.Models;
 
 namespace EVF.Api.Extensions
 {
@@ -25,6 +26,7 @@ namespace EVF.Api.Extensions
             this.MappingHrModel();
             this.MappingWorkflowModel();
             this.MappingEvaluationModel();
+            this.MappingVendorModel();
         }
 
         #endregion
@@ -110,6 +112,15 @@ namespace EVF.Api.Extensions
         {
             CreateMap<WorkflowDelegate, WorkflowDelegateViewModel>();
             CreateMap<WorkflowDelegateViewModel, WorkflowDelegate>();
+        }
+
+        /// <summary>
+        /// Create auto mapper profile vendor model.
+        /// </summary>
+        private void MappingVendorModel()
+        {
+            CreateMap<Data.Pocos.Vendor, VendorViewModel>();
+            CreateMap<VendorViewModel, Data.Pocos.Vendor>();
         }
 
         /// <summary>

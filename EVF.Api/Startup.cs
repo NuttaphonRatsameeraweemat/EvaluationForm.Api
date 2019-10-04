@@ -30,6 +30,7 @@ namespace EVF.Api
             services.ConfigureHrBll();
             services.ConfigureWorkflowBll();
             services.ConfigureEvaluationBll();
+            services.ConfigureVendorBll();
             //Add Configure Extension.
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();

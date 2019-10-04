@@ -38,6 +38,8 @@ using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll;
+using EVF.Vendor.Bll.Interfaces;
+using EVF.Vendor.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -120,7 +122,7 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
-        /// Dependency Injection Central Setting Business Logic Layer.
+        /// Dependency Injection Evaluation Business Logic Layer.
         /// </summary>
         /// <param name="services">The service collection.</param>
         public static void ConfigureEvaluationBll(this IServiceCollection services)
@@ -129,6 +131,15 @@ namespace EVF.Api.Extensions
             services.AddScoped<IEvaluationAssignBll, EvaluationAssignBll>();
             services.AddScoped<IEvaluationLogBll, EvaluationLogBll>();
             services.AddScoped<ISummaryEvaluationBll, SummaryEvaluationBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Vendor Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureVendorBll(this IServiceCollection services)
+        {
+            services.AddScoped<IVendorBll, VendorBll>();
         }
 
         /// <summary>
