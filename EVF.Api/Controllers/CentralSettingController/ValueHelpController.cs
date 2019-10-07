@@ -64,6 +64,13 @@ namespace EVF.Api.Controllers
             return Ok(_valueHelp.Get(ConstantValue.ValueTypeWeightingKey));
         }
 
+        [HttpGet]
+        [Route("GetVendorFilterCondition")]
+        public IActionResult GetVendorFilterCondition()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeVendorFilterCondition));
+        }
+        
         #endregion
 
     }

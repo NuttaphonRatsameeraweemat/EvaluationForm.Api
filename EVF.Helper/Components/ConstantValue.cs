@@ -34,6 +34,7 @@ namespace EVF.Helper.Components
         public const string ValueTypeVendorSendingStatus = "VendorSendingStatus";
         public const string ValueTypePurchaseUserType = "PurchaseUserType";
         public const string ValueTypeWeightingKey = "WeightingKey";
+        public const string ValueTypeVendorFilterCondition = "VendorFilterCondition";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";
@@ -50,6 +51,9 @@ namespace EVF.Helper.Components
         //Sending vendor status
         public const string VendorWaiting = "WAITING";
         public const string VendorSending = "SEND";
+        //Vendor Condition
+        public const string VendorConditionMoreThan = "MoreThan";
+        public const string VendorConditionOther = "Other";
         //Purchasing Type
         public const string PurchasingTypeAdmin = "A";
         public const string PurchasingTypeUser = "U";

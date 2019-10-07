@@ -31,6 +31,10 @@ namespace EVF.Vendor.Bll
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
+        /// <summary>
+        /// The vendor transection manager provides vendor transection functionality.
+        /// </summary>
+        private readonly IVendorTransectionBll _vendorTransection;
 
         #endregion
 
@@ -42,11 +46,12 @@ namespace EVF.Vendor.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public VendorFilterBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token)
+        public VendorFilterBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IVendorTransectionBll vendorTransection)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
+            _vendorTransection = vendorTransection;
         }
 
         #endregion
@@ -204,6 +209,40 @@ namespace EVF.Vendor.Bll
         }
 
         /// <summary>
+        /// Change Assign to VendorFilter.
+        /// </summary>
+        /// <param name="model">The Vendor filter assign to information.</param>
+        /// <returns></returns>
+        public ResultViewModel ChangeAssignTo(VendorFilterEditRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<VendorFilter>().GetById(model.Id);
+                data.AssignTo = model.AssignTo;
+                _unitOfWork.GetRepository<VendorFilter>().Update(data);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Delete VendorFilter.
+        /// </summary>
+        /// <param name="id">The Vendor filter identity.</param>
+        /// <returns></returns>
+        public ResultViewModel Delete(int id)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                _unitOfWork.GetRepository<VendorFilter>().Remove(_unitOfWork.GetRepository<VendorFilter>().GetById(id));
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Update sending status and log timestamp.
         /// </summary>
         /// <param name="model">The Vendor information value.</param>
@@ -217,6 +256,37 @@ namespace EVF.Vendor.Bll
                 model.SendingEvaDate = DateTime.Now;
                 _unitOfWork.GetRepository<VendorFilter>().Update(model);
                 _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Filter Vendor by condition and total sales.
+        /// </summary>
+        /// <param name="model">The criteria vendor filter.</param>
+        /// <returns></returns>
+        public IEnumerable<VendorFilterResponseViewModel> SearchVendor(VendorFilterSearchViewModel model)
+        {
+            var result = new List<VendorFilterResponseViewModel>();
+            var purGroups = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.WeightingKey == model.WeightingKey && x.EvaStatus.Value).Select(x => x.PurGroup).ToArray();
+            var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups);
+            var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
+            var vendors = transectionList.Select(x => x.Vendor).Distinct().ToArray();
+            foreach (var item in vendors)
+            {
+                //var summary = transectionList.Where(x=>x.Vendor == item).Sum(x=>x.)
+
+                result.Add(new VendorFilterResponseViewModel
+                {
+                    VendorNo = item,
+                    VendorName = vendorInfo.FirstOrDefault(x=>x.VendorNo == item)?.VendorName,
+                });
+            }
+            switch (model.Condition)
+            {
+                case ConstantValue.VendorConditionMoreThan:
+                    //filter total sales morethan value in model.
+                    break;
             }
             return result;
         }

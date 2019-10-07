@@ -58,8 +58,8 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public IEnumerable<VendorTransectionViewModel> GetList()
         {
-            return _mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
-                _unitOfWork.GetRepository<VendorTransection>().GetCache());
+            return this.InitialVendorName(_mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
+                _unitOfWork.GetRepository<VendorTransection>().Get()));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public IEnumerable<VendorTransectionViewModel> GetListSearch(VendorTransectionSearchViewModel model)
         {
-            return this.SearchTransection(model);
+            return this.InitialVendorName(this.SearchTransection(model));
         }
 
         /// <summary>
@@ -78,12 +78,37 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         private IEnumerable<VendorTransectionViewModel> SearchTransection(VendorTransectionSearchViewModel model)
         {
-            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == model.PeriodItemId).FirstOrDefault();
+            return _mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
+                    this.GetTransections(model.PeriodItemId,new string[] { model.PurGroup }));
+        }
+
+        /// <summary>
+        /// Initial vendor transection view model.
+        /// </summary>
+        /// <param name="result">The vendor transection infomation.</param>
+        /// <returns></returns>
+        private IEnumerable<VendorTransectionViewModel> InitialVendorName(IEnumerable<VendorTransectionViewModel> result)
+        {
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
+            foreach (var item in result)
+            {
+                item.VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.Vendor)?.VendorName;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get Vendor transection.
+        /// </summary>
+        /// <param name="model">The criteria search vendor transection model.</param>
+        /// <returns></returns>
+        public IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup)
+        {
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemid).FirstOrDefault();
             var startReceipt = periodItem.StartEvaDate.Value.AddMonths(-6);
-            var data = _unitOfWork.GetRepository<VendorTransection>().GetCache(x => x.PurgropCode == model.PurGroup &&
-                                                                                    x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
-                                                                                    x.ReceiptDate.Value.Date >= startReceipt.Date);
-            return _mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(data);
+            return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
+                                                                                   x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
+                                                                                   x.ReceiptDate.Value.Date >= startReceipt.Date);
         }
 
         /// <summary>
@@ -94,7 +119,7 @@ namespace EVF.Vendor.Bll
         public VendorTransectionViewModel GetDetail(int id)
         {
             var result = _mapper.Map<VendorTransection, VendorTransectionViewModel>(
-                _unitOfWork.GetRepository<VendorTransection>().GetCache(x => x.Id == id).FirstOrDefault());
+                _unitOfWork.GetRepository<VendorTransection>().Get(x => x.Id == id).FirstOrDefault());
             return result;
         }
 
