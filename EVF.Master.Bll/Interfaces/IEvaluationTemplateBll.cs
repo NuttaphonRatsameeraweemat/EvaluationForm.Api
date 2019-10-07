@@ -14,6 +14,12 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<EvaluationTemplateViewModel> GetList();
         /// <summary>
+        /// Get Evaluation template list filter by weighting key.
+        /// </summary>
+        /// <param name="weightingKey">The weighting key.</param>
+        /// <returns></returns>
+        IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey);
+        /// <summary>
         /// Get Detail of Evaluation Template.
         /// </summary>
         /// <param name="id">The identity of evaluation template.</param>

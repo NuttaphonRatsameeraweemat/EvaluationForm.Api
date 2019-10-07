@@ -83,6 +83,18 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Get Evaluation template list filter by weighting key.
+        /// </summary>
+        /// <param name="weightingKey">The weighting key.</param>
+        /// <returns></returns>
+        public IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey)
+        {
+            var levelPointIds = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.WeightingKey == weightingKey).Select(x => x.Id).ToArray();
+            return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => levelPointIds.Contains(x.LevelPointId.Value)));
+        }
+
+        /// <summary>
         /// Get Detail of Evaluation Template.
         /// </summary>
         /// <param name="id">The identity of evaluation template.</param>

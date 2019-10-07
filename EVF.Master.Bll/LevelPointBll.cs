@@ -138,6 +138,7 @@ namespace EVF.Master.Bll
                 this.SetIsDefault(model);
                 var levelPointGroup = _unitOfWork.GetRepository<LevelPoint>().GetById(model.Id);
                 levelPointGroup.Name = model.Name;
+                levelPointGroup.WeightingKey = model.WeightingKey;
                 levelPointGroup.IsDefault = model.IsDefault;
                 levelPointGroup.LastModifyBy = _token.EmpNo;
                 levelPointGroup.LastModifyDate = DateTime.Now;

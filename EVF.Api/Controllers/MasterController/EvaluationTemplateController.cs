@@ -46,6 +46,13 @@ namespace EVF.Api.Controllers.MasterController
         }
 
         [HttpGet]
+        [Route("GetListByWeightingKey")]
+        public IActionResult GetListByWeightingKey(string weightingKey)
+        {
+            return Ok(_evaluationTemplate.GetListByWeightingKey(weightingKey));
+        }
+
+        [HttpGet]
         [Route("GetDetail")]
         public IActionResult GetDetail(int id)
         {
