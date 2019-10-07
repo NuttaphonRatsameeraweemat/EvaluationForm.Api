@@ -119,6 +119,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
             services.AddScoped<IApprovalBll, ApprovalBll>();
             services.AddScoped<IEvaluatorGroupBll, EvaluatorGroupBll>();
+            services.AddScoped<IPurchasingOrgBll, PurchasingOrgBll>();
         }
 
         /// <summary>
@@ -140,6 +141,7 @@ namespace EVF.Api.Extensions
         public static void ConfigureVendorBll(this IServiceCollection services)
         {
             services.AddScoped<IVendorBll, VendorBll>();
+            services.AddScoped<IVendorFilterBll, VendorFilterBll>();
             services.AddScoped<IVendorTransectionBll, VendorTransectionBll>();
         }
 

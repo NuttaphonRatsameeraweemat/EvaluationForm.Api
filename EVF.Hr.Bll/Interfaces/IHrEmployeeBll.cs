@@ -13,6 +13,18 @@ namespace EVF.Hr.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<HrEmployeeViewModel> GetList();
         /// <summary>
+        /// Get Employee list in purchase org.
+        /// </summary>
+        /// <param name="purOrg">The purchase org code.</param>
+        /// <returns></returns>
+        IEnumerable<HrEmployeeViewModel> GetListByPurchaseOrg(string purOrg);
+        /// <summary>
+        /// Get Employee list without purchase org.
+        /// </summary>
+        /// <param name="purOrg">The purchase org code.</param>
+        /// <returns></returns>
+        IEnumerable<HrEmployeeViewModel> GetListWithOutPurchaseOrg(string purOrg);
+        /// <summary>
         /// Get Employee list filter by company code.
         /// </summary>
         /// <returns></returns>

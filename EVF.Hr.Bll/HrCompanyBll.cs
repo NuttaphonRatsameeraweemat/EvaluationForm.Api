@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper.Interfaces;
 using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll.Models;
 using System;
@@ -22,6 +23,10 @@ namespace EVF.Hr.Bll
         /// The auto mapper.
         /// </summary>
         private readonly IMapper _mapper;
+        /// <summary>
+        /// The ClaimsIdentity in token management.
+        /// </summary>
+        private readonly IManageToken _token;
 
         #endregion
 
@@ -32,10 +37,11 @@ namespace EVF.Hr.Bll
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
-        public HrCompanyBll(IUnitOfWork unitOfWork, IMapper mapper)
+        public HrCompanyBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _token = token;
         }
 
         #endregion
@@ -47,6 +53,16 @@ namespace EVF.Hr.Bll
         /// </summary>
         /// <returns></returns>
         public IEnumerable<HrCompanyViewModel> GetList()
+        {
+            return _mapper.Map<IEnumerable<Hrcompany>, IEnumerable<HrCompanyViewModel>>(
+                   _unitOfWork.GetRepository<Hrcompany>().GetCache(x=>x.ComCode == _token.ComCode));
+        }
+
+        /// <summary>
+        /// Get All Company list.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<HrCompanyViewModel> GetAllCompany()
         {
             return _mapper.Map<IEnumerable<Hrcompany>, IEnumerable<HrCompanyViewModel>>(
                    _unitOfWork.GetRepository<Hrcompany>().GetCache());

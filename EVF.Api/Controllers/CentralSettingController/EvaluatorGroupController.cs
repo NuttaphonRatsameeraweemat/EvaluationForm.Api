@@ -43,6 +43,13 @@ namespace EVF.Api.Controllers.CentralSettingController
         }
 
         [HttpGet]
+        [Route("GetEvaluatorGroups")]
+        public IActionResult GetEvaluatorGroups(int periodItemid)
+        {
+            return Ok(_evaluatorGroup.GetEvaluatorGroups(periodItemid));
+        }
+
+        [HttpGet]
         [Route("GetDetail")]
         public IActionResult GetDetail(int id)
         {

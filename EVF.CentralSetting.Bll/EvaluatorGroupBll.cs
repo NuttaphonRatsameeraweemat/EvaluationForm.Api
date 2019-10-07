@@ -58,8 +58,33 @@ namespace EVF.CentralSetting.Bll
         /// <returns></returns>
         public IEnumerable<EvaluatorGroupViewModel> GetList()
         {
-            return _mapper.Map<IEnumerable<EvaluatorGroup>, IEnumerable<EvaluatorGroupViewModel>>(
+            var data = _mapper.Map<IEnumerable<EvaluatorGroup>, IEnumerable<EvaluatorGroupViewModel>>(
                 _unitOfWork.GetRepository<EvaluatorGroup>().GetCache());
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache();
+            foreach (var item in data)
+            {
+                var temp = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                item.PeriodItemName = temp?.PeriodName;
+            }
+            return data;
+        }
+
+        /// <summary>
+        /// Get EvaluatorGroup list by period item id.
+        /// </summary>
+        /// <param name="periodItems">The identity period item.</param>
+        /// <returns></returns>
+        public IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(int periodItems)
+        {
+            var data = _mapper.Map<IEnumerable<EvaluatorGroup>, IEnumerable<EvaluatorGroupViewModel>>(
+                _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x=>x.PeriodItemId == periodItems));
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache();
+            foreach (var item in data)
+            {
+                var temp = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                item.PeriodItemName = temp?.PeriodName;
+            }
+            return data;
         }
 
         /// <summary>

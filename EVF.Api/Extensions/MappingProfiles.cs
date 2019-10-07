@@ -79,6 +79,10 @@ namespace EVF.Api.Extensions
             CreateMap<ValueHelpViewModel, ValueHelp>();
             CreateMap<EvaluatorGroup, EvaluatorGroupViewModel>();
             CreateMap<EvaluatorGroupViewModel, EvaluatorGroup>();
+            CreateMap<PurchaseOrg, PurchasingOrgViewModel>();
+            CreateMap<PurchasingOrgViewModel, PurchaseOrg>();
+            CreateMap<PurchaseOrgItem, PurchasingOrgItemViewModel>();
+            CreateMap<PurchasingOrgItemViewModel, PurchaseOrgItem>();
         }
 
         /// <summary>
@@ -123,6 +127,7 @@ namespace EVF.Api.Extensions
             CreateMap<VendorViewModel, Data.Pocos.Vendor>();
             CreateMap<VendorTransection, VendorTransectionViewModel>();
             CreateMap<VendorTransectionViewModel, VendorTransection>();
+            CreateMap<VendorFilterRequestViewModel, VendorFilter>();
         }
 
         /// <summary>

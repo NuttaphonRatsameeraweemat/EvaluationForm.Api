@@ -14,6 +14,12 @@ namespace EVF.CentralSetting.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<EvaluatorGroupViewModel> GetList();
         /// <summary>
+        /// Get EvaluatorGroup list by period item id.
+        /// </summary>
+        /// <param name="periodItems">The identity period item.</param>
+        /// <returns></returns>
+        IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(int periodItems);
+        /// <summary>
         /// Get Detail of EvaluatorGroup.
         /// </summary>
         /// <param name="id">The identity EvaluatorGroup.</param>

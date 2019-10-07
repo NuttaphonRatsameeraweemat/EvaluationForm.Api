@@ -51,10 +51,17 @@ namespace EVF.Api.Controllers
         }
 
         [HttpGet]
-        [Route("GetPeriodRound")]
-        public IActionResult GetPeriodRound()
+        [Route("GetPurchaseUserType")]
+        public IActionResult GetPurchaseUserType()
         {
-            return Ok(_valueHelp.Get(ConstantValue.ValueTypePeriodRound));
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypePurchaseUserType));
+        }
+
+        [HttpGet]
+        [Route("GetWeightingKey")]
+        public IActionResult GetWeightingKey()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeWeightingKey));
         }
 
         #endregion

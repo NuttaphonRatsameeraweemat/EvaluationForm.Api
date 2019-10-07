@@ -12,5 +12,10 @@ namespace EVF.Hr.Bll.Interfaces
         /// </summary>
         /// <returns></returns>
         IEnumerable<HrCompanyViewModel> GetList();
+        /// <summary>
+        /// Get Company list.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<HrCompanyViewModel> GetAllCompany();
     }
 }

@@ -31,6 +31,9 @@ namespace EVF.Helper.Components
         public const string ValueTypeSAPScoreFields = "SAPScoreFields";
         public const string ValueTypePeriodRound = "PeriodRound";
         public const string ValueTypeEvaStatus = "EvaStatus";
+        public const string ValueTypeVendorSendingStatus = "VendorSendingStatus";
+        public const string ValueTypePurchaseUserType = "PurchaseUserType";
+        public const string ValueTypeWeightingKey = "WeightingKey";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";
@@ -44,6 +47,12 @@ namespace EVF.Helper.Components
         public const string EvaWaiting = "EvaWaiting";
         public const string EvaComplete = "EvaComplete";
         public const string EvaExpire = "EvaExpire";
+        //Sending vendor status
+        public const string VendorWaiting = "WAITING";
+        public const string VendorSending = "SEND";
+        //Purchasing Type
+        public const string PurchasingTypeAdmin = "A";
+        public const string PurchasingTypeUser = "U";
         //Activity Workflow
         public const string ActivityRequest = "SendRequest";
         public const string ActivityApprove = "Approve";

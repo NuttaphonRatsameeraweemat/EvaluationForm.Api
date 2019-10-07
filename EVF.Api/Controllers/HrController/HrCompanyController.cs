@@ -42,6 +42,13 @@ namespace EVF.Api.Controllers.HrController
             return Ok(_hrCompany.GetList());
         }
 
+        [HttpGet]
+        [Route("GetAllCompany")]
+        public IActionResult GetAllCompany()
+        {
+            return Ok(_hrCompany.GetAllCompany());
+        }
+
         #endregion
 
     }

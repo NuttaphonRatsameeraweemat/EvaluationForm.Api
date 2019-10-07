@@ -55,6 +55,7 @@ namespace EVF.Data
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
         public virtual DbSet<Vendor> Vendor { get; set; }
+        public virtual DbSet<VendorFilter> VendorFilter { get; set; }
         public virtual DbSet<VendorTransection> VendorTransection { get; set; }
         public virtual DbSet<WorkflowActivityLog> WorkflowActivityLog { get; set; }
         public virtual DbSet<WorkflowActivityStep> WorkflowActivityStep { get; set; }

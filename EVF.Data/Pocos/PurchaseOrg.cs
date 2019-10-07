@@ -12,5 +12,11 @@ namespace EVF.Data.Pocos
         public string PurchaseOrg1 { get; set; }
         [StringLength(200)]
         public string PurchaseName { get; set; }
+        [StringLength(11)]
+        public string CreateBy { get; set; }
+        public DateTime? CreateDate { get; set; }
+        [StringLength(11)]
+        public string LastModifyBy { get; set; }
+        public DateTime? LastModifyDate { get; set; }
     }
 }

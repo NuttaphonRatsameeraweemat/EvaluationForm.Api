@@ -5,6 +5,7 @@ using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EVF.Hr.Bll
@@ -53,13 +54,37 @@ namespace EVF.Hr.Bll
         }
 
         /// <summary>
+        /// Get Employee list in purchase org.
+        /// </summary>
+        /// <param name="purOrg">The purchase org code.</param>
+        /// <returns></returns>
+        public IEnumerable<HrEmployeeViewModel> GetListByPurchaseOrg(string purOrg)
+        {
+            var purchaseUser = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.PuchaseOrg == purOrg).Select(x => x.AdUser);
+            return _mapper.Map<IEnumerable<Hremployee>, IEnumerable<HrEmployeeViewModel>>(
+                   _unitOfWork.GetRepository<Hremployee>().GetCache(x => purchaseUser.Contains(x.Aduser)));
+        }
+
+        /// <summary>
+        /// Get Employee list without purchase org.
+        /// </summary>
+        /// <param name="purOrg">The purchase org code.</param>
+        /// <returns></returns>
+        public IEnumerable<HrEmployeeViewModel> GetListWithOutPurchaseOrg(string purOrg)
+        {
+            var purchaseUser = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.PuchaseOrg == purOrg).Select(x => x.AdUser);
+            return _mapper.Map<IEnumerable<Hremployee>, IEnumerable<HrEmployeeViewModel>>(
+                   _unitOfWork.GetRepository<Hremployee>().GetCache(x => !purchaseUser.Contains(x.Aduser)));
+        }
+
+        /// <summary>
         /// Get Employee list filter by company code.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<HrEmployeeViewModel> GetListByComCode(string comCode)
         {
             return _mapper.Map<IEnumerable<Hremployee>, IEnumerable<HrEmployeeViewModel>>(
-                   _unitOfWork.GetRepository<Hremployee>().GetCache(x=>x.ComCode == comCode));
+                   _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.ComCode == comCode));
         }
 
         /// <summary>
@@ -69,7 +94,7 @@ namespace EVF.Hr.Bll
         public IEnumerable<HrEmployeeViewModel> GetListByOrg(string orgId)
         {
             return _mapper.Map<IEnumerable<Hremployee>, IEnumerable<HrEmployeeViewModel>>(
-                   _unitOfWork.GetRepository<Hremployee>().GetCache(x=>x.OrgId == orgId));
+                   _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.OrgId == orgId));
         }
 
         #endregion

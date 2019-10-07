@@ -4,6 +4,7 @@ using EVF.CentralSetting.Bll.Models;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EVF.CentralSetting.Bll
 {
@@ -46,7 +47,7 @@ namespace EVF.CentralSetting.Bll
         public IEnumerable<ValueHelpViewModel> Get(string type)
         {
             return _mapper.Map<IEnumerable<ValueHelp>, IEnumerable<ValueHelpViewModel>>(
-                _unitOfWork.GetRepository<ValueHelp>().Get(x => x.ValueType == type));
+                _unitOfWork.GetRepository<ValueHelp>().Get(x => x.ValueType == type, x => x.OrderBy(y => y.Sequence)));
         }
 
         #endregion

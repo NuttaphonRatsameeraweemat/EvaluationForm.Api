@@ -43,6 +43,20 @@ namespace EVF.Api.Controllers.HrController
         }
 
         [HttpGet]
+        [Route("GetListByPurchaseOrg")]
+        public IActionResult GetListByPurchaseOrg(string purOrg)
+        {
+            return Ok(_hrEmployee.GetListByPurchaseOrg(purOrg));
+        }
+
+        [HttpGet]
+        [Route("GetListWithOutPurchaseOrg")]
+        public IActionResult GetListWithOutPurchaseOrg(string purOrg)
+        {
+            return Ok(_hrEmployee.GetListWithOutPurchaseOrg(purOrg));
+        }
+
+        [HttpGet]
         [Route("GetListByComCode")]
         public IActionResult GetListByComCode(string comCode)
         {

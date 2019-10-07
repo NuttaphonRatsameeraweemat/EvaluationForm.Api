@@ -13,6 +13,8 @@ namespace EVF.CentralSetting.Bll.Models
         public int Id { get; set; }
         [Required]
         public string EvaluatorGroupName { get; set; }
+        public int PeriodItemId { get; set; }
+        public string PeriodItemName { get; set; }
         public string[] AdUserList { get; set; }
     }
 }

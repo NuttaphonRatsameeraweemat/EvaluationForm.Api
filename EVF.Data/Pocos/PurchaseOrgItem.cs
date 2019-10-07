@@ -9,8 +9,6 @@ namespace EVF.Data.Pocos
     {
         [StringLength(4)]
         public string PuchaseOrg { get; set; }
-        [StringLength(11)]
-        public string EmpNo { get; set; }
         [StringLength(100)]
         public string AdUser { get; set; }
         [StringLength(10)]
