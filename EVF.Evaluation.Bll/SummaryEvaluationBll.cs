@@ -7,6 +7,8 @@ using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
+using EVF.Workflow.Bll.Interfaces;
+using EVF.Workflow.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,10 @@ namespace EVF.Evaluation.Bll
         /// The config value in appsetting.json
         /// </summary>
         private readonly IConfigSetting _config;
+        /// <summary>
+        /// The workflow manager provides workflow functionality.
+        /// </summary>
+        private readonly IWorkflowBll _workflow;
 
         #endregion
 
@@ -47,12 +53,13 @@ namespace EVF.Evaluation.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IConfigSetting config)
+        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IConfigSetting config, IWorkflowBll workflow)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
             _config = config;
+            _workflow = workflow;
         }
 
         #endregion
@@ -315,7 +322,8 @@ namespace EVF.Evaluation.Bll
             {
                 foreach (var item in userResult)
                 {
-                    result.Add(this.InitialModel(item, this.CalculateScore(0, this.AverageScore(item.Score, userCount))));
+                    result.Add(this.InitialModel(item, UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
+                                                                                     _config.UserPercentage, _config.PurchasingPercentage)));
                 }
             }
             else
@@ -326,38 +334,13 @@ namespace EVF.Evaluation.Bll
                     var userPoint = userResult.FirstOrDefault(x => x.KpiGroupId == item.KpiGroupId && x.KpiId == item.KpiId);
                     if (userPoint != null)
                     {
-                        uPoint = this.AverageScore(userPoint.Score, userCount);
+                        uPoint = UtilityService.AverageScore(userPoint.Score, userCount);
                     }
                     result.Add(this.InitialModel(item, uPoint));
                 }
             }
             return result;
         }
-
-        /// <summary>
-        /// Calculate average score.
-        /// </summary>
-        /// <param name="score">The score.</param>
-        /// <param name="userTotal">The average.</param>
-        /// <returns></returns>
-        private double AverageScore(double score, int userTotal)
-        {
-            return score / userTotal;
-        }
-
-        /// <summary>
-        /// Calculate kpi group score.
-        /// </summary>
-        /// <param name="purScore">The purchasing score.</param>
-        /// <param name="userScore">The average users score.</param>
-        /// <returns></returns>
-        private double CalculateScore(double purScore, double userScore)
-        {
-            purScore = (purScore * _config.PurchasingPercentage) / 100;
-            userScore = (userScore * _config.UserPercentage) / 100;
-            return Math.Round(purScore + userScore);
-        }
-
 
         /// <summary>
         /// Get total score summary.
@@ -397,7 +380,7 @@ namespace EVF.Evaluation.Bll
             {
                 KpiGroupId = item.KpiGroupId,
                 KpiId = item.KpiId,
-                Score = this.CalculateScore(item.Score, score),
+                Score = UtilityService.CalculateScore(item.Score, score, _config.UserPercentage, _config.PurchasingPercentage),
                 Sequence = item.Sequence
             };
         }
@@ -420,6 +403,104 @@ namespace EVF.Evaluation.Bll
                 UserType = item.UserType,
                 FullName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh)
             };
+        }
+
+        /// <summary>
+        /// Send evaluation approve.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        public ResultViewModel SendApprove(int id)
+        {
+            var result = new ResultViewModel();
+            var model = this.GetDetail(id);
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+                data.TotalScore = Convert.ToInt32(model.Total);
+                data.Status = ConstantValue.WorkflowStatusInWorkflowProcess;
+
+                //Sending workflow k2
+                var approval = _unitOfWork.GetRepository<Approval>().GetCache(x => x.PurchasingOrg == data.PurchasingOrg).FirstOrDefault();
+                var approvalList = this.GetApproval(_unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == approval.Id));
+                var vendorInfo = _unitOfWork.GetRepository<Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+                _workflow.Start(data.Id, ConstantValue.EvaluationProcessCode,
+                                string.Format(MessageValue.WorkflowFiloEvaluationProcess, vendorInfo.VendorName), approvalList);
+                _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Submit action task approve or reject.
+        /// </summary>
+        /// <param name="model">The evaluation task information.</param>
+        /// <returns></returns>
+        public ResultViewModel SubmitAction(WorkflowViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var response = _workflow.Action(model);
+                if (string.IsNullOrEmpty(response))
+                {
+                    var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(model.DataId);
+                    if (string.Equals(model.Action, ConstantValue.WorkflowActionApprove, StringComparison.OrdinalIgnoreCase))
+                    {
+                        data.Status = ConstantValue.WorkflowStatusApproved;
+                    }
+                    else data.Status = ConstantValue.WorkflowActionReject;
+                    _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);
+                }
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Validate Status before send approve.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        public ResultViewModel ValidateStatus(int id)
+        {
+            var result = new ResultViewModel();
+            string[] status = new string[] { ConstantValue.EvaComplete, ConstantValue.EvaExpire };
+            var valueHelp = _unitOfWork.GetRepository<ValueHelp>().GetCache();
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            if (!status.Contains(data.Status))
+            {
+                var temp = valueHelp.FirstOrDefault(x => x.ValueType == ConstantValue.ValueTypeEvaStatus && x.ValueKey == data.Status);
+                result = UtilityService.InitialResultError(string.Format(MessageValue.StatusInvalidAction, temp.ValueText), 
+                                                          (int)System.Net.HttpStatusCode.BadRequest);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Mapping approve to dictionary.
+        /// </summary>
+        /// <param name="approvalList">The approval list.</param>
+        /// <returns></returns>
+        private Dictionary<int, string> GetApproval(IEnumerable<ApprovalItem> approvalList)
+        {
+            var result = new Dictionary<int, string>();
+            foreach (var item in approvalList)
+            {
+                result.Add(item.Step.Value, item.AdUser);
+            }
+            return result;
+        }
+
+        public void SendEmail()
+        {
+
+        }
+
+        public void PrintReport()
+        {
+
         }
 
         #endregion

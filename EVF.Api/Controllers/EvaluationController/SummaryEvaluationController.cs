@@ -49,6 +49,20 @@ namespace EVF.Api.Controllers.EvaluationController
             return Ok(_summaryEva.GetDetail(id));
         }
 
+        [HttpPost]
+        [Route("SendApprove/{id}")]
+        public IActionResult SendApprove(int id)
+        {
+            IActionResult response;
+            var valid = _summaryEva.ValidateStatus(id);
+            if (valid.IsError)
+            {
+                response = BadRequest(valid);
+            }
+            else response = Ok(_summaryEva.SendApprove(id));
+            return response;
+        }
+
         #endregion
 
     }

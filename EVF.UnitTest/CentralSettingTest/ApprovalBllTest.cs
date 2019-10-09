@@ -73,8 +73,8 @@ namespace EVF.UnitTest.CentralSettingTest
             {
                 var response = _approval.Save(new CentralSetting.Bll.Models.ApprovalViewModel
                 {
-                    OrgId = orgId,
-                    ComCode = comCode,
+                    PurchasingOrg = orgId,
+                    PurchasingOrgName = comCode,
                     ApprovalList = new List<CentralSetting.Bll.Models.ApprovalItemViewModel>
                     {
                         new CentralSetting.Bll.Models.ApprovalItemViewModel { AdUser = adUser, Step = 1 }
@@ -98,8 +98,8 @@ namespace EVF.UnitTest.CentralSettingTest
                 var response = _approval.Edit(new CentralSetting.Bll.Models.ApprovalViewModel
                 {
                     Id = 1,
-                    OrgId = orgId,
-                    ComCode = comCode,
+                    PurchasingOrg = orgId,
+                    PurchasingOrgName = comCode,
                     ApprovalList = new List<CentralSetting.Bll.Models.ApprovalItemViewModel>
                     {
                         new CentralSetting.Bll.Models.ApprovalItemViewModel { AdUser = adUser, Step = 1 }

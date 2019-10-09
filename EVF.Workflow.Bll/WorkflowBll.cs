@@ -93,20 +93,18 @@ namespace EVF.Workflow.Bll
         /// <summary>
         /// Action workflow by outcome in workflow.
         /// </summary>
-        /// <param name="processIntanceId">The process instance id workflow.</param>
-        /// <param name="serialNo">The serial no identity task.</param>
-        /// <param name="step">The workflow task step.</param>
-        /// <param name="action">The action to execute workflow.</param>
-        /// <param name="comment">The comment workflow task.</param>
-        public void Action(int processIntanceId, string serialNo, int step, string action, string comment)
+        /// <param name="model">The task list information.</param>
+        public string Action(WorkflowViewModel model)
         {
-            int nextStep = step + 1;
+            string result = string.Empty;
+            int nextStep = model.Step + 1;
             string processInstanceStatus = ConstantValue.WorkflowStatusInWorkflowProcess;
             Dictionary<string, object> dataFields = new Dictionary<string, object>();
-            if (this.IsWorkflowFisnish(processIntanceId, nextStep))
+            if (this.IsWorkflowFisnish(model.ProcessInstanceId, nextStep) || model.Action != ConstantValue.WorkflowActionReject)
             {
+                result = "GoNext";
                 dataFields.Add("GoNextActivity", false);
-                dataFields.Add("ActionUser", this.GetCurrentApprove(processIntanceId, nextStep));
+                dataFields.Add("ActionUser", this.GetCurrentApprove(model.ProcessInstanceId, nextStep));
                 dataFields.Add("CurrentStep", nextStep);
             }
             else
@@ -115,9 +113,10 @@ namespace EVF.Workflow.Bll
                 nextStep = 0;
                 processInstanceStatus = ConstantValue.WorkflowStatusComplete;
             }
-            _k2Service.ActionWorkflow(serialNo, action, dataFields);
-            this.UpdateWorkflowProcessInstance(processIntanceId, nextStep, processInstanceStatus);
-            this.SaveWorkflowLog(this.InitialWorkflowLog(processIntanceId, step, serialNo, action, comment));
+            _k2Service.ActionWorkflow(model.SerialNo, model.Action, dataFields);
+            this.UpdateWorkflowProcessInstance(model.ProcessInstanceId, nextStep, processInstanceStatus);
+            this.SaveWorkflowLog(this.InitialWorkflowLog(model.ProcessInstanceId, model.Step, model.SerialNo, model.Action, model.Comment));
+            return result;
         }
 
         /// <summary>
@@ -318,11 +317,11 @@ namespace EVF.Workflow.Bll
         /// <returns></returns>
         private string GetProcessName(string processCode)
         {
-            string result = string.Empty;
+            string result = $"{_config.K2ProcessFolder}\\";
             switch (processCode)
             {
                 case ConstantValue.EvaluationProcessCode:
-                    result = _config.SpeEvaluationProcess;
+                    result += _config.SpeEvaluationProcess;
                     break;
             }
             return result;

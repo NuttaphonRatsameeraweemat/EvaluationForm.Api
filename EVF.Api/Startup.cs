@@ -35,7 +35,10 @@ namespace EVF.Api
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();
+            //Release
             services.ConfigureCookieAuthen(Configuration);
+            //Debug
+            //services.ConfigureJwtAuthen(Configuration);
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();
@@ -47,7 +50,10 @@ namespace EVF.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
                 app.ConfigureUseSwagger();
-            
+
+            //For JWT test
+            //app.ConfigureHandlerStatusPages();
+           
             app.UseAuthentication();
             app.ConfigureMiddleware();
             app.UseCors("CorsPolicy");

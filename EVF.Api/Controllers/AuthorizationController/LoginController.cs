@@ -53,7 +53,8 @@ namespace EVF.Api.Controllers
                 var responseMessage = new
                 {
                     Employee = model,
-                    Menu = _menu.GenerateMenu(auth.Username)
+                    Menu = _menu.GenerateMenu(auth.Username),
+                    Token = token
                 };
                 _login.SetupCookie(HttpContext, token);
                 response = Ok(responseMessage);

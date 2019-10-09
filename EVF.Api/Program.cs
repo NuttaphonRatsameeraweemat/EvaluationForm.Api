@@ -17,6 +17,7 @@ namespace EVF.Api
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                //.UseUrls("http://*:3000")
                 .Build();
     }
 }

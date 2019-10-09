@@ -25,6 +25,10 @@ namespace EVF.Data
         public virtual DbSet<Criteria> Criteria { get; set; }
         public virtual DbSet<CriteriaGroup> CriteriaGroup { get; set; }
         public virtual DbSet<CriteriaItem> CriteriaItem { get; set; }
+        public virtual DbSet<EmailTask> EmailTask { get; set; }
+        public virtual DbSet<EmailTaskContent> EmailTaskContent { get; set; }
+        public virtual DbSet<EmailTaskReceiver> EmailTaskReceiver { get; set; }
+        public virtual DbSet<EmailTemplate> EmailTemplate { get; set; }
         public virtual DbSet<Evaluation> Evaluation { get; set; }
         public virtual DbSet<EvaluationAssign> EvaluationAssign { get; set; }
         public virtual DbSet<EvaluationLog> EvaluationLog { get; set; }
@@ -73,6 +77,11 @@ namespace EVF.Data
                     .HasName("AppMenu_pkey");
 
                 entity.Property(e => e.MenuCode).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<EmailTemplate>(entity =>
+            {
+                entity.Property(e => e.EmailType).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<EvaluationSapResult>(entity =>

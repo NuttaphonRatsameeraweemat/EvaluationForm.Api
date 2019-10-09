@@ -61,13 +61,19 @@ namespace EVF.Helper.Components
         public const string ActivityRequest = "SendRequest";
         public const string ActivityApprove = "Approve";
         public const string WorkflowStatusInWorkflowProcess = "InWfProcess";
+        public const string WorkflowStatusApproved = "Approved";
+        public const string WorkflowStatusReject = "Reject";
         public const string WorkflowStatusComplete = "Complete";
+        public const string WorkflowStatusSendEmail = "SendEmail";
+        public const string WorkflowStatusPrint = "Print";
         //K2 set out of office action
         public const string K2SharingCreate = "CREATE";
         public const string K2SharingEdit = "EDIT";
         public const string K2SharingDelete = "DELETE";
         //Workflow Action
         public const string WorkflowActionSendRequest = "SendRequest";
+        public const string WorkflowActionApprove = "Approve";
+        public const string WorkflowActionReject = "Reject";
         //Workflow Process Code
         public const string EvaluationProcessCode = "EvaluationProcess";
         //Error Log Messages.

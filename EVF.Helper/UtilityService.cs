@@ -144,6 +144,33 @@ namespace EVF.Helper
                                        System.Globalization.DateTimeStyles.None, out DateTime temp) ? temp : throw new ArgumentException($"DateTime incorrect format : {value}");
         }
 
+
+        /// <summary>
+        /// Calculate average score.
+        /// </summary>
+        /// <param name="score">The score.</param>
+        /// <param name="userTotal">The average.</param>
+        /// <returns></returns>
+        public static double AverageScore(double score, int userTotal)
+        {
+            return score / userTotal;
+        }
+
+        /// <summary>
+        /// Calculate kpi group score.
+        /// </summary>
+        /// <param name="purScore">The purchasing score.</param>
+        /// <param name="userScore">The average users score.</param>
+        /// <param name="userPercentage">The user score percentage.</param>
+        /// <param name="purchasePercentange">The purchase score percentage.</param>
+        /// <returns></returns>
+        public static double CalculateScore(double purScore, double userScore, int userPercentage, int purchasePercentange)
+        {
+            purScore = (purScore * purchasePercentange) / 100;
+            userScore = (userScore * userPercentage) / 100;
+            return Math.Round(purScore + userScore);
+        }
+
     }
 
 }

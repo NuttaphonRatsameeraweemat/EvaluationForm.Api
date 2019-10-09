@@ -32,6 +32,9 @@ namespace EVF.Evaluation.Bll
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
+        /// <summary>
+        /// The evaluation assign manager provides evaluation assign functionality.
+        /// </summary>
         private readonly IEvaluationAssignBll _evaluationAssign;
 
         #endregion
@@ -44,6 +47,7 @@ namespace EVF.Evaluation.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
+        /// <param name="evaluationAssign">The evaluation assign manager provides evaluation assign functionality.</param>
         public EvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IEvaluationAssignBll evaluationAssign)
         {
             _unitOfWork = unitOfWork;
@@ -64,7 +68,7 @@ namespace EVF.Evaluation.Bll
         {
             var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.AdUser == _token.AdUser && (x.IsReject == null || !x.IsReject.Value));
             var evaluationWaitingIds = evaluationAssign.Where(x => !x.IsAction.Value).Select(x => x.EvaluationId).Distinct();
-            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationWaitingIds.Contains(x.Id)), false);
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaluationWaitingIds.Contains(x.Id) && x.Status == ConstantValue.EvaWaiting), false);
         }
 
         /// <summary>

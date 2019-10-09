@@ -24,5 +24,7 @@ namespace EVF.Helper.Components
         public const string EvaluationTemplateMessage = "Template แบบประเมิน";
         public const string LevelPointMessage = "ระดับคะแนน";
         public const string GradeMessage = "เกณฑ์การประเมิน";
+        public const string WorkflowFiloEvaluationProcess = "ประเมินผู้ขาย {0}";
+        public const string StatusInvalidAction = "ไม่สามารถส่งอนุมัติได้ เนื่องจากใบประเมิน อยู่ในสถานะ {0}";
     }
 }

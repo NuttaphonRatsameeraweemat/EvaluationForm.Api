@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using EVF.Vendor.Bll.Interfaces;
@@ -71,6 +73,59 @@ namespace EVF.Vendor.Bll
             var result = _mapper.Map<Data.Pocos.Vendor, VendorViewModel>(
                 _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == vendorNo).FirstOrDefault());
             return result;
+        }
+
+        public void GetPieChart()
+        {
+
+        }
+
+        public void GetLineChart()
+        {
+
+        }
+
+        /// <summary>
+        /// Get vendor evaluation history by period id.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <param name="periodId">The period identity.</param>
+        /// <returns></returns>
+        public IEnumerable<VendorEvaluationHistoryViewModel> GetVendorEvaluationHistory(string vendorNo, int periodId)
+        {
+            var result = new List<VendorEvaluationHistoryViewModel>();
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodId);
+            var history = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo && 
+                                                                           periodItem.Select(y => y.Id).Contains(x.PeriodItemId.Value) &&
+                                                                           x.Status == ConstantValue.WorkflowStatusApproved);
+            var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
+            var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
+
+            foreach (var item in history)
+            {
+                var template = evaluationTemplate.FirstOrDefault(x => x.Id == item.EvaluationTemplateId);
+                result.Add(new VendorEvaluationHistoryViewModel
+                {
+                    PeriodName = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId)?.PeriodName,
+                    WeightingKey = item.WeightingKey,
+                    WeightingKeyName = string.Empty,
+                    TotalScore = item.TotalScore.Value,
+                    GradeName = this.GetGradeName(gradeItemList.Where(x => x.GradeId == template.GradeId), item.TotalScore.Value)
+                });
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Get GradeName.
+        /// </summary>
+        /// <param name="gradeItems">The list grade item for evaluation.</param>
+        /// <param name="score">The score.</param>
+        /// <returns></returns>
+        private string GetGradeName(IEnumerable<GradeItem> gradeItems, int score)
+        {
+            return gradeItems.FirstOrDefault(x => x.StartPoint <= score && x.EndPoint >= score)?.GradeNameTh;
         }
 
         /// <summary>

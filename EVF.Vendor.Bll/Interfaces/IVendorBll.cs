@@ -25,5 +25,12 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="model">The Vendor information value.</param>
         /// <returns></returns>
         ResultViewModel UpdateVendorContact(VendorRequestViewModel model);
+        /// <summary>
+        /// Get vendor evaluation history by period id.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <param name="periodId">The period identity.</param>
+        /// <returns></returns>
+        IEnumerable<VendorEvaluationHistoryViewModel> GetVendorEvaluationHistory(string vendorNo, int periodId);
     }
 }

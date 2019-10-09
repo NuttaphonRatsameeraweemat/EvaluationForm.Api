@@ -118,7 +118,7 @@ namespace EVF.Helper
                 DataFields = dataFields
             };
             using (HttpResponseMessage response = _client.PostAsync(
-                                                    this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteActionWorkflow)),
+                                                    this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteStartWorkflow)),
                                                     UtilityService.SerializeContent(model)).Result)
             {
                 if (!response.IsSuccessStatusCode)
@@ -148,7 +148,7 @@ namespace EVF.Helper
                 Datafields = dataFields
             };
             using (HttpResponseMessage response = _client.PostAsync(
-                                                    this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteStartWorkflow)),
+                                                    this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteActionWorkflow)),
                                                     UtilityService.SerializeContent(model)).Result)
             {
                 if (!response.IsSuccessStatusCode)

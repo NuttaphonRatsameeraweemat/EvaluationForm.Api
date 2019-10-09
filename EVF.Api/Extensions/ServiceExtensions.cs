@@ -348,7 +348,10 @@ namespace EVF.Api.Extensions
                 ValidAudience = Configuration["Jwt:Issuer"],
                 IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
             };
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
              .AddJwtBearer(options =>
              {
                  options.TokenValidationParameters = option;
@@ -399,7 +402,8 @@ namespace EVF.Api.Extensions
                          return System.Threading.Tasks.Task.CompletedTask;
                      },
                  };
-             });
+             })
+             .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(ConstantValue.BasicAuthentication, null);
         }
 
         /// <summary>
