@@ -18,9 +18,11 @@
     <ProjectReference Include="..\EVF.Authorization.Bll\EVF.Authorization.Bll.csproj" />
     <ProjectReference Include="..\EVF.CentralSetting.Bll\EVF.CentralSetting.Bll.csproj" />
     <ProjectReference Include="..\EVF.Data\EVF.Data.csproj" />
+    <ProjectReference Include="..\EVF.Email.Bll\EVF.Email.Bll.csproj" />
     <ProjectReference Include="..\EVF.Evaluation.Bll\EVF.Evaluation.Bll.csproj" />
     <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
     <ProjectReference Include="..\EVF.Hr.Bll\EVF.Hr.Bll.csproj" />
+    <ProjectReference Include="..\EVF.Inbox.Bll\EVF.Inbox.Bll.csproj" />
     <ProjectReference Include="..\EVF.Master.Bll\EVF.Master.Bll.csproj" />
     <ProjectReference Include="..\EVF.Vendor.Bll\EVF.Vendor.Bll.csproj" />
     <ProjectReference Include="..\EVF.Workflow.Bll\EVF.Workflow.Bll.csproj" />
