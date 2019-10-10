@@ -74,7 +74,7 @@ namespace EVF.Workflow.Bll
         {
             Dictionary<string, object> dataFields = new Dictionary<string, object>
             {
-                { "ActionUser", this.GetActionUser(approvalStep,2) },
+                { "ActionUser", this.GetActionUser(approvalStep,1) },
                 { "ProcessCode", processCode },
                 { "DataID", dataId },
                 { "CurrentStep", 2 },
@@ -100,7 +100,7 @@ namespace EVF.Workflow.Bll
             int nextStep = model.Step + 1;
             string processInstanceStatus = ConstantValue.WorkflowStatusInWorkflowProcess;
             Dictionary<string, object> dataFields = new Dictionary<string, object>();
-            if (this.IsWorkflowFisnish(model.ProcessInstanceId, nextStep) || model.Action != ConstantValue.WorkflowActionReject)
+            if (!this.IsWorkflowFisnish(model.ProcessInstanceId, nextStep) && model.Action != ConstantValue.WorkflowActionReject)
             {
                 result = "GoNext";
                 dataFields.Add("GoNextActivity", false);
@@ -134,19 +134,19 @@ namespace EVF.Workflow.Bll
                     dataFields.Add("GoNextActivity", false);
                     dataFields.Add("ActionUser", this.GetCurrentApprove(item.ProcessInstanceId, nextStep));
                     dataFields.Add("CurrentStep", nextStep);
-                    item.SetStatus(ConstantValue.WorkflowStatusInWorkflowProcess);
+                  //  item.SetStatus(ConstantValue.WorkflowStatusInWorkflowProcess);
                 }
                 else
                 {
                     dataFields.Add("GoNextActivity", true);
                     nextStep = 0;
-                    item.SetStatus(ConstantValue.WorkflowStatusComplete);
+                   // item.SetStatus(ConstantValue.WorkflowStatusComplete);
                 }
-                item.SetDataFields(dataFields);
+                //item.SetDataFields(dataFields);
             }
             throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// Insert workflow task first to last step approve.
         /// </summary>

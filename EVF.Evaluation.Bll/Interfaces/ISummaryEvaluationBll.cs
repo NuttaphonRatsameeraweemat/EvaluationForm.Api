@@ -10,16 +10,22 @@ namespace EVF.Evaluation.Bll.Interfaces
     public interface ISummaryEvaluationBll
     {
         /// <summary>
+        /// Get Evaluation waiting List.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<EvaluationViewModel> GetList();
+        /// <summary>
+        /// Get Summary Evaluation List by period item id.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <returns></returns>
+        IEnumerable<EvaluationViewModel> GetListSearch(int periodItemId);
+        /// <summary>
         /// Get Detail summary evaluation.
         /// </summary>
         /// <param name="id">The evaluation identity.</param>
         /// <returns></returns>
         SummaryEvaluationViewModel GetDetail(int id);
-        /// <summary>
-        /// Get Evaluation waiting List.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerable<EvaluationViewModel> GetList();
         /// <summary>
         /// Send evaluation approve.
         /// </summary>

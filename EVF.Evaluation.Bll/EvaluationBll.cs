@@ -125,6 +125,7 @@ namespace EVF.Evaluation.Bll
                 {
                     Id = item.Id,
                     ComCode = item.ComCode,
+                    DocNo = item.DocNo,
                     EvaluationTemplateId = item.EvaluationTemplateId.Value,
                     PurchasingOrg = item.PurchasingOrg,
                     VendorNo = item.VendorNo,
@@ -180,12 +181,13 @@ namespace EVF.Evaluation.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var evaluation = _mapper.Map<EvaluationRequestViewModel, Data.Pocos.Evaluation>(model);
+                evaluation.DocNo = this.GetDocNo();
                 evaluation.Status = ConstantValue.EvaWaiting;
                 evaluation.CreateBy = _token.EmpNo;
                 evaluation.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
-                _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, model.EvaluatorList);
+                _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, this.GetEvaluatorGroup(model.EvaluatorList, model.EvaluatorGroup));
                 this.SetEvaluationTemplateFlagUsing(evaluation.EvaluationTemplateId.Value);
                 _unitOfWork.Complete(scope);
             }
@@ -202,6 +204,36 @@ namespace EVF.Evaluation.Bll
             var evaluation = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == evaluationTemplateId).FirstOrDefault();
             evaluation.IsUse = true;
             _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluation);
+        }
+
+        private string GetDocNo()
+        {
+            return DateTime.Now.ToString("yyyyMMddHHmmss");
+        }
+
+        /// <summary>
+        /// Get evaluator by group id.
+        /// </summary>
+        /// <param name="evaluators">The other evaluators.</param>
+        /// <param name="evaluatorGroupId">The evaluator group identity.</param>
+        /// <returns></returns>
+        private string[] GetEvaluatorGroup(string[] evaluators, int evaluatorGroupId)
+        {
+            var result = new List<string>();
+            if (evaluatorGroupId != 0)
+            {
+                var evaGroup = _unitOfWork.GetRepository<EvaluatorGroupItem>().GetCache(x => x.EvaluatorGroupId == evaluatorGroupId);
+                foreach (var item in evaGroup)
+                {
+                    result.Add(item.AdUser);
+                }
+            }
+            foreach (var item in evaluators)
+            {
+                result.Add(item);
+            }
+            return result.ToArray();
+
         }
 
         /// <summary>

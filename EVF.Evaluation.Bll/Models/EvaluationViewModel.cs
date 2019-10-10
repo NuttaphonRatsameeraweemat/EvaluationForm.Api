@@ -11,6 +11,7 @@ namespace EVF.Evaluation.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Evaluation";
 
         public int Id { get; set; }
+        public string DocNo { get; set; }
         public int EvaluationTemplateId { get; set; }
         public string VendorNo { get; set; }
         public string WeightingKey { get; set; }

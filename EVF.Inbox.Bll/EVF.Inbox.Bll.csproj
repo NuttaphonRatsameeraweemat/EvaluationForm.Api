@@ -6,7 +6,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EVF.Data\EVF.Data.csproj" />
+    <ProjectReference Include="..\EVF.Evaluation.Bll\EVF.Evaluation.Bll.csproj" />
     <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
+    <ProjectReference Include="..\EVF.Workflow.Bll\EVF.Workflow.Bll.csproj" />
   </ItemGroup>
 
 </Project>

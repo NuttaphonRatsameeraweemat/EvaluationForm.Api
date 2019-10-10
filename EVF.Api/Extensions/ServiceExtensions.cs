@@ -40,6 +40,8 @@ using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll;
 using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll;
+using EVF.Inbox.Bll.Interfaces;
+using EVF.Inbox.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -154,7 +156,18 @@ namespace EVF.Api.Extensions
             services.AddScoped<IWorkflowBll, WorkflowBll>();
             services.AddScoped<IWorkflowDelegateBll, WorkflowDelegateBll>();
         }
-        
+
+
+        /// <summary>
+        /// Dependency Injection Inbox Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureInboxBll(this IServiceCollection services)
+        {
+            services.AddScoped<ITaskBll, TaskBll>();
+            services.AddScoped<ITaskActionBll, TaskActionBll>();
+        }
+
         /// <summary>
         /// Register service components class.
         /// </summary>
@@ -163,9 +176,9 @@ namespace EVF.Api.Extensions
         {
             services.AddSingleton<IConfigSetting, ConfigSetting>();
             services.AddSingleton<IAdService, AdService>();
-            services.AddSingleton<IK2Service, K2Service>();
             services.AddSingleton(typeof(IElasticSearch<>), typeof(ElasticSearch<>));
 
+            services.AddTransient<IK2Service, K2Service>();
             services.AddTransient<IManageToken, ManageToken>();
         }
 

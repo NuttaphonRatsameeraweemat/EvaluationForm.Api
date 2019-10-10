@@ -17,6 +17,10 @@ namespace EVF.Inbox.Bll.Models
         public string Folder { get; set; }
         public string Name { get; set; }
         public string FullName { get; set; }
+
+        
         public string SerialNumber { get; set; }
+        public string ProcessCode { get; set; }
+        public int Step { get; set; }
     }
 }

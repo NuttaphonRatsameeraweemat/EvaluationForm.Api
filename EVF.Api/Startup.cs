@@ -31,6 +31,7 @@ namespace EVF.Api
             services.ConfigureWorkflowBll();
             services.ConfigureEvaluationBll();
             services.ConfigureVendorBll();
+            services.ConfigureInboxBll();
             //Add Configure Extension.
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();

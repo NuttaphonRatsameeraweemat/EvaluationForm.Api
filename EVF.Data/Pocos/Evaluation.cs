@@ -27,5 +27,7 @@ namespace EVF.Data.Pocos
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }
         public int? TotalScore { get; set; }
+        [StringLength(20)]
+        public string DocNo { get; set; }
     }
 }

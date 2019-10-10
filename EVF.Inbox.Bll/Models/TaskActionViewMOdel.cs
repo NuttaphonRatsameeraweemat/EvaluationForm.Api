@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EVF.Workflow.Bll.Models
+namespace EVF.Inbox.Bll.Models
 {
-    public class WorkflowViewModel
+    public class TaskActionViewModel
     {
-        public int ProcessInstanceId { get; set; }
-        public string SerialNo { get; set; }
+        public string ProcessCode { get; set; }
         public int DataId { get; set; }
+        public string SerialNumber { get; set; }
         public int Step { get; set; }
-        public string Action { get; set; }
         public string Comment { get; set; }
-
     }
 }

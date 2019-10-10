@@ -67,12 +67,23 @@ namespace EVF.Evaluation.Bll
         #region [Methods]
 
         /// <summary>
-        /// Get Evaluation waiting List.
+        /// Get Summary Evaluation List.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<EvaluationViewModel> GetList()
         {
             return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => _token.PurchasingOrg.Contains(x.PurchasingOrg)));
+        }
+
+        /// <summary>
+        /// Get Summary Evaluation List by period item id.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <returns></returns>
+        public IEnumerable<EvaluationViewModel> GetListSearch(int periodItemId)
+        {
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => _token.PurchasingOrg.Contains(x.PurchasingOrg) &&
+                                                                                                 x.PeriodItemId == periodItemId));
         }
 
         /// <summary>
@@ -116,6 +127,7 @@ namespace EVF.Evaluation.Bll
                 {
                     Id = item.Id,
                     ComCode = item.ComCode,
+                    DocNo = item.DocNo,
                     EvaluationTemplateId = item.EvaluationTemplateId.Value,
                     PurchasingOrg = item.PurchasingOrg,
                     VendorNo = item.VendorNo,
@@ -472,7 +484,7 @@ namespace EVF.Evaluation.Bll
             if (!status.Contains(data.Status))
             {
                 var temp = valueHelp.FirstOrDefault(x => x.ValueType == ConstantValue.ValueTypeEvaStatus && x.ValueKey == data.Status);
-                result = UtilityService.InitialResultError(string.Format(MessageValue.StatusInvalidAction, temp.ValueText), 
+                result = UtilityService.InitialResultError(string.Format(MessageValue.StatusInvalidAction, temp.ValueText),
                                                           (int)System.Net.HttpStatusCode.BadRequest);
             }
             return result;

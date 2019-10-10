@@ -2,6 +2,7 @@
 using EVF.Data.Repository.Interfaces;
 using EVF.Helper.Interfaces;
 using EVF.Inbox.Bll.Interfaces;
+using EVF.Inbox.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -56,9 +57,53 @@ namespace EVF.Inbox.Bll
 
         #region [Methods]
 
-        public void GetTaskList()
+        /// <summary>
+        /// Get Task pending list from k2.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<TaskViewModel> GetTaskList()
         {
+            var result = new List<TaskViewModel>();
+            var taskList = _k2Service.GetWorkList(_token.AdUser);
+            foreach (var item in taskList)
+            {
+                result.Add(new TaskViewModel
+                {
+                    AllocatedUser = item.AllocatedUser,
+                    Folder = item.Folder,
+                    Folio = item.Folio,
+                    FullName = item.FullName,
+                    Name = item.Name,
+                    SerialNumber = item.SerialNumber,
+                    StartDate = item.StartDate
+                });
+            }
+            return result;
+        }
 
+        /// <summary>
+        /// Get Task delegate pending list from k2.
+        /// </summary>
+        /// <param name="fromUser">The user task delegate task.</param>
+        /// <returns></returns>
+        public IEnumerable<TaskViewModel> GetTaskListDelegate(string fromUser)
+        {
+            var result = new List<TaskViewModel>();
+            var taskList = _k2Service.GetWorkList(fromUser);
+            foreach (var item in taskList)
+            {
+                result.Add(new TaskViewModel
+                {
+                    AllocatedUser = item.AllocatedUser,
+                    Folder = item.Folder,
+                    Folio = item.Folio,
+                    FullName = item.FullName,
+                    Name = item.Name,
+                    SerialNumber = item.SerialNumber,
+                    StartDate = item.StartDate
+                });
+            }
+            return result;
         }
 
         #endregion

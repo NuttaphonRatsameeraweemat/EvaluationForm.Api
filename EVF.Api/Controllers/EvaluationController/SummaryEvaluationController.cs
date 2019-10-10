@@ -43,7 +43,14 @@ namespace EVF.Api.Controllers.EvaluationController
         }
 
         [HttpGet]
-        [Route("GetDetail")]
+        [Route("GetListSearch/{periodItemId}")]
+        public IActionResult GetListSearch(int periodItemId)
+        {
+            return Ok(_summaryEva.GetListSearch(periodItemId));
+        }
+
+        [HttpGet]
+        [Route("GetDetail/{id}")]
         public IActionResult GetDetail(int id)
         {
             return Ok(_summaryEva.GetDetail(id));
