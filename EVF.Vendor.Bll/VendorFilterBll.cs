@@ -276,6 +276,7 @@ namespace EVF.Vendor.Bll
             var result = new List<VendorFilterResponseViewModel>();
             var purGroups = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.WeightingKey == model.WeightingKey && x.EvaStatus.Value).Select(x => x.PurGroup).ToArray();
             var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups, model.ComCode, model.PurchaseOrg);
+            transectionList = this.FilterCondition(transectionList, model.WeightingKey);
             var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var vendors = transectionList.Select(x => x.Vendor).Distinct().ToArray();
             foreach (var item in vendors)
@@ -297,6 +298,27 @@ namespace EVF.Vendor.Bll
                     break;
             }
             return result.OrderByDescending(x => x.TotalSales);
+        }
+
+        /// <summary>
+        /// Filter vendor transection mark weighting key.
+        /// </summary>
+        /// <param name="transectionList">The vendor transection list.</param>
+        /// <param name="weightingKey">The weighting key.</param>
+        /// <returns></returns>
+        private IEnumerable<VendorTransection> FilterCondition(IEnumerable<VendorTransection> transectionList, string weightingKey)
+        {
+            switch (weightingKey)
+            {
+                case "A4":
+                case "A5":
+                    transectionList = transectionList.Where(x => x.MarkWeightingKey == weightingKey);
+                    break;
+                default:
+                    transectionList = transectionList.Where(x => x.MarkWeightingKey == null || x.MarkWeightingKey == weightingKey);
+                    break;
+            }
+            return transectionList;
         }
 
         #endregion
