@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
+using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Inbox.Bll.Interfaces;
 using EVF.Inbox.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EVF.Inbox.Bll
@@ -61,32 +65,7 @@ namespace EVF.Inbox.Bll
         /// Get Task pending list from k2.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TaskViewModel> GetTaskList()
-        {
-            var result = new List<TaskViewModel>();
-            var taskList = _k2Service.GetWorkList(_token.AdUser);
-            foreach (var item in taskList)
-            {
-                result.Add(new TaskViewModel
-                {
-                    AllocatedUser = item.AllocatedUser,
-                    Folder = item.Folder,
-                    Folio = item.Folio,
-                    FullName = item.FullName,
-                    Name = item.Name,
-                    SerialNumber = item.SerialNumber,
-                    StartDate = item.StartDate
-                });
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Get Task delegate pending list from k2.
-        /// </summary>
-        /// <param name="fromUser">The user task delegate task.</param>
-        /// <returns></returns>
-        public IEnumerable<TaskViewModel> GetTaskListDelegate(string fromUser)
+        public IEnumerable<TaskViewModel> GetTaskList(string fromUser)
         {
             var result = new List<TaskViewModel>();
             var taskList = _k2Service.GetWorkList(fromUser);
@@ -94,16 +73,59 @@ namespace EVF.Inbox.Bll
             {
                 result.Add(new TaskViewModel
                 {
-                    AllocatedUser = item.AllocatedUser,
-                    Folder = item.Folder,
-                    Folio = item.Folio,
-                    FullName = item.FullName,
-                    Name = item.Name,
                     SerialNumber = item.SerialNumber,
-                    StartDate = item.StartDate
+                    ProcessCode = UtilityService.GetValueDictionaryToString(item.DataFields, ConstantValue.DataFieldsKeyProcessCode),
+                    Step = UtilityService.GetValueDictionaryToInt(item.DataFields, ConstantValue.DataFieldsKeyCurrentStep),
+                    DataId = UtilityService.GetValueDictionaryToInt(item.DataFields, ConstantValue.DataFieldsKeyDataID),
+                    ReceiveDate = UtilityService.GetValueDictionaryToDateTime(item.DataFields, ConstantValue.DataFieldsKeyReceivedDate)
                 });
             }
+            this.GetInformationTask(result);
             return result;
+        }
+
+        /// <summary>
+        /// Get display information task.
+        /// </summary>
+        /// <param name="result">The task result.</param>
+        private void GetInformationTask(IEnumerable<TaskViewModel> result)
+        {
+            var evaIds = result.Where(x => x.ProcessCode == ConstantValue.EvaluationProcessCode).Select(x => x.DataId).ToArray();
+            var evaInfoList = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaIds.Contains(x.Id));
+            var templateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
+            var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
+            var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
+            var processCode = _unitOfWork.GetRepository<WorkflowProcess>().GetCache();
+
+            foreach (var item in result)
+            {
+                switch (item.ProcessCode)
+                {
+                    case ConstantValue.EvaluationProcessCode:
+                        var temp = evaInfoList.FirstOrDefault(x => x.Id == item.DataId);
+                        var template = templateList.FirstOrDefault(x => x.Id == temp.EvaluationTemplateId);
+                        item.TotalScore = temp.TotalScore.Value;
+                        item.VendorName = vendorList.FirstOrDefault(x => x.VendorNo == temp.VendorNo)?.VendorName;
+                        item.PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == temp.PurchasingOrg)?.PurchaseName;
+                        item.GradeName = this.GetGrade(template.GradeId.Value, temp.TotalScore.Value);
+                        item.ProcessName = processCode.FirstOrDefault(x => x.ProcessCode == item.ProcessCode)?.ProcessName;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get Grade from total score.
+        /// </summary>
+        /// <param name="gradeId">The grade identity.</param>
+        /// <param name="totalScore">The total score evaluation.</param>
+        /// <returns></returns>
+        private string GetGrade(int gradeId, int totalScore)
+        {
+            var gradeInfo = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
+            var gradePoint = gradeInfo.FirstOrDefault(x => x.StartPoint <= totalScore && x.EndPoint >= totalScore);
+            return gradePoint.GradeNameTh;
         }
 
         #endregion

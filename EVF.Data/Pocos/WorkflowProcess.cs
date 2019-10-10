@@ -15,13 +15,5 @@ namespace EVF.Data.Pocos
         [Column("K2WorkflowProcess")]
         [StringLength(100)]
         public string K2workflowProcess { get; set; }
-        [StringLength(100)]
-        public string Controller { get; set; }
-        [StringLength(100)]
-        public string Action { get; set; }
-        [StringLength(100)]
-        public string Area { get; set; }
-        public bool? AllowConfig { get; set; }
-        public bool? RejectToInbox { get; set; }
     }
 }

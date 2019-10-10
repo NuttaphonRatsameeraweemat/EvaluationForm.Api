@@ -76,6 +76,17 @@ namespace EVF.Helper.Components
         public const string WorkflowActionReject = "Reject";
         //Workflow Process Code
         public const string EvaluationProcessCode = "EvaluationProcess";
+        //Data Fields key
+        public const string DataFieldsKeyActionUser = "ActionUser";
+        public const string DataFieldsKeyProcessCode = "ProcessCode";
+        public const string DataFieldsKeyDataID = "DataID";
+        public const string DataFieldsKeyCurrentStep = "CurrentStep";
+        public const string DataFieldsKeyRequesterUser = "RequesterUser";
+        public const string DataFieldsKeyRequesterCode = "RequesterCode";
+        public const string DataFieldsKeyRequesterPos = "RequesterPos";
+        public const string DataFieldsKeyRequesterOrg = "RequesterOrg";
+        public const string DataFieldsKeyGoNextActivity = "GoNextActivity";
+        public const string DataFieldsKeyReceivedDate = "ReceivedDate2";
         //Error Log Messages.
         public const string HrEmployeeArgumentNullExceptionMessage = "The {0} hasn't in HrEmployee Table.";
         public const string HttpRequestFailedMessage = "Response StatusCode {0}, {1}";

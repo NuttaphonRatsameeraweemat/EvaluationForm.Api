@@ -1,4 +1,5 @@
 ﻿using EVF.Helper.Components;
+using EVF.Helper.Interfaces;
 using EVF.Inbox.Bll.Interfaces;
 using EVF.Inbox.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,10 @@ namespace EVF.Api.Controllers.InboxController
         /// The Task Action manager provides Task Action functionality.
         /// </summary>
         private readonly ITaskActionBll _taskAction;
+        /// <summary>
+        /// The ClaimsIdentity in token management.
+        /// </summary>
+        private readonly IManageToken _token;
 
         #endregion
 
@@ -32,10 +37,11 @@ namespace EVF.Api.Controllers.InboxController
         /// </summary>
         /// <param name="task">The Task manager provides Task functionality.</param>
         /// <param name="taskAction">The Task Action manager provides Task Action functionality.</param>
-        public TaskController(ITaskBll task, ITaskActionBll taskAction)
+        public TaskController(ITaskBll task, ITaskActionBll taskAction, IManageToken token)
         {
             _task = task;
             _taskAction = taskAction;
+            _token = token;
         }
 
         #endregion
@@ -46,14 +52,14 @@ namespace EVF.Api.Controllers.InboxController
         [Route("GetTaskList")]
         public IActionResult GetTaskList()
         {
-            return Ok(_task.GetTaskList());
+            return Ok(_task.GetTaskList(_token.AdUser));
         }
 
         [HttpGet]
         [Route("GetTaskListDelegate/{fromUser}")]
         public IActionResult GetTaskListDelegate(string fromUser)
         {
-            return Ok(_task.GetTaskListDelegate(fromUser));
+            return Ok(_task.GetTaskList(fromUser));
         }
 
         [HttpPost]

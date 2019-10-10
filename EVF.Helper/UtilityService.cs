@@ -171,6 +171,39 @@ namespace EVF.Helper
             return Math.Round(purScore + userScore);
         }
 
+        /// <summary>
+        /// Get value object from dictionary to string.
+        /// </summary>
+        /// <param name="dic">The dictionary value.</param>
+        /// <param name="key">The key target.</param>
+        /// <returns></returns>
+        public static string GetValueDictionaryToString(Dictionary<string,object> dic, string key)
+        {
+            return dic.GetValueOrDefault(key).ToString();
+        }
+
+        /// <summary>
+        /// Get value object from dictionary to int.
+        /// </summary>
+        /// <param name="dic">The dictionary value.</param>
+        /// <param name="key">The key target.</param>
+        /// <returns></returns>
+        public static int GetValueDictionaryToInt(Dictionary<string, object> dic, string key)
+        {
+            return Convert.ToInt32(dic.GetValueOrDefault(key).ToString());
+        }
+
+        /// <summary>
+        /// Get value object from dictionary to datetime.
+        /// </summary>
+        /// <param name="dic">The dictionary value.</param>
+        /// <param name="key">The key target.</param>
+        /// <returns></returns>
+        public static DateTime GetValueDictionaryToDateTime(Dictionary<string, object> dic, string key)
+        {
+            return DateTime.Parse(dic.GetValueOrDefault(key).ToString());
+        }
+
     }
 
 }

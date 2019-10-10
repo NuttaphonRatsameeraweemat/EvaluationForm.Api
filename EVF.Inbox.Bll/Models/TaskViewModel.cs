@@ -10,17 +10,18 @@ namespace EVF.Inbox.Bll.Models
         {
 
         }
-
-        public string AllocatedUser { get; set; }
-        public string Folio { get; set; }
-        public DateTime StartDate { get; set; }
-        public string Folder { get; set; }
-        public string Name { get; set; }
-        public string FullName { get; set; }
-
-        
+        //Data for post back when action task.
         public string SerialNumber { get; set; }
         public string ProcessCode { get; set; }
         public int Step { get; set; }
+        public int DataId { get; set; }
+
+        //Display information
+        public string ProcessName { get; set; }
+        public string VendorName { get; set; }
+        public string PurchaseOrgName { get; set; }
+        public int TotalScore { get; set; }
+        public string GradeName { get; set; }
+        public DateTime ReceiveDate { get; set; }
     }
 }

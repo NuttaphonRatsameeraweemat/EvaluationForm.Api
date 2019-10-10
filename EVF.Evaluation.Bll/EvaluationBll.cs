@@ -236,9 +236,12 @@ namespace EVF.Evaluation.Bll
                     result.Add(item.AdUser);
                 }
             }
-            foreach (var item in evaluators)
+            if (evaluators != null)
             {
-                result.Add(item);
+                foreach (var item in evaluators)
+                {
+                    result.Add(item);
+                }
             }
             return result.ToArray();
 

@@ -74,15 +74,15 @@ namespace EVF.Workflow.Bll
         {
             Dictionary<string, object> dataFields = new Dictionary<string, object>
             {
-                { "ActionUser", this.GetActionUser(approvalStep,1) },
-                { "ProcessCode", processCode },
-                { "DataID", dataId },
-                { "CurrentStep", 2 },
-                { "RequesterUser", _token.AdUser },
-                { "RequesterCode", _token.EmpNo },
-                { "RequesterPos", _token.PositionId },
-                { "RequesterOrg", _token.OrgId },
-                { "GoNextActivity", false }
+                { ConstantValue.DataFieldsKeyActionUser, this.GetActionUser(approvalStep,1) },
+                { ConstantValue.DataFieldsKeyProcessCode, processCode },
+                { ConstantValue.DataFieldsKeyDataID, dataId },
+                { ConstantValue.DataFieldsKeyCurrentStep, 2 },
+                { ConstantValue.DataFieldsKeyRequesterUser, _token.AdUser },
+                { ConstantValue.DataFieldsKeyRequesterCode, _token.EmpNo },
+                { ConstantValue.DataFieldsKeyRequesterPos, _token.PositionId },
+                { ConstantValue.DataFieldsKeyRequesterOrg, _token.OrgId },
+                { ConstantValue.DataFieldsKeyGoNextActivity, false }
             };
             int processIntanceId = _k2Service.StartWorkflow(this.GetProcessName(processCode), folio, dataFields);
             this.SaveWorkflowProcessInstance(processIntanceId, dataId, 2, processCode);
@@ -103,13 +103,13 @@ namespace EVF.Workflow.Bll
             if (!this.IsWorkflowFisnish(model.ProcessInstanceId, nextStep) && model.Action != ConstantValue.WorkflowActionReject)
             {
                 result = "GoNext";
-                dataFields.Add("GoNextActivity", false);
-                dataFields.Add("ActionUser", this.GetCurrentApprove(model.ProcessInstanceId, nextStep));
-                dataFields.Add("CurrentStep", nextStep);
+                dataFields.Add(ConstantValue.DataFieldsKeyGoNextActivity, false);
+                dataFields.Add(ConstantValue.DataFieldsKeyActionUser, this.GetCurrentApprove(model.ProcessInstanceId, nextStep));
+                dataFields.Add(ConstantValue.DataFieldsKeyCurrentStep, nextStep);
             }
             else
             {
-                dataFields.Add("GoNextActivity", true);
+                dataFields.Add(ConstantValue.DataFieldsKeyGoNextActivity, true);
                 nextStep = 0;
                 processInstanceStatus = ConstantValue.WorkflowStatusComplete;
             }
@@ -134,13 +134,13 @@ namespace EVF.Workflow.Bll
                     dataFields.Add("GoNextActivity", false);
                     dataFields.Add("ActionUser", this.GetCurrentApprove(item.ProcessInstanceId, nextStep));
                     dataFields.Add("CurrentStep", nextStep);
-                  //  item.SetStatus(ConstantValue.WorkflowStatusInWorkflowProcess);
+                    //  item.SetStatus(ConstantValue.WorkflowStatusInWorkflowProcess);
                 }
                 else
                 {
                     dataFields.Add("GoNextActivity", true);
                     nextStep = 0;
-                   // item.SetStatus(ConstantValue.WorkflowStatusComplete);
+                    // item.SetStatus(ConstantValue.WorkflowStatusComplete);
                 }
                 //item.SetDataFields(dataFields);
             }
