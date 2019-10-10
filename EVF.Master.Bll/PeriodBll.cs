@@ -61,7 +61,7 @@ namespace EVF.Master.Bll
         public IEnumerable<PeriodViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
-                   _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderBy(y => y.Year)));
+                   _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderByDescending(y => y.Year)));
         }
 
         /// <summary>

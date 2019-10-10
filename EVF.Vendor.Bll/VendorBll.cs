@@ -140,7 +140,9 @@ namespace EVF.Vendor.Bll
             {
                 var data = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == model.VendorNo).FirstOrDefault();
                 data.Email = model.Email;
-                data.TelephoneNo = model.TelephoneNo;
+                data.TelNo = model.TelNo;
+                data.TelExt = model.TelExt;
+                data.MobileNo = model.MobileNo;
                 _unitOfWork.GetRepository<Data.Pocos.Vendor>().Update(data);
                 _unitOfWork.Complete(scope);
             }

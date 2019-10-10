@@ -9,14 +9,24 @@ namespace EVF.Tranfer.Service.Bll.Interfaces
     public interface IVendorTranferBll
     {
         /// <summary>
-        /// Tranfer data vendor transection in brb util to spe database.
+        /// Tranfer data vendor master in zncr 03 to spe database.
         /// </summary>
         /// <returns></returns>
-        ResultViewModel TranferVendorTransection();
+        ResultViewModel TranferVendorData();
         /// <summary>
-        /// Try to connect brb util db.
+        /// Update data vendor master from zncr 03 to spe database.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<SPE_TRANSAC_PO_QA> TryToConnect();
+        ResultViewModel UpdateVendorDataFromZncr03(string vendorNo);
+        /// <summary>
+        /// Insert new data vendor master from zncr 03 to spe database.
+        /// </summary>
+        /// <returns></returns>
+        ResultViewModel AddNewVendorDataFromZncr03(string vendorNo);
+        /// <summary>
+        /// Try to connect zncr 03 table.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<ZNCR_03> TryToConnect();
     }
 }

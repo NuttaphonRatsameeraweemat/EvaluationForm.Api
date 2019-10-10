@@ -96,6 +96,7 @@ namespace EVF.Tranfer.Service.Api.Extensions
         public static void ConfigureBll(this IServiceCollection services)
         {
             services.AddScoped<ISapTranferBll, SapTranferBll>();
+            services.AddScoped<IVendorTransectionTranferBll, VendorTransectionTranferBll>();
             services.AddScoped<IVendorTranferBll, VendorTranferBll>();
         }
 

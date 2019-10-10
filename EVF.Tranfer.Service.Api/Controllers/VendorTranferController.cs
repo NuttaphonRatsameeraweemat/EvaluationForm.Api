@@ -1,12 +1,11 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using EVF.Tranfer.Service.Bll.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EVF.Helper.Components;
-using EVF.Tranfer.Service.Bll.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Tranfer.Service.Api.Controllers
 {
@@ -41,10 +40,24 @@ namespace EVF.Tranfer.Service.Api.Controllers
         #region Methods
 
         [HttpPost]
-        [Route("TranferVendorTransection")]
-        public IActionResult TranferVendorTransection()
+        [Route("TranferVendorData")]
+        public IActionResult TranferVendorData()
         {
-            return Ok(_tranfer.TranferVendorTransection());
+            return Ok(_tranfer.TranferVendorData());
+        }
+
+        [HttpPost]
+        [Route("UpdateVendorDataFromZncr03/{vendorNo}")]
+        public IActionResult UpdateVendorDataFromZncr03(string vendorNo)
+        {
+            return Ok(_tranfer.UpdateVendorDataFromZncr03(vendorNo));
+        }
+
+        [HttpPost]
+        [Route("AddNewVendorDataFromZncr03/{vendorNo}")]
+        public IActionResult AddNewVendorDataFromZncr03(string vendorNo)
+        {
+            return Ok(_tranfer.AddNewVendorDataFromZncr03(vendorNo));
         }
 
         [HttpPost]
@@ -53,7 +66,7 @@ namespace EVF.Tranfer.Service.Api.Controllers
         {
             return Ok(_tranfer.TryToConnect());
         }
-
+        
         #endregion
 
     }
