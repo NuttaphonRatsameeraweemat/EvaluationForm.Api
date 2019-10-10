@@ -26,6 +26,15 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup);
         /// <summary>
+        /// Get Transection list by condition.
+        /// </summary>
+        /// <param name="periodItemid">The period item identity.</param>
+        /// <param name="purGroup">The purGroup code.</param>
+        /// <param name="comCode">The company code.</param>
+        /// <param name="purOrg">The purchase org.</param>
+        /// <returns></returns>
+        IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup, string comCode, string purOrg);
+        /// <summary>
         /// Get Detail of VendorTransection.
         /// </summary>
         /// <param name="id">The identity VendorTranection.</param>

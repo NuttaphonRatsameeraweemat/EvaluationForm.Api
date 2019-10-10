@@ -64,11 +64,12 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public IEnumerable<VendorFilterViewModel> GetList(int periodItemId)
         {
-            return this.InitialVendorFilterViewModel(_unitOfWork.GetRepository<VendorFilter>().Get(x => x.PeriodItemId == periodItemId));
+            return this.InitialVendorFilterViewModel(_unitOfWork.GetRepository<VendorFilter>().Get(x => x.PeriodItemId == periodItemId &&
+                                                                                                        _token.PurchasingOrg.Contains(x.PurchasingOrg)));
         }
 
         /// <summary>
-        /// Get VendorFilter list.
+        /// Get VendorFilter list condition current user is admin can see all vendor.
         /// </summary>
         /// <returns></returns>
         public IEnumerable<VendorFilterViewModel> GetVendorFilters(VendorFilterCriteriaViewModel model)
@@ -81,14 +82,16 @@ namespace EVF.Vendor.Bll
                                                         x => x.PeriodItemId == model.PeriodItemId &&
                                                             x.CompanyCode == model.CompanyCode &&
                                                             x.PurchasingOrg == model.PurchasingOrg &&
-                                                            x.WeightingKey == model.WeightingKey)).ToList();
+                                                            x.WeightingKey == model.WeightingKey &&
+                                                            !x.IsSending.Value)).ToList();
             }
             else result = this.InitialVendorFilterViewModel(_unitOfWork.GetRepository<VendorFilter>().Get(
                                                         x => x.PeriodItemId == model.PeriodItemId &&
                                                             x.CompanyCode == model.CompanyCode &&
                                                             x.PurchasingOrg == model.PurchasingOrg &&
                                                             x.WeightingKey == model.WeightingKey &&
-                                                            x.AssignTo == _token.AdUser)).ToList();
+                                                            x.AssignTo == _token.AdUser &&
+                                                            !x.IsSending.Value)).ToList();
             return result;
         }
 
@@ -245,19 +248,22 @@ namespace EVF.Vendor.Bll
         /// <summary>
         /// Update sending status and log timestamp.
         /// </summary>
-        /// <param name="model">The Vendor information value.</param>
-        /// <returns></returns>
-        public ResultViewModel UpdateStatus(VendorFilter model)
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <param name="comCode">The company code identity.</param>
+        /// <param name="purOrg">The purchasing org identity.</param>
+        /// <param name="weightingKey">The weighting key evaluation.</param>
+        /// <param name="vendorNo">The vendor no identity.</param>
+        public void UpdateStatus(int periodItemId, string comCode, string purOrg, string weightingKey, string vendorNo)
         {
-            var result = new ResultViewModel();
-            using (TransactionScope scope = new TransactionScope())
-            {
-                model.IsSending = true;
-                model.SendingEvaDate = DateTime.Now;
-                _unitOfWork.GetRepository<VendorFilter>().Update(model);
-                _unitOfWork.Complete(scope);
-            }
-            return result;
+            var data = _unitOfWork.GetRepository<VendorFilter>().Get(x => x.PeriodItemId == periodItemId &&
+                                                                        x.CompanyCode == comCode &&
+                                                                        x.PurchasingOrg == purOrg &&
+                                                                        x.WeightingKey == weightingKey &&
+                                                                        x.VendorNo == vendorNo).FirstOrDefault();
+            data.IsSending = true;
+            data.SendingBy = _token.EmpNo;
+            data.SendingEvaDate = DateTime.Now;
+            _unitOfWork.GetRepository<VendorFilter>().Update(data);
         }
 
         /// <summary>
@@ -269,26 +275,28 @@ namespace EVF.Vendor.Bll
         {
             var result = new List<VendorFilterResponseViewModel>();
             var purGroups = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.WeightingKey == model.WeightingKey && x.EvaStatus.Value).Select(x => x.PurGroup).ToArray();
-            var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups);
+            var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups, model.ComCode, model.PurchaseOrg);
             var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var vendors = transectionList.Select(x => x.Vendor).Distinct().ToArray();
             foreach (var item in vendors)
             {
-                //var summary = transectionList.Where(x=>x.Vendor == item).Sum(x=>x.)
+                var summary = transectionList.Where(x => x.Vendor == item).Sum(x => x.QuantityReceived);
 
                 result.Add(new VendorFilterResponseViewModel
                 {
                     VendorNo = item,
-                    VendorName = vendorInfo.FirstOrDefault(x=>x.VendorNo == item)?.VendorName,
+                    VendorName = vendorInfo.FirstOrDefault(x => x.VendorNo == item)?.VendorName,
+                    TotalSales = summary.Value
                 });
             }
             switch (model.Condition)
             {
                 case ConstantValue.VendorConditionMoreThan:
                     //filter total sales morethan value in model.
+                    result = result.Where(x => x.TotalSales >= model.TotalSales).ToList();
                     break;
             }
-            return result;
+            return result.OrderByDescending(x => x.TotalSales);
         }
 
         #endregion

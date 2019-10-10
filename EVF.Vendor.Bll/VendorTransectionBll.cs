@@ -107,6 +107,26 @@ namespace EVF.Vendor.Bll
             var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemid).FirstOrDefault();
             var startReceipt = periodItem.StartEvaDate.Value.AddMonths(-6);
             return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
+                                                                           _token.PurchasingOrg.Contains(x.PurorgCode) &&
+                                                                                   x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
+                                                                                   x.ReceiptDate.Value.Date >= startReceipt.Date);
+        }
+
+        /// <summary>
+        /// Get Transection list by condition.
+        /// </summary>
+        /// <param name="periodItemid">The period item identity.</param>
+        /// <param name="purGroup">The purGroup code.</param>
+        /// <param name="comCode">The company code.</param>
+        /// <param name="purOrg">The purchase org.</param>
+        /// <returns></returns>
+        public IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup, string comCode, string purOrg)
+        {
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemid).FirstOrDefault();
+            var startReceipt = periodItem.StartEvaDate.Value.AddMonths(-6);
+            return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
+                                                                                   x.CompanyCode == comCode &&
+                                                                                   x.PurorgCode == purOrg &&
                                                                                    x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
                                                                                    x.ReceiptDate.Value.Date >= startReceipt.Date);
         }

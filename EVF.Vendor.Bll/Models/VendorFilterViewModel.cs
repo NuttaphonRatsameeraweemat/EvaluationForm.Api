@@ -51,14 +51,21 @@ namespace EVF.Vendor.Bll.Models
         public string WeightingKey { get; set; }
         [Required]
         public string Condition { get; set; }
-        public decimal TotalSales { get; set; }
+        public double TotalSales { get; set; }
     }
 
     public class VendorFilterResponseViewModel
     {
         public string VendorNo { get; set; }
         public string VendorName { get; set; }
-        public decimal TotalSales { get; set; }
+        public double TotalSales { get; set; }
+        public string TotalSalesText
+        {
+            get
+            {
+                return TotalSales.ToString("n0");
+            }
+        }
     }
 
     public class VendorFilterRequestViewModel

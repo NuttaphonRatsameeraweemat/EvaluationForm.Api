@@ -25,5 +25,7 @@ namespace EVF.Data.Pocos
         public string CreateBy { get; set; }
         public DateTime? CreateDate { get; set; }
         public DateTime? SendingEvaDate { get; set; }
+        [StringLength(11)]
+        public string SendingBy { get; set; }
     }
 }

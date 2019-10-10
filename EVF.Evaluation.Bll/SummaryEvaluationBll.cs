@@ -96,7 +96,7 @@ namespace EVF.Evaluation.Bll
             var result = new List<EvaluationViewModel>();
             var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
             var purList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
-            var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache();
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var evaluationTemplateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
             var periodList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
             result.AddRange(this.InitialEvaluationViewModel(comList, purList, periodList, vendorList, evaluationTemplateList, evaluation));
@@ -115,7 +115,7 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private IEnumerable<EvaluationViewModel> InitialEvaluationViewModel(
             IEnumerable<Hrcompany> comList, IEnumerable<PurchaseOrg> purList, IEnumerable<PeriodItem> periodList,
-            IEnumerable<Vendor> vendorList, IEnumerable<EvaluationTemplate> evaluationTemplateList,
+            IEnumerable<Data.Pocos.Vendor> vendorList, IEnumerable<EvaluationTemplate> evaluationTemplateList,
             IEnumerable<Data.Pocos.Evaluation> data)
         {
             var result = new List<EvaluationViewModel>();
@@ -183,7 +183,7 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private SummaryEvaluationViewModel GetHeaderInformation(Data.Pocos.Evaluation data)
         {
-            var vendor = _unitOfWork.GetRepository<Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+            var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
             var purOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == data.PurchasingOrg).FirstOrDefault();
             return new SummaryEvaluationViewModel
             {
@@ -435,7 +435,7 @@ namespace EVF.Evaluation.Bll
                 //Sending workflow k2
                 var approval = _unitOfWork.GetRepository<Approval>().GetCache(x => x.PurchasingOrg == data.PurchasingOrg).FirstOrDefault();
                 var approvalList = this.GetApproval(_unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == approval.Id));
-                var vendorInfo = _unitOfWork.GetRepository<Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+                var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
                 _workflow.Start(data.Id, ConstantValue.EvaluationProcessCode,
                                 string.Format(MessageValue.WorkflowFiloEvaluationProcess, vendorInfo.VendorName), approvalList);
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);

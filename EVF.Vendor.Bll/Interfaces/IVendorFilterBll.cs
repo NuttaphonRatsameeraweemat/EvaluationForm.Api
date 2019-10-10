@@ -52,8 +52,11 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <summary>
         /// Update sending status and log timestamp.
         /// </summary>
-        /// <param name="model">The Vendor information value.</param>
-        /// <returns></returns>
-        ResultViewModel UpdateStatus(VendorFilter model);
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <param name="comCode">The company code identity.</param>
+        /// <param name="purOrg">The purchasing org identity.</param>
+        /// <param name="weightingKey">The weighting key evaluation.</param>
+        /// <param name="vendorNo">The vendor no identity.</param>
+        void UpdateStatus(int periodItemId, string comCode, string purOrg, string weightingKey, string vendorNo);
     }
 }

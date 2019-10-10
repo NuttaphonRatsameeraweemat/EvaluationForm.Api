@@ -7,6 +7,7 @@ using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
+using EVF.Vendor.Bll.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,10 @@ namespace EVF.Evaluation.Bll
         /// The evaluation assign manager provides evaluation assign functionality.
         /// </summary>
         private readonly IEvaluationAssignBll _evaluationAssign;
+        /// <summary>
+        /// The vendor filter manager provides vendor filter functionality.
+        /// </summary>
+        private readonly IVendorFilterBll _vendorFilter;
 
         #endregion
 
@@ -48,12 +53,14 @@ namespace EVF.Evaluation.Bll
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
         /// <param name="evaluationAssign">The evaluation assign manager provides evaluation assign functionality.</param>
-        public EvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IEvaluationAssignBll evaluationAssign)
+        /// <param name="vendorFilter">The vendor filter manager provides vendor filter functionality.</param>
+        public EvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IEvaluationAssignBll evaluationAssign, IVendorFilterBll vendorFilter)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
             _evaluationAssign = evaluationAssign;
+            _vendorFilter = vendorFilter;
         }
 
         #endregion
@@ -93,7 +100,7 @@ namespace EVF.Evaluation.Bll
             var result = new List<EvaluationViewModel>();
             var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
             var purList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
-            var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache();
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var evaluationTemplateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
             var periodList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
             result.AddRange(this.InitialEvaluationViewModel(comList, purList, periodList, vendorList, evaluationTemplateList, evaluation, isAction));
@@ -113,7 +120,7 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private IEnumerable<EvaluationViewModel> InitialEvaluationViewModel(
             IEnumerable<Hrcompany> comList, IEnumerable<PurchaseOrg> purList, IEnumerable<PeriodItem> periodList,
-            IEnumerable<Vendor> vendorList, IEnumerable<EvaluationTemplate> evaluationTemplateList,
+            IEnumerable<Data.Pocos.Vendor> vendorList, IEnumerable<EvaluationTemplate> evaluationTemplateList,
             IEnumerable<Data.Pocos.Evaluation> data, bool isAction)
         {
             var result = new List<EvaluationViewModel>();
@@ -188,6 +195,7 @@ namespace EVF.Evaluation.Bll
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
                 _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, this.GetEvaluatorGroup(model.EvaluatorList, model.EvaluatorGroup));
+                _vendorFilter.UpdateStatus(model.PeriodItemId, model.ComCode, model.PurchasingOrg, model.WeightingKey, model.VendorNo);
                 this.SetEvaluationTemplateFlagUsing(evaluation.EvaluationTemplateId.Value);
                 _unitOfWork.Complete(scope);
             }
