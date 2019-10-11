@@ -92,7 +92,7 @@ namespace EVF.Authorization.Bll
 
             var token = new JwtSecurityToken(_config.JwtIssuer,
               _config.JwtIssuer,
-              expires: DateTime.Now.AddMinutes(30),
+              expires: DateTime.Now.AddMinutes(600),
               signingCredentials: creds,
               claims: this.GetClaimsPrincipal(principal));
 
@@ -129,8 +129,13 @@ namespace EVF.Authorization.Bll
             _identity.AddClaim(new Claim(ConstantValue.ClamisOrg, data.OrgId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisPosition, data.PositionId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, data.ComCode));
-            //For test
-            _identity.AddClaim(new Claim(ConstantValue.ClamisPurchasing, "1600"));
+            //Add purchase org
+            var purOrgs = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.AdUser == data.Aduser);
+            foreach (var item in purOrgs)
+            {
+                _identity.AddClaim(new Claim(ConstantValue.ClamisPurchasing, item.PuchaseOrg));
+            }
+            //Add role
             foreach (var item in roleList)
             {
                 _identity.AddClaim(new Claim(ClaimTypes.Role, item.RoleMenu));

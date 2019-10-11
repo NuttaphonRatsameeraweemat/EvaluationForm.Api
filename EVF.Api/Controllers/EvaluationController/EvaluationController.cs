@@ -1,5 +1,7 @@
 ﻿using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper;
+using EVF.Helper.Components;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,6 +49,13 @@ namespace EVF.Api.Controllers.EvaluationController
         public IActionResult GetListHistory()
         {
             return Ok(_evaluation.GetListHistory());
+        }
+
+        [HttpGet]
+        [Route("GetImages")]
+        public IActionResult GetImages(int id)
+        {
+            return Ok(UtilityService.GetImages(id, ConstantValue.EvaluationProcessCode));
         }
 
         [HttpPost]

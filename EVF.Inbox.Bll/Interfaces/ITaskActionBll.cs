@@ -15,5 +15,12 @@ namespace EVF.Inbox.Bll.Interfaces
         /// <param name="action">The action value.</param>
         /// <returns></returns>
         ResultViewModel ActionTask(TaskActionViewModel model, string action);
+        /// <summary>
+        /// Process multi task action k2.
+        /// </summary>
+        /// <param name="models">The task list action information.</param>
+        /// <param name="action">The action value.</param>
+        /// <returns></returns>
+        ResultViewModel ActionMultiTask(IEnumerable<TaskActionViewModel> models, string action);
     }
 }

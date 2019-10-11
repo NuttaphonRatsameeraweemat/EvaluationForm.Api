@@ -4,6 +4,7 @@ using EVF.Inbox.Bll.Interfaces;
 using EVF.Inbox.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace EVF.Api.Controllers.InboxController
 {
@@ -74,6 +75,20 @@ namespace EVF.Api.Controllers.InboxController
         public IActionResult RejectTask(TaskActionViewModel model)
         {
             return Ok(_taskAction.ActionTask(model, ConstantValue.WorkflowActionReject));
+        }
+
+        [HttpPost]
+        [Route("ApproveMultiTask")]
+        public IActionResult ApproveMultiTask(IEnumerable<TaskActionViewModel> models)
+        {
+            return Ok(_taskAction.ActionMultiTask(models, ConstantValue.WorkflowActionApprove));
+        }
+
+        [HttpPost]
+        [Route("RejectMultiTask")]
+        public IActionResult RejectMultiTask(IEnumerable<TaskActionViewModel> models)
+        {
+            return Ok(_taskAction.ActionMultiTask(models, ConstantValue.WorkflowActionReject));
         }
 
         #endregion

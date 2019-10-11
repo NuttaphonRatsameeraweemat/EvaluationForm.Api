@@ -55,9 +55,20 @@ namespace EVF.Inbox.Bll
             return result;
         }
 
-        public void ActionMultiTask()
+        /// <summary>
+        /// Process multi task action k2.
+        /// </summary>
+        /// <param name="models">The task list action information.</param>
+        /// <param name="action">The action value.</param>
+        /// <returns></returns>
+        public ResultViewModel ActionMultiTask(IEnumerable<TaskActionViewModel> models, string action)
         {
-
+            var result = new ResultViewModel();
+            foreach (var item in models)
+            {
+                result = this.ActionTask(item, action);
+            }
+            return result;
         }
 
         /// <summary>

@@ -204,6 +204,56 @@ namespace EVF.Helper
             return DateTime.Parse(dic.GetValueOrDefault(key).ToString());
         }
 
+        /// <summary>
+        /// Write images file to server directory.
+        /// </summary>
+        /// <param name="imageList">The images model collection.</param>
+        /// <param name="dataId">The data identity.</param>
+        /// <param name="processCode">The process code folder.</param>
+        /// <returns></returns>
+        public static ResultViewModel SaveImages(IEnumerable<ImageViewModel> imageList, int dataId, string processCode)
+        {
+            var result = new ResultViewModel();
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Images", processCode, dataId.ToString());
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            foreach (var item in imageList)
+            {
+                var file = Convert.FromBase64String(item.FileContent);
+                string savePath = Path.Combine(path, item.FileName);
+                File.WriteAllBytes(savePath, file);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get images from id.
+        /// </summary>
+        /// <param name="dataId">The data identity.</param>
+        /// <param name="processCode">The process code folder.</param>
+        /// <returns></returns>
+        public static IEnumerable<ImageViewModel> GetImages(int dataId, string processCode)
+        {
+            var result = new List<ImageViewModel>();
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "Images", processCode, dataId.ToString());
+            if (Directory.Exists(path))
+            {
+                string[] allfiles = Directory.GetFiles(path);
+                foreach (var item in allfiles)
+                {
+                    var fileByte = File.ReadAllBytes(item);
+                    result.Add(new ImageViewModel
+                    {
+                        FileName = Path.GetFileName(item),
+                        FileContent = Convert.ToBase64String(fileByte)
+                    });
+                }
+            }
+            return result;
+        }
+
     }
 
 }

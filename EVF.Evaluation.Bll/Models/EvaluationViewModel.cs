@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -32,6 +33,11 @@ namespace EVF.Evaluation.Bll.Models
 
     public class EvaluationRequestViewModel
     {
+        public EvaluationRequestViewModel()
+        {
+            ImageList = new List<ImageViewModel>();
+        }
+
         public int Id { get; set; }
         [Required]
         public int EvaluationTemplateId { get; set; }
@@ -49,5 +55,7 @@ namespace EVF.Evaluation.Bll.Models
         public int EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }
         public string EvaluatorPurchasing { get; set; }
+
+        public List<ImageViewModel> ImageList { get; set; }
     }
 }
