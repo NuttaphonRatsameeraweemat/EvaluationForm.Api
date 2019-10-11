@@ -49,6 +49,27 @@ namespace EVF.Api.Controllers.VendorController
             return Ok(_vendor.GetDetail(vendorNo));
         }
 
+        [HttpGet]
+        [Route("GetVendorEvaluationHistory")]
+        public IActionResult GetVendorEvaluationHistory(string vendorNo, int periodId)
+        {
+            return Ok(_vendor.GetVendorEvaluationHistory(vendorNo, periodId));
+        }
+
+        [HttpGet]
+        [Route("GetPieChart")]
+        public IActionResult GetPieChart(string vendorNo)
+        {
+            return Ok(_vendor.GetPieChart(vendorNo));
+        }
+
+        [HttpGet]
+        [Route("GetLineChart")]
+        public IActionResult GetLineChart(string vendorNo)
+        {
+            return Ok(_vendor.GetLineChart(vendorNo));
+        }
+
         [HttpPost]
         [Route("UpdateVendorContact")]
         public IActionResult UpdateVendorContact([FromBody]VendorRequestViewModel model)

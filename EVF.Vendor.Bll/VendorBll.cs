@@ -75,14 +75,58 @@ namespace EVF.Vendor.Bll
             return result;
         }
 
-        public void GetPieChart()
+        /// <summary>
+        /// Get pie chart stat vendor evaluation.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <returns></returns>
+        public IEnumerable<VendorPieChart> GetPieChart(string vendorNo)
         {
-
+            var result = new List<VendorPieChart>();
+            var templateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
+            var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
+            var evaluations = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo && x.Status == ConstantValue.WorkflowStatusApproved);
+            foreach (var item in evaluations)
+            {
+                var tempTemplate = templateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId);
+                var gradeItems = gradeItemList.Where(x => x.GradeId == tempTemplate.GradeId);
+                var grade = gradeItems.FirstOrDefault(x => x.StartPoint <= item.TotalScore && x.EndPoint >= item.TotalScore);
+                var temp = result.FirstOrDefault(x => x.GradeName == grade.GradeNameTh);
+                if (temp != null)
+                {
+                    temp.Count = temp.Count + 1;
+                }
+                else result.Add(new VendorPieChart { GradeName = grade.GradeNameTh, Count = 1 });
+            }
+            return result;
         }
 
-        public void GetLineChart()
+        /// <summary>
+        /// Get Line chart vendor evaluation stat.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <returns></returns>
+        public VendorLineChart GetLineChart(string vendorNo)
         {
-
+            var result = new VendorLineChart();
+            var statData = new List<VendorLineChartData>();
+            var labels = new List<string>();
+            var periods = _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderBy(y => y.Year)).Take(5);
+            var periodIds = periods.Select(x => x.Id).ToArray();
+            var periodItems = _unitOfWork.GetRepository<PeriodItem>().GetCache(x=> periodIds.Contains(x.PeriodId.Value));
+            var evaluations = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo && x.Status == ConstantValue.WorkflowStatusApproved);
+            foreach (var item in periodItems)
+            {
+                labels.Add(item.PeriodName);
+                var temp = evaluations.FirstOrDefault(x => x.PeriodItemId == item.Id);
+                if (temp != null)
+                {
+                    statData.Add(new VendorLineChartData { PeriodName = item.PeriodName, TotalScore = temp.TotalScore.Value });
+                }
+            }
+            result.DataStats.AddRange(statData);
+            result.AllPeriods = labels.ToArray();
+            return result;
         }
 
         /// <summary>
@@ -95,8 +139,9 @@ namespace EVF.Vendor.Bll
         {
             var result = new List<VendorEvaluationHistoryViewModel>();
             var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodId);
-            var history = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo && 
-                                                                           periodItem.Select(y => y.Id).Contains(x.PeriodItemId.Value) &&
+            var periodItemIds = periodItem.Select(x => x.Id).ToArray();
+            var history = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo &&
+                                                                           periodItemIds.Contains(x.PeriodItemId.Value) &&
                                                                            x.Status == ConstantValue.WorkflowStatusApproved);
             var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
             var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();

@@ -70,7 +70,14 @@ namespace EVF.Api.Controllers
         {
             return Ok(_valueHelp.Get(ConstantValue.ValueTypeVendorFilterCondition));
         }
-        
+
+        [HttpGet]
+        [Route("GetLevelPointCalculate")]
+        public IActionResult GetLevelPointCalculate()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeLevelPointCalculate));
+        }
+
         #endregion
 
     }

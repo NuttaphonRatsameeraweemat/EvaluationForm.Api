@@ -34,6 +34,7 @@ namespace EVF.Helper.Components
         public const string ValueTypeVendorSendingStatus = "VendorSendingStatus";
         public const string ValueTypePurchaseUserType = "PurchaseUserType";
         public const string ValueTypeWeightingKey = "WeightingKey";
+        public const string ValueTypeLevelPointCalculate = "LevelPointCalculate";
         public const string ValueTypeVendorFilterCondition = "VendorFilterCondition";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";

@@ -32,5 +32,17 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="periodId">The period identity.</param>
         /// <returns></returns>
         IEnumerable<VendorEvaluationHistoryViewModel> GetVendorEvaluationHistory(string vendorNo, int periodId);
+        /// <summary>
+        /// Get pie chart stat vendor evaluation.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <returns></returns>
+        IEnumerable<VendorPieChart> GetPieChart(string vendorNo);
+        /// <summary>
+        /// Get Line chart vendor evaluation stat.
+        /// </summary>
+        /// <param name="vendorNo">The vendor identity.</param>
+        /// <returns></returns>
+        VendorLineChart GetLineChart(string vendorNo);
     }
 }

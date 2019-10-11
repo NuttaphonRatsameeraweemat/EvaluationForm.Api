@@ -89,7 +89,7 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey)
         {
-            var levelPointIds = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.WeightingKey == weightingKey).Select(x => x.Id).ToArray();
+            var levelPointIds = this.GetLevelPointIds(weightingKey);
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
                    _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => levelPointIds.Contains(x.LevelPointId.Value)));
         }
@@ -265,6 +265,22 @@ namespace EVF.Master.Bll
                 result.Grade = _grade.GetDetail(evaTemplate.GradeId.Value);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Get Level point identitys.
+        /// </summary>
+        /// <param name="weightingKey">The weighting key.</param>
+        /// <returns></returns>
+        private int[] GetLevelPointIds(string weightingKey)
+        {
+            switch (weightingKey)
+            {
+                case "A2":
+                    return _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.WeightingKey == weightingKey).Select(x => x.Id).ToArray();
+                default:
+                    return _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.WeightingKey != "A2").Select(x => x.Id).ToArray();
+            }
         }
 
         #endregion
