@@ -278,7 +278,9 @@ namespace EVF.Vendor.Bll
             var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups, model.ComCode, model.PurchaseOrg);
             transectionList = this.FilterCondition(transectionList, model.WeightingKey);
             var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
-            var vendors = transectionList.Select(x => x.Vendor).Distinct().ToArray();
+            var exitsVendors = this.GetExistVendorFilter(model);
+            var vendors = transectionList.Where(x => !exitsVendors.Contains(x.Vendor))
+                                         .Select(x => x.Vendor).Distinct().ToArray();
             foreach (var item in vendors)
             {
                 var summary = transectionList.Where(x => x.Vendor == item).Sum(x => x.QuantityReceived);
@@ -298,6 +300,19 @@ namespace EVF.Vendor.Bll
                     break;
             }
             return result.OrderByDescending(x => x.TotalSales);
+        }
+
+        /// <summary>
+        /// Get exits vendor in condition.
+        /// </summary>
+        /// <param name="model">The criteria vendor filter.</param>
+        /// <returns></returns>
+        private string[] GetExistVendorFilter(VendorFilterSearchViewModel model)
+        {
+            return _unitOfWork.GetRepository<VendorFilter>().Get(x => x.PeriodItemId == model.PeriodItemId &&
+                                                                         x.CompanyCode == model.ComCode &&
+                                                                         x.PurchasingOrg == model.PurchaseOrg &&
+                                                                         x.WeightingKey == model.WeightingKey).Select(x => x.VendorNo).ToArray();
         }
 
         /// <summary>
