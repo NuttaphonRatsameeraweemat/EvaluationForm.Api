@@ -131,8 +131,8 @@ namespace EVF.Vendor.Bll
                     AssignToName = string.Format(ConstantValue.EmpTemplate, temp?.FirstnameTh, temp?.LastnameTh),
                     CompanyCode = item.CompanyCode,
                     CompanyName = comList.FirstOrDefault(x => x.SapcomCode == item.CompanyCode)?.LongText,
-                    IsSending = item.IsSending.Value,
-                    SendingStatus = item.IsSending.Value ? valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorSending)?.ValueText :
+                    IsSending = item.IsSending ?? false,
+                    SendingStatus = item.IsSending.HasValue && item.IsSending.Value ? valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorSending)?.ValueText :
                                                            valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorWaiting)?.ValueText,
                     PeriodItemId = item.PeriodItemId,
                     PeriodItemName = periodList.FirstOrDefault(x => x.Id == item.PeriodItemId)?.PeriodName,
@@ -178,8 +178,8 @@ namespace EVF.Vendor.Bll
                 AssignToName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh),
                 CompanyCode = vendorFilter.CompanyCode,
                 CompanyName = company?.LongText,
-                IsSending = vendorFilter.IsSending.Value,
-                SendingStatus = vendorFilter.IsSending.Value ? valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorSending)?.ValueText :
+                IsSending = vendorFilter.IsSending ?? false,
+                SendingStatus = vendorFilter.IsSending.HasValue && vendorFilter.IsSending.Value ? valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorSending)?.ValueText :
                                                            valueHelpList.FirstOrDefault(x => x.ValueKey == ConstantValue.VendorWaiting)?.ValueText,
                 PeriodItemId = vendorFilter.PeriodItemId,
                 PeriodItemName = period?.PeriodName,

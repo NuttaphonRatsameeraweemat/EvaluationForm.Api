@@ -42,6 +42,8 @@ using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll;
 using EVF.Inbox.Bll.Interfaces;
 using EVF.Inbox.Bll;
+using EVF.Utility.Bll.Interfaces;
+using EVF.Utility.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -166,6 +168,15 @@ namespace EVF.Api.Extensions
         {
             services.AddScoped<ITaskBll, TaskBll>();
             services.AddScoped<ITaskActionBll, TaskActionBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Inbox Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureUtilityBll(this IServiceCollection services)
+        {
+            services.AddScoped<ICacheBll, CacheBll>();
         }
 
         /// <summary>

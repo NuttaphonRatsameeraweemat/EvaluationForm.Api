@@ -24,6 +24,7 @@
     <ProjectReference Include="..\EVF.Hr.Bll\EVF.Hr.Bll.csproj" />
     <ProjectReference Include="..\EVF.Inbox.Bll\EVF.Inbox.Bll.csproj" />
     <ProjectReference Include="..\EVF.Master.Bll\EVF.Master.Bll.csproj" />
+    <ProjectReference Include="..\EVF.Utility.Bll\EVF.Utility.Bll.csproj" />
     <ProjectReference Include="..\EVF.Vendor.Bll\EVF.Vendor.Bll.csproj" />
     <ProjectReference Include="..\EVF.Workflow.Bll\EVF.Workflow.Bll.csproj" />
   </ItemGroup>
