@@ -18,6 +18,13 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// </summary>
         /// <returns></returns>
         IEnumerable<EvaluationViewModel> GetListHistory();
+
+        /// <summary>
+        /// Validate model data logic.
+        /// </summary>
+        /// <param name="model">The evaluation information value.</param>
+        /// <returns></returns>
+        ResultViewModel ValidateData(EvaluationRequestViewModel model);
         /// <summary>
         /// Insert new evaluation.
         /// </summary>

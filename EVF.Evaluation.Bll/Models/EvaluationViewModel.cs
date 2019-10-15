@@ -1,4 +1,5 @@
-﻿using EVF.Helper.Models;
+﻿using EVF.Helper.Components;
+using EVF.Helper.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,17 +40,17 @@ namespace EVF.Evaluation.Bll.Models
         }
 
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedEvaluationTemplate)]
         public int EvaluationTemplateId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedVendor)]
         public string VendorNo { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedWeightingKey)]
         public string WeightingKey { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCompany)]
         public string ComCode { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
         public string PurchasingOrg { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
         public int PeriodItemId { get; set; }
 
         public int EvaluatorGroup { get; set; }

@@ -50,6 +50,22 @@ namespace EVF.CentralSetting.Bll
                 _unitOfWork.GetRepository<ValueHelp>().Get(x => x.ValueType == type, x => x.OrderBy(y => y.Sequence)));
         }
 
+        /// <summary>
+        /// Get PurGroup ValueHelp List.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ValueHelpViewModel> GetPurGroup()
+        {
+            string[] weightingKeys = new string[] { "A2", "A3", "A4", "A5" };
+            var result = new List<ValueHelpViewModel>();
+            var purGroup = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.EvaStatus.Value && weightingKeys.Contains(x.WeightingKey));
+            foreach (var item in purGroup)
+            {
+                result.Add(new ValueHelpViewModel { ValueKey = item.PurGroup, ValueText = item.Description });
+            }
+            return result;
+        }
+
         #endregion
 
 

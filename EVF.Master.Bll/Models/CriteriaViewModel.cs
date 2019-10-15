@@ -17,12 +17,12 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Criteria";
 
         public int Id { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillCriteriaName)]
+        [MaxLength(200, ErrorMessage = MessageValue.CriteriaNameOverLength)]
         public string CriteriaName { get; set; }
         public bool IsDefault { get; set; }
         public bool IsUse { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedKpiGroup)]
         public List<CriteriaGroupViewModel> CriteriaGroups { get; set; }
     }
 }

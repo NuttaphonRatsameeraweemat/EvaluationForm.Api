@@ -179,6 +179,21 @@ namespace EVF.Evaluation.Bll
         }
 
         /// <summary>
+        /// Validate model data logic.
+        /// </summary>
+        /// <param name="model">The evaluation information value.</param>
+        /// <returns></returns>
+        public ResultViewModel ValidateData(EvaluationRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+            if (model.EvaluatorGroup == 0 && model.EvaluatorList == null)
+            {
+                result = UtilityService.InitialResultError(MessageValue.EvaluatorEmpty, (int)System.Net.HttpStatusCode.BadRequest);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Insert new evaluation.
         /// </summary>
         /// <param name="model">The evaluation information value.</param>

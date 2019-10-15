@@ -62,7 +62,14 @@ namespace EVF.Api.Controllers.EvaluationController
         [Route("Save")]
         public IActionResult Save([FromBody]EvaluationRequestViewModel model)
         {
-            return Ok(_evaluation.Save(model));
+            IActionResult response;
+            var result = _evaluation.ValidateData(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_evaluation.Save(model));
+            return response;
         }
 
         [HttpPost]

@@ -13,5 +13,10 @@ namespace EVF.CentralSetting.Bll.Interfaces
         /// <param name="type">The type of value.</param>
         /// <returns></returns>
         IEnumerable<ValueHelpViewModel> Get(string type);
+        /// <summary>
+        /// Get PurGroup ValueHelp List.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<ValueHelpViewModel> GetPurGroup();
     }
 }

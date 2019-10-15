@@ -23,7 +23,7 @@ namespace EVF.Master.Bll.Models
         public string KpiGroupShortTextEn { get; set; }
         [Required]
         public int Sequence { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillScore)]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int MaxScore { get; set; }
         public List<CriteriaItemViewModel> CriteriaItems { get; set; }
@@ -40,7 +40,7 @@ namespace EVF.Master.Bll.Models
         public string KpiNameEn { get; set; }
         public string KpiShortTextTh { get; set; }
         public string KpiShortTextEn { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillScore)]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int MaxScore { get; set; }
     }

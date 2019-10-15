@@ -17,5 +17,6 @@ namespace EVF.Helper.Models
         public int StatusCode { get; set; }
         public string Message { get; set; }
         public object ModelError { get; set; }
+        public object ModelErrorMessage { get; set; }
     }
 }

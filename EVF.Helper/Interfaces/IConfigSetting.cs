@@ -94,5 +94,9 @@ namespace EVF.Helper.Interfaces
         /// Get Elastic Search Url.
         /// </summary>
         string ElasticSearchUrl { get; }
+        /// <summary>
+        /// Get Report Url.
+        /// </summary>
+        string ReportUrl { get; }
     }
 }

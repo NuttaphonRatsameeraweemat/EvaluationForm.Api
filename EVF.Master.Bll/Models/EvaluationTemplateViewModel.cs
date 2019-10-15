@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -12,14 +13,14 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_EvaluationTemplate";
 
         public int Id { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillEvaluationTemplateName)]
+        [MaxLength(200, ErrorMessage = MessageValue.EvaluationTemplateNameOverLength)]
         public string EvaluationTemplateName { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCriteria)]
         public int CriteriaId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedGrade)]
         public int GradeId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedLevelPoint)]
         public int LevelPointId { get; set; }
         public bool IsUse { get; set; }
     }

@@ -33,6 +33,7 @@ namespace EVF.Api
             services.ConfigureVendorBll();
             services.ConfigureInboxBll();
             services.ConfigureUtilityBll();
+            services.ConfigureReportBll();
             //Add Configure Extension.
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
@@ -53,8 +54,8 @@ namespace EVF.Api
         {
                 app.ConfigureUseSwagger();
 
-            //For JWT test
-            //app.ConfigureHandlerStatusPages();
+            //For JWT
+            app.ConfigureHandlerStatusPages();
            
             app.UseAuthentication();
             app.ConfigureMiddleware();

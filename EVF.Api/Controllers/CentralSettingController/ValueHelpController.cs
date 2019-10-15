@@ -78,6 +78,13 @@ namespace EVF.Api.Controllers
             return Ok(_valueHelp.Get(ConstantValue.ValueTypeLevelPointCalculate));
         }
 
+        [HttpGet]
+        [Route("GetPurGroup")]
+        public IActionResult GetPurGroup()
+        {
+            return Ok(_valueHelp.GetPurGroup());
+        }
+
         #endregion
 
     }

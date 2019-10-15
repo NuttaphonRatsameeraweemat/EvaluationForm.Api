@@ -44,6 +44,9 @@ using EVF.Inbox.Bll.Interfaces;
 using EVF.Inbox.Bll;
 using EVF.Utility.Bll.Interfaces;
 using EVF.Utility.Bll;
+using EVF.Report.Bll.Interfaces;
+using EVF.Report.Bll;
+using System.Linq;
 
 namespace EVF.Api.Extensions
 {
@@ -180,6 +183,15 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
+        /// Dependency Injection Inbox Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureReportBll(this IServiceCollection services)
+        {
+            services.AddScoped<IReportService, ReportService>();
+        }
+
+        /// <summary>
         /// Register service components class.
         /// </summary>
         /// <param name="services">The service collection.</param>
@@ -236,8 +248,9 @@ namespace EVF.Api.Extensions
                 options.InvalidModelStateResponseFactory = actionContext =>
                 {
                     return new BadRequestObjectResult(
-                        UtilityService.InitialResultError(ConstantValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest,
-                                        actionContext.ModelState.Keys));
+                        UtilityService.InitialResultError(MessageValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest,
+                                        actionContext.ModelState.Keys, 
+                                        actionContext.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)));
                 };
             });
         }

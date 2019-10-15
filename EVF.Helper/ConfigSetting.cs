@@ -128,6 +128,11 @@ namespace EVF.Helper
         /// Get Elastic Search Url.
         /// </summary>
         public string ElasticSearchUrl => this.GetAppSetting("ElasticSearch:Url");
+        /// <summary>
+        /// Get Report Url.
+        /// </summary>
+        public string ReportUrl => this.GetAppSetting("Report:Url");
+
         #endregion
 
     }

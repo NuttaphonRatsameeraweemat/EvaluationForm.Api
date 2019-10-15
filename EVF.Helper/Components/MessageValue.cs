@@ -18,6 +18,7 @@ namespace EVF.Helper.Components
         public const string EvaluationRejectTaskIsAction = "ขออภัย ไม่สามารถปฎิเสธงานที่ทำการประเมินแล้วได้";
         public const string KpiGroupOverFiftySapFields = "ขออภัย ไม่สามารถสร้างกลุ่มตัวชี้วัด เกิน 50 กลุ่มได้";
         public const string IsUseMessageFormat = "ขออภัย ไม่สามารถแก้ไข หรือ ลบ {0} เนื่องจากมีการนำไปใช้งานแล้ว";
+        public const string HttpBadRequestMessage = "กรุณา กรอกข้อมูลให้ถูกต้อง";
         public const string KpiMessage = "ตัวชี้วัด";
         public const string KpiGroupMessage = "กลุ่มตัวชี้วัด";
         public const string CriteriaMessage = "หลักเกณฑ์";
@@ -26,5 +27,21 @@ namespace EVF.Helper.Components
         public const string GradeMessage = "เกณฑ์การประเมิน";
         public const string WorkflowFiloEvaluationProcess = "ประเมินผู้ขาย {0}";
         public const string StatusInvalidAction = "ไม่สามารถส่งอนุมัติได้ เนื่องจากใบประเมิน อยู่ในสถานะ {0}";
+        public const string EvaluatorEmpty = "กรุณาเลือก ผู้ประเมิน หรือกลุ่มผู้ประเมิน";
+        public const string PleaseSelectedEvaluationTemplate = "กรุณาเลือก Template แบบประเมิน";
+        public const string PleaseSelectedVendor = "กรุณาเลือก ผู้ขาย";
+        public const string PleaseSelectedWeightingKey = "กรุณาเลือก WeightingKey";
+        public const string PleaseSelectedCompany = "กรุณาเลือก บริษัท";
+        public const string PleaseSelectedPurchaseOrg = "กรุณาเลือก กลุ่มจัดซื้อ";
+        public const string PleaseSelectedPeriod = "กรุณาเลือก ระยะเวลา";
+        public const string PleaseSelectedKpiGroup = "กรุณาเลือก กลุ่มตัวชี้วัด";
+        public const string PleaseSelectedCriteria = "กรุณาเลือก หลักเกณฑ์";
+        public const string PleaseSelectedGrade = "กรุณาเลือก เกณฑ์การประเมิน";
+        public const string PleaseSelectedLevelPoint = "กรุณาเลือก ระดับคะแนน";
+        public const string PleaseFillCriteriaName = "กรุณากรอก ชื่อหลักเกณฑ์";
+        public const string PleaseFillEvaluationTemplateName = "กรุณากรอก ชื่อ Template แบบประเมิน";
+        public const string PleaseFillScore = "กรุณากรอก คะแนน";
+        public const string CriteriaNameOverLength = "ขออภัย ชื่อหลักเกณฑ์ ความยาวต้องไม่เกิน 200 ตัวอักษร";
+        public const string EvaluationTemplateNameOverLength = "ขออภัย ชื่อ Template แบบประเมิน ความยาวต้องไม่เกิน 200 ตัวอักษร";
     }
 }

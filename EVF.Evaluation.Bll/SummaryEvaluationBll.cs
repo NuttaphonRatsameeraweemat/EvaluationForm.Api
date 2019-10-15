@@ -203,9 +203,11 @@ namespace EVF.Evaluation.Bll
             var result = new List<UserEvaluationViewModel>();
             var data = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId);
             var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
+            var orgList = _unitOfWork.GetRepository<Hrorg>().GetCache();
             foreach (var item in data)
             {
-                var evaluator = this.InitialEvaluationAssignViewModel(item, empList.FirstOrDefault(x => x.EmpNo == item.EmpNo));
+                var evaluator = this.InitialEvaluationAssignViewModel(item, empList.FirstOrDefault(x => x.EmpNo == item.EmpNo),
+                                                                            orgList);
                 if (evaluator.IsAction)
                 {
                     evaluator.EvaluationLogs.AddRange(this.GetEvaluationLogs(evaluator.AdUser, evaluationId, criteriaId));
@@ -403,8 +405,9 @@ namespace EVF.Evaluation.Bll
         /// <param name="item">The evaluators information.</param>
         /// <param name="emp">The employee information.</param>
         /// <returns></returns>
-        private UserEvaluationViewModel InitialEvaluationAssignViewModel(EvaluationAssign item, Hremployee emp)
+        private UserEvaluationViewModel InitialEvaluationAssignViewModel(EvaluationAssign item, Hremployee emp, IEnumerable<Hrorg> orgList)
         {
+            var org = orgList.FirstOrDefault(x => x.OrgId == emp?.OrgId);
             return new UserEvaluationViewModel
             {
                 Id = item.Id,
@@ -413,7 +416,8 @@ namespace EVF.Evaluation.Bll
                 IsReject = item.IsReject.Value,
                 IsAction = item.IsAction.Value,
                 UserType = item.UserType,
-                FullName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh)
+                FullName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh),
+                OrgName = org?.OrgName
             };
         }
 
