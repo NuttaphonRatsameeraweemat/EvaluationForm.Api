@@ -30,6 +30,8 @@ namespace EVF.Evaluation.Bll.Models
         public string StartEvaDateString { get; set; }
         public string EndEvaDateString { get; set; }
         public string StatusName { get; set; }
+        public string[] Categorys { get; set; }
+        public string Remark { get; set; }
     }
 
     public class EvaluationRequestViewModel
@@ -56,6 +58,9 @@ namespace EVF.Evaluation.Bll.Models
         public int EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }
         public string EvaluatorPurchasing { get; set; }
+
+        public string[] Categorys { get; set; }
+        public string Remark { get; set; }
 
         public List<ImageViewModel> ImageList { get; set; }
     }

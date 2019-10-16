@@ -36,6 +36,7 @@ namespace EVF.Helper.Components
         public const string ValueTypeWeightingKey = "WeightingKey";
         public const string ValueTypeLevelPointCalculate = "LevelPointCalculate";
         public const string ValueTypeVendorFilterCondition = "VendorFilterCondition";
+        public const string ValueTypeCategory = "Category";
         //Regular expresstion format date
         public const string RegexDateFormat = @"^[0-9]{4}-[0-9]{2}-[0-9]{2}$";
         public const string RegexYearFormat = @"^[0-9]{4}$";

@@ -79,6 +79,13 @@ namespace EVF.Api.Controllers
         }
 
         [HttpGet]
+        [Route("GetCategory")]
+        public IActionResult GetCategory()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeCategory));
+        }
+
+        [HttpGet]
         [Route("GetPurGroup")]
         public IActionResult GetPurGroup()
         {

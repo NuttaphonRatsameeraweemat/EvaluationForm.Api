@@ -31,5 +31,8 @@ namespace EVF.Data.Pocos
         public string DocNo { get; set; }
         [Column("EvaPercentageID")]
         public int? EvaPercentageId { get; set; }
+        [StringLength(255)]
+        public string Category { get; set; }
+        public string Remark { get; set; }
     }
 }

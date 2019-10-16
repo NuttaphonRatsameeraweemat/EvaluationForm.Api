@@ -43,5 +43,6 @@ namespace EVF.Helper.Components
         public const string PleaseFillScore = "กรุณากรอก คะแนน";
         public const string CriteriaNameOverLength = "ขออภัย ชื่อหลักเกณฑ์ ความยาวต้องไม่เกิน 200 ตัวอักษร";
         public const string EvaluationTemplateNameOverLength = "ขออภัย ชื่อ Template แบบประเมิน ความยาวต้องไม่เกิน 200 ตัวอักษร";
+        public const string EvaluationLogSaveValidate = "ขออภัย ไม่สามารถบันทึกการประเมินได้ กรุณาประเมินให้ครบทุกข้อ";
     }
 }

@@ -20,6 +20,12 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<EvaluationLogViewModel> GetEvaluationLogById(int id);
         /// <summary>
+        /// Validate Evaluation value before save.
+        /// </summary>
+        /// <param name="model">The evaluation log item information value.</param>
+        /// <returns></returns>
+        ResultViewModel ValidateData(IEnumerable<EvaluationLogItemViewModel> model);
+        /// <summary>
         /// Insert new evaluation log.
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>

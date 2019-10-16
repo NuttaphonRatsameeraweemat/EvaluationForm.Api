@@ -59,7 +59,14 @@ namespace EVF.Api.Controllers.EvaluationController
         [Authorize(Roles = EvaluationViewModel.RoleForManageData)]
         public IActionResult Save(int evaluationId, [FromBody]IEnumerable<EvaluationLogItemViewModel> model)
         {
-            return Ok(_evaluationLog.Save(evaluationId, model));
+            IActionResult response;
+            var result = _evaluationLog.ValidateData(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_evaluationLog.Save(evaluationId, model));
+            return response;
         }
 
         #endregion

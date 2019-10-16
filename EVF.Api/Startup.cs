@@ -38,8 +38,8 @@ namespace EVF.Api
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();
-            //services.ConfigureCookieAuthen(Configuration);
-            services.ConfigureJwtAuthen(Configuration);
+            services.ConfigureCookieAuthen(Configuration);
+            //services.ConfigureJwtAuthen(Configuration);
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();

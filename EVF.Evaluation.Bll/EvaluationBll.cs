@@ -146,7 +146,9 @@ namespace EVF.Evaluation.Bll
                     PurchasingOrgName = purList.FirstOrDefault(x => x.PurchaseOrg1 == item.PurchasingOrg)?.PurchaseName,
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
                     EvaluationTemplateName = evaluationTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)?.EvaluationTemplateName,
-                    StatusName = status[1]
+                    StatusName = status[1],
+                    Categorys = item.Category.Split(','),
+                    Remark = item.Remark
                 });
             }
             return result;
@@ -206,6 +208,7 @@ namespace EVF.Evaluation.Bll
                 evaluation.DocNo = this.GetDocNo();
                 evaluation.EvaPercentageId = this.GetEvaluationPercentage();
                 evaluation.Status = ConstantValue.EvaWaiting;
+                evaluation.Category = string.Join(",", model.Categorys);
                 evaluation.CreateBy = _token.EmpNo;
                 evaluation.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);

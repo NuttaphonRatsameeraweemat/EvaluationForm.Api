@@ -263,6 +263,27 @@ namespace EVF.Master.Bll
                 result.Criteria = _criteria.GetDetail(evaTemplate.CriteriaId.Value);
                 result.LevelPoint = _levelPoint.GetDetail(evaTemplate.LevelPointId.Value);
                 result.Grade = _grade.GetDetail(evaTemplate.GradeId.Value);
+                result.MaxTotalScore = this.GetMaxTotalScore(result.LevelPoint.WeightingKey, result.LevelPoint.LevelPointItems.Count, result.Criteria);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get Max total score calculate for a2 type.
+        /// </summary>
+        /// <param name="weightingKey">The weighting key.</param>
+        /// <param name="levelPoint">The maximun level point.</param>
+        /// <param name="criteria">The criteria and maxscore.</param>
+        /// <returns></returns>
+        private int GetMaxTotalScore(string weightingKey, int levelPoint, CriteriaViewModel criteria)
+        {
+            int result = 0;
+            if (string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var item in criteria.CriteriaGroups)
+                {
+                    result = result + (item.MaxScore * levelPoint);
+                }
             }
             return result;
         }

@@ -28,6 +28,7 @@ namespace EVF.Master.Bll.Models
     public class EvaluationTemplateDisplayViewModel
     {
         public string Name { get; set; }
+        public int MaxTotalScore { get; set; }
         public CriteriaViewModel Criteria { get; set; }
         public LevelPointViewModel LevelPoint { get; set; }
         public GradeViewModel Grade { get; set; }

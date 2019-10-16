@@ -3,6 +3,7 @@ using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -70,7 +71,7 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationLogViewModel> GetEvaluationLogById(int id)
         {
-            return this.InitialEvaluationLogViewModel(_unitOfWork.GetRepository<EvaluationLog>().Get(x=>x.Id == id));
+            return this.InitialEvaluationLogViewModel(_unitOfWork.GetRepository<EvaluationLog>().Get(x => x.Id == id));
         }
 
         /// <summary>
@@ -98,6 +99,35 @@ namespace EVF.Evaluation.Bll
         }
 
         /// <summary>
+        /// Validate Evaluation value before save.
+        /// </summary>
+        /// <param name="model">The evaluation log item information value.</param>
+        /// <returns></returns>
+        public ResultViewModel ValidateData(IEnumerable<EvaluationLogItemViewModel> model)
+        {
+            var result = new ResultViewModel();
+            var kpiGroup = model.Where(x => x.KpiId == null || x.KpiId == 0);
+            foreach (var item in kpiGroup)
+            {
+                var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                if (temp.Count() > 0 && temp.Any(x => x.Score == 0))
+                {
+                    result = UtilityService.InitialResultError(MessageValue.EvaluationLogSaveValidate, (int)System.Net.HttpStatusCode.BadRequest);
+                    break;
+                }
+                else
+                {
+                    if (item.Score == 0)
+                    {
+                        result = UtilityService.InitialResultError(MessageValue.EvaluationLogSaveValidate, (int)System.Net.HttpStatusCode.BadRequest);
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Insert new evaluation log.
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>
@@ -106,6 +136,7 @@ namespace EVF.Evaluation.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
+                model = this.SumKpiGroupScore(model);
                 var evaluationLog = new EvaluationLog
                 {
                     EvaluationId = evaluationId,
@@ -121,6 +152,26 @@ namespace EVF.Evaluation.Bll
                 _unitOfWork.Complete(scope);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Sum Kpi Group Score.
+        /// </summary>
+        /// <param name="model">The evaluation log item information value.</param>
+        /// <returns></returns>
+        private IEnumerable<EvaluationLogItemViewModel> SumKpiGroupScore(IEnumerable<EvaluationLogItemViewModel> model)
+        {
+            var kpiGroup = model.Where(x => x.KpiId == null || x.KpiId == 0);
+            foreach (var item in kpiGroup)
+            {
+                var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                if (temp.Count() > 0)
+                {
+                    var score = temp.Sum(x => x.Score);
+                    item.Score = score / temp.Count();
+                }
+            }
+            return model;
         }
 
         /// <summary>
