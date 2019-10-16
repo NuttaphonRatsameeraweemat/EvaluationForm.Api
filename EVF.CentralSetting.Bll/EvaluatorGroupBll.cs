@@ -181,6 +181,7 @@ namespace EVF.CentralSetting.Bll
             {
                 var evaluatorGroup = _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x => x.Id == id);
                 this.DeleteItem(_unitOfWork.GetRepository<EvaluatorGroupItem>().GetCache(x => x.EvaluatorGroupId == id));
+                _unitOfWork.GetRepository<EvaluatorGroup>().RemoveRange(evaluatorGroup);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheEvaluatorGroup();

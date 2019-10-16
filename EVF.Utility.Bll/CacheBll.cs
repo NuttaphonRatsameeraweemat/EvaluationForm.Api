@@ -108,6 +108,7 @@ namespace EVF.Utility.Bll
             _unitOfWork.GetRepository<PurchaseOrgItem>().ReCache();
             _unitOfWork.GetRepository<PurGroupWeightingKey>().ReCache();
             _unitOfWork.GetRepository<ValueHelp>().ReCache();
+            _unitOfWork.GetRepository<EvaluationPercentageConfig>().ReCache();
         }
 
         /// <summary>

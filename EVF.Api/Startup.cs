@@ -39,9 +39,9 @@ namespace EVF.Api
             services.ConfigureLoggerService();
             services.ConfigureCors();
             //Release
-            services.ConfigureCookieAuthen(Configuration);
+            //services.ConfigureCookieAuthen(Configuration);
             //Debug
-            //services.ConfigureJwtAuthen(Configuration);
+            services.ConfigureJwtAuthen(Configuration);
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();

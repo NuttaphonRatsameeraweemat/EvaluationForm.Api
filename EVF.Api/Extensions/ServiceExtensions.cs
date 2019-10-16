@@ -127,6 +127,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IApprovalBll, ApprovalBll>();
             services.AddScoped<IEvaluatorGroupBll, EvaluatorGroupBll>();
             services.AddScoped<IPurchasingOrgBll, PurchasingOrgBll>();
+            services.AddScoped<IEvaluationPercentageConfigBll, EvaluationPercentageConfigBll>();
         }
 
         /// <summary>
