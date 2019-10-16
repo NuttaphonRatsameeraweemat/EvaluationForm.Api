@@ -12,7 +12,6 @@ using EVF.Workflow.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Transactions;
 
 namespace EVF.Evaluation.Bll
@@ -35,10 +34,6 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         private readonly IManageToken _token;
         /// <summary>
-        /// The config value in appsetting.json
-        /// </summary>
-        private readonly IConfigSetting _config;
-        /// <summary>
         /// The workflow manager provides workflow functionality.
         /// </summary>
         private readonly IWorkflowBll _workflow;
@@ -53,12 +48,11 @@ namespace EVF.Evaluation.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IConfigSetting config, IWorkflowBll workflow)
+        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IWorkflowBll workflow)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
-            _config = config;
             _workflow = workflow;
         }
 
@@ -170,7 +164,7 @@ namespace EVF.Evaluation.Bll
             var templateInfo = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault();
             var result = this.GetHeaderInformation(data);
             result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
-            result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists));
+            result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value));
             result.Total = this.GetTotalScore(result.Summarys);
             result.GradeName = this.GetGrade(templateInfo.GradeId.Value, result.Total);
             return result;
@@ -256,7 +250,7 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="userLists">The evaluators list.</param>
         /// <returns></returns>
-        private IEnumerable<SummaryEvaluationDetailViewModel> GetSummaryPoint(IEnumerable<UserEvaluationViewModel> userLists)
+        private IEnumerable<SummaryEvaluationDetailViewModel> GetSummaryPoint(IEnumerable<UserEvaluationViewModel> userLists, int percenConfigId)
         {
             var purResult = new List<SummaryEvaluationDetailViewModel>();
             var userResult = new List<SummaryEvaluationDetailViewModel>();
@@ -267,7 +261,7 @@ namespace EVF.Evaluation.Bll
             {
                 userResult = this.GetLastEvaluation(item.EvaluationLogs, userResult);
             }
-            return this.SummaryScore(purResult, userResult);
+            return this.SummaryScore(purResult, userResult, percenConfigId);
         }
 
         /// <summary>
@@ -328,16 +322,18 @@ namespace EVF.Evaluation.Bll
         /// <param name="userResult">The users score.</param>
         /// <returns></returns>
         private IEnumerable<SummaryEvaluationDetailViewModel> SummaryScore(IEnumerable<SummaryEvaluationDetailViewModel> purResult,
-                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult)
+                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult, int percenConfigId)
         {
             var result = new List<SummaryEvaluationDetailViewModel>();
+            var percentageConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.Id == percenConfigId).FirstOrDefault();
             int userCount = userResult.Count();
             if (userCount > 0 && purResult.Count() <= 0)
             {
                 foreach (var item in userResult)
                 {
                     result.Add(this.InitialModel(item, UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
-                                                                                     _config.UserPercentage, _config.PurchasingPercentage)));
+                                                                                     percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
+                                                 percentageConfig));
                 }
             }
             else
@@ -350,7 +346,7 @@ namespace EVF.Evaluation.Bll
                     {
                         uPoint = UtilityService.AverageScore(userPoint.Score, userCount);
                     }
-                    result.Add(this.InitialModel(item, uPoint));
+                    result.Add(this.InitialModel(item, uPoint, percentageConfig));
                 }
             }
             return result;
@@ -388,13 +384,14 @@ namespace EVF.Evaluation.Bll
         /// <param name="item">The summary evaluation detail viewmodel.</param>
         /// <param name="score">The score.</param>
         /// <returns></returns>
-        private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score)
+        private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
+                                                              EvaluationPercentageConfig percentageConfig)
         {
             return new SummaryEvaluationDetailViewModel
             {
                 KpiGroupId = item.KpiGroupId,
                 KpiId = item.KpiId,
-                Score = UtilityService.CalculateScore(item.Score, score, _config.UserPercentage, _config.PurchasingPercentage),
+                Score = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
                 Sequence = item.Sequence
             };
         }

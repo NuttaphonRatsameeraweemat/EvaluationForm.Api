@@ -33,6 +33,7 @@ namespace EVF.Data
         public virtual DbSet<EvaluationAssign> EvaluationAssign { get; set; }
         public virtual DbSet<EvaluationLog> EvaluationLog { get; set; }
         public virtual DbSet<EvaluationLogItem> EvaluationLogItem { get; set; }
+        public virtual DbSet<EvaluationPercentageConfig> EvaluationPercentageConfig { get; set; }
         public virtual DbSet<EvaluationSapResult> EvaluationSapResult { get; set; }
         public virtual DbSet<EvaluationTemplate> EvaluationTemplate { get; set; }
         public virtual DbSet<EvaluatorGroup> EvaluatorGroup { get; set; }

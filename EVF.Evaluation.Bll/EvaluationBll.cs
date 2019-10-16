@@ -204,6 +204,7 @@ namespace EVF.Evaluation.Bll
             {
                 var evaluation = _mapper.Map<EvaluationRequestViewModel, Data.Pocos.Evaluation>(model);
                 evaluation.DocNo = this.GetDocNo();
+                evaluation.EvaPercentageId = this.GetEvaluationPercentage();
                 evaluation.Status = ConstantValue.EvaWaiting;
                 evaluation.CreateBy = _token.EmpNo;
                 evaluation.CreateDate = DateTime.Now;
@@ -233,9 +234,24 @@ namespace EVF.Evaluation.Bll
             _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluation);
         }
 
+        /// <summary>
+        /// Get documentation number.
+        /// </summary>
+        /// <returns></returns>
         private string GetDocNo()
         {
             return DateTime.Now.ToString("yyyyMMddHHmmss");
+        }
+
+        /// <summary>
+        /// Get evaluation percentage config.
+        /// </summary>
+        /// <returns></returns>
+        private int GetEvaluationPercentage()
+        {
+            var percenConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.StartDate.Value.Date <= DateTime.Now.Date &&
+                                                                                                     !x.EndDate.HasValue).FirstOrDefault();
+            return percenConfig.Id;
         }
 
         /// <summary>

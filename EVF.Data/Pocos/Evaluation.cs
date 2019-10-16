@@ -29,5 +29,7 @@ namespace EVF.Data.Pocos
         public int? TotalScore { get; set; }
         [StringLength(20)]
         public string DocNo { get; set; }
+        [Column("EvaPercentageID")]
+        public int? EvaPercentageId { get; set; }
     }
 }
