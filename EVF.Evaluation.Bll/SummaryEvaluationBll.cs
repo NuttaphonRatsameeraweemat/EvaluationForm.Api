@@ -166,6 +166,10 @@ namespace EVF.Evaluation.Bll
             result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
             result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value));
             result.Total = this.GetTotalScore(result.Summarys);
+            if (double.IsNaN(result.Total))
+            {
+                result.Total = 0;
+            }
             result.GradeName = this.GetGrade(templateInfo.GradeId.Value, result.Total);
             return result;
         }

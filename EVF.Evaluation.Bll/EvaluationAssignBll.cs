@@ -157,7 +157,9 @@ namespace EVF.Evaluation.Bll
                 var emp = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == model.ToAdUser).FirstOrDefault();
                 data.EmpNo = emp?.EmpNo;
                 data.AdUser = emp?.Aduser;
-                _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                data.IsReject = false;
+                data.ReasonReject = null;
+                _unitOfWork.GetRepository<EvaluationAssign>().Update(data);
                 _unitOfWork.Complete(scope);
             }
             return result;

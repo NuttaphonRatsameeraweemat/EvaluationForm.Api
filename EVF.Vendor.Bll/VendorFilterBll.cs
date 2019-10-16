@@ -203,6 +203,7 @@ namespace EVF.Vendor.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 var data = _mapper.Map<VendorFilterRequestViewModel, VendorFilter>(model);
+                data.IsSending = false;
                 data.CreateBy = _token.EmpNo;
                 data.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<VendorFilter>().Add(data);
