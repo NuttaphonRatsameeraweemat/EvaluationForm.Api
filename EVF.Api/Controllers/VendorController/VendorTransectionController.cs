@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.VendorController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = VendorTransectionViewModel.RoleForManageData)]
+    [Authorize]
     public class VendorTransectionController : ControllerBase
     {
 
@@ -58,6 +58,7 @@ namespace EVF.Api.Controllers.VendorController
 
         [HttpPost]
         [Route("MarkWeightingKey")]
+        [Authorize(Roles = VendorTransectionViewModel.RoleForManageData)]
         public IActionResult MarkWeightingKey([FromBody]VendorTransectionRequestViewModel model)
         {
             return Ok(_vendorTransection.MarkWeightingKey(model));

@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.VendorController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = VendorViewModel.RoleForManageData)]
+    [Authorize]
     public class VendorController : ControllerBase
     {
 
@@ -72,6 +72,7 @@ namespace EVF.Api.Controllers.VendorController
 
         [HttpPost]
         [Route("UpdateVendorContact")]
+        [Authorize(Roles = VendorViewModel.RoleForManageData)]
         public IActionResult UpdateVendorContact([FromBody]VendorRequestViewModel model)
         {
             return Ok(_vendor.UpdateVendorContact(model));

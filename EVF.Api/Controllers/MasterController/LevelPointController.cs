@@ -10,7 +10,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = LevelPointViewModel.RoleForManageData)]
+    [Authorize]
     public class LevelPointController : ControllerBase
     {
 
@@ -54,6 +54,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = LevelPointViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]LevelPointViewModel model)
         {
             return Ok(_levelPoint.Save(model));
@@ -61,6 +62,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = LevelPointViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]LevelPointViewModel model)
         {
             IActionResult response;
@@ -75,6 +77,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = LevelPointViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             IActionResult response;

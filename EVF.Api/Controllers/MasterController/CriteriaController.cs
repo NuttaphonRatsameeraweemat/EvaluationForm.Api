@@ -10,7 +10,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = CriteriaViewModel.RoleForManageData)]
+    [Authorize]
     public class CriteriaController : ControllerBase
     {
 
@@ -54,6 +54,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = CriteriaViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]CriteriaViewModel model)
         {
             var response = _criteria.ValidateData(model);
@@ -66,6 +67,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = CriteriaViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]CriteriaViewModel model)
         {
             IActionResult response;
@@ -88,6 +90,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = CriteriaViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             IActionResult response;

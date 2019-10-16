@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = PeriodViewModel.RoleForManageData)]
+    [Authorize]
     public class PeriodController : ControllerBase
     {
 
@@ -52,6 +52,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = PeriodViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]PeriodViewModel model)
         {
             return Ok(_period.Save(model));
@@ -59,6 +60,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = PeriodViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]PeriodViewModel model)
         {
             return Ok(_period.Edit(model));
@@ -66,6 +68,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = PeriodViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_period.Delete(id));

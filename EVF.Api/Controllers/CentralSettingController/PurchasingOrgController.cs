@@ -12,7 +12,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = PurchasingOrgViewModel.RoleForManageData)]
+    [Authorize]
     public class PurchasingOrgController : ControllerBase
     {
 
@@ -63,6 +63,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = PurchasingOrgViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]PurchasingOrgViewModel model)
         {
             return Ok(_purchasingOrg.Save(model));
@@ -70,6 +71,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = PurchasingOrgViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]PurchasingOrgViewModel model)
         {
             return Ok(_purchasingOrg.Edit(model));
@@ -77,6 +79,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = PurchasingOrgViewModel.RoleForManageData)]
         public IActionResult Delete(string purOrg)
         {
             return Ok(_purchasingOrg.Delete(purOrg));

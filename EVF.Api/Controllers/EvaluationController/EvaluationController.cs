@@ -9,7 +9,7 @@ namespace EVF.Api.Controllers.EvaluationController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluationController : ControllerBase
     {
 

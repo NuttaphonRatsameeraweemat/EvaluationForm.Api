@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EVF.Vendor.Bll.Interfaces;
+﻿using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers.VendorController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
+    [Authorize]
     public class VendorFilterController : ControllerBase
     {
 
@@ -70,6 +65,7 @@ namespace EVF.Api.Controllers.VendorController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]VendorFilterRequestViewModel model)
         {
             return Ok(_vendorFilter.Save(model));
@@ -77,6 +73,7 @@ namespace EVF.Api.Controllers.VendorController
 
         [HttpPost]
         [Route("ChangeAssignToSave")]
+        [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
         public IActionResult ChangeAssignToSave([FromBody]VendorFilterEditRequestViewModel model)
         {
             return Ok(_vendorFilter.ChangeAssignTo(model));
@@ -84,6 +81,7 @@ namespace EVF.Api.Controllers.VendorController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_vendorFilter.Delete(id));

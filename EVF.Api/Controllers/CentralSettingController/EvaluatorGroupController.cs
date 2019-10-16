@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluatorGroupViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluatorGroupController : ControllerBase
     {
 
@@ -58,6 +58,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = EvaluatorGroupViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]EvaluatorGroupViewModel model)
         {
             return Ok(_evaluatorGroup.Save(model));
@@ -65,6 +66,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = EvaluatorGroupViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]EvaluatorGroupViewModel model)
         {
             return Ok(_evaluatorGroup.Edit(model));
@@ -72,6 +74,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = EvaluatorGroupViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_evaluatorGroup.Delete(id));

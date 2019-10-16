@@ -10,7 +10,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = GradeViewModel.RoleForManageData)]
+    [Authorize]
     public class GradeController : ControllerBase
     {
 
@@ -54,6 +54,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = GradeViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]GradeViewModel model)
         {
             var response = _grade.ValidateData(model);
@@ -66,6 +67,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = GradeViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]GradeViewModel model)
         {
             IActionResult response;
@@ -88,6 +90,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = GradeViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             IActionResult response;

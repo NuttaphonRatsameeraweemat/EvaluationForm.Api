@@ -10,7 +10,7 @@ namespace EVF.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = KpiGroupViewModel.RoleForManageData)]
+    [Authorize]
     public class KpiGroupController : ControllerBase
     {
 
@@ -61,6 +61,7 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = KpiGroupViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]KpiGroupViewModel model)
         {
             IActionResult response;
@@ -75,6 +76,7 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = KpiGroupViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]KpiGroupViewModel model)
         {
             IActionResult response;
@@ -89,6 +91,7 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = KpiGroupViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             IActionResult response;

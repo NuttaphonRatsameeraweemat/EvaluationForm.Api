@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationPercentageConfigViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluationPercentageConfigController : ControllerBase
     {
 
@@ -51,6 +51,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = EvaluationPercentageConfigViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]EvaluationPercentageConfigRequestModel model)
         {
             return Ok(_evaConfig.Save(model));
@@ -58,6 +59,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = EvaluationPercentageConfigViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]EvaluationPercentageConfigRequestModel model)
         {
             return Ok(_evaConfig.Edit(model));
@@ -65,6 +67,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = EvaluationPercentageConfigViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_evaConfig.Delete(id));

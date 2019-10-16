@@ -12,7 +12,7 @@ namespace EVF.Api.Controllers.EvaluationController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluationLogController : ControllerBase
     {
 
@@ -56,6 +56,7 @@ namespace EVF.Api.Controllers.EvaluationController
 
         [HttpPost]
         [Route("Save/{evaluationId}")]
+        [Authorize(Roles = EvaluationViewModel.RoleForManageData)]
         public IActionResult Save(int evaluationId, [FromBody]IEnumerable<EvaluationLogItemViewModel> model)
         {
             return Ok(_evaluationLog.Save(evaluationId, model));

@@ -38,9 +38,7 @@ namespace EVF.Api
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();
             services.ConfigureCors();
-            //Release
             //services.ConfigureCookieAuthen(Configuration);
-            //Debug
             services.ConfigureJwtAuthen(Configuration);
             services.ConfigureEmailService();
             services.ConfigureComponent();
@@ -52,11 +50,11 @@ namespace EVF.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-                app.ConfigureUseSwagger();
+            app.ConfigureUseSwagger();
 
-            //For JWT
+            //For JWT handle forbiden response.
             app.ConfigureHandlerStatusPages();
-           
+
             app.UseAuthentication();
             app.ConfigureMiddleware();
             app.UseCors("CorsPolicy");

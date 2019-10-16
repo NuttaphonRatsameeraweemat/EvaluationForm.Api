@@ -7,7 +7,7 @@ namespace EVF.Api.Controllers.EvaluationController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluationAssignController : ControllerBase
     {
 
@@ -44,6 +44,7 @@ namespace EVF.Api.Controllers.EvaluationController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]EvaluationAssignRequestViewModel model)
         {
             return Ok(_evaluationAssign.Save(model));
@@ -51,6 +52,7 @@ namespace EVF.Api.Controllers.EvaluationController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]EvaluationAssignRequestViewModel model)
         {
             return Ok(_evaluationAssign.Edit(model));
@@ -58,6 +60,7 @@ namespace EVF.Api.Controllers.EvaluationController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_evaluationAssign.Delete(id));

@@ -10,7 +10,7 @@ namespace EVF.Api.Controllers.MasterController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]
+    [Authorize]
     public class EvaluationTemplateController : ControllerBase
     {
 
@@ -68,6 +68,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]EvaluationTemplateViewModel model)
         {
             var response = _evaluationTemplate.ValidateData(model);
@@ -80,6 +81,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]EvaluationTemplateViewModel model)
         {
             var response = _evaluationTemplate.ValidateData(model);
@@ -92,6 +94,7 @@ namespace EVF.Api.Controllers.MasterController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             IActionResult response;

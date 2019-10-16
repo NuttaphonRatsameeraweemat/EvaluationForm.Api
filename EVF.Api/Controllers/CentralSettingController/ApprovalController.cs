@@ -8,7 +8,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = ApprovalViewModel.RoleForManageData)]
+    [Authorize]
     public class ApprovalController : ControllerBase
     {
 
@@ -52,6 +52,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Save")]
+        [Authorize(Roles = ApprovalViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]ApprovalViewModel model)
         {
             return Ok(_approval.Save(model));
@@ -59,6 +60,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Edit")]
+        [Authorize(Roles = ApprovalViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]ApprovalViewModel model)
         {
             return Ok(_approval.Edit(model));
@@ -66,6 +68,7 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpPost]
         [Route("Delete")]
+        [Authorize(Roles = ApprovalViewModel.RoleForManageData)]
         public IActionResult Delete(int id)
         {
             return Ok(_approval.Delete(id));
