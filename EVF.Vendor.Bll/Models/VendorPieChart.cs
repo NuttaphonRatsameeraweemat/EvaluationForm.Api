@@ -6,7 +6,8 @@ namespace EVF.Vendor.Bll.Models
 {
     public class VendorPieChart
     {
-        public string GradeName { get; set; }
+        public string GradeNameTh { get; set; }
+        public string GradeNameEn { get; set; }
         public int Count { get; set; }
     }
 }

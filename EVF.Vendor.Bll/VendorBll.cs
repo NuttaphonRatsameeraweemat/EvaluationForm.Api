@@ -91,12 +91,12 @@ namespace EVF.Vendor.Bll
                 var tempTemplate = templateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId);
                 var gradeItems = gradeItemList.Where(x => x.GradeId == tempTemplate.GradeId);
                 var grade = gradeItems.FirstOrDefault(x => x.StartPoint <= item.TotalScore && x.EndPoint >= item.TotalScore);
-                var temp = result.FirstOrDefault(x => x.GradeName == grade.GradeNameTh);
+                var temp = result.FirstOrDefault(x => x.GradeNameEn == grade.GradeNameEn);
                 if (temp != null)
                 {
                     temp.Count = temp.Count + 1;
                 }
-                else result.Add(new VendorPieChart { GradeName = grade.GradeNameTh, Count = 1 });
+                else result.Add(new VendorPieChart { GradeNameTh = grade.GradeNameTh, GradeNameEn = grade.GradeNameEn, Count = 1 });
             }
             return result;
         }
