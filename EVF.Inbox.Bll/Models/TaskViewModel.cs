@@ -21,6 +21,8 @@ namespace EVF.Inbox.Bll.Models
         public string VendorName { get; set; }
         public string PurchaseOrgName { get; set; }
         public int TotalScore { get; set; }
+        public int GradeId { get; set; }
+        public int EvaluationTemplateId { get; set; }
         public string GradeName { get; set; }
         public DateTime ReceiveDate { get; set; }
     }

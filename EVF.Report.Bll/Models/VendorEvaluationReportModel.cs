@@ -9,6 +9,7 @@ namespace EVF.Report.Bll.Models
         public VendorEvaluationRequestModel()
         {
             KpiGroups = new List<VendorEvaluationRequestItemModel>();
+            MaxTotalScore = 100;
         }
 
         public string CompanyNameTh { get; set; }

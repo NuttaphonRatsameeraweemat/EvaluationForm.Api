@@ -123,6 +123,7 @@ namespace EVF.Vendor.Bll
                 {
                     statData.Add(new VendorLineChartData { PeriodName = item.PeriodName, TotalScore = temp.TotalScore.Value });
                 }
+                else statData.Add(new VendorLineChartData { PeriodName = item.PeriodName, TotalScore = 0 });
             }
             result.DataStats.AddRange(statData);
             result.AllPeriods = labels.ToArray();

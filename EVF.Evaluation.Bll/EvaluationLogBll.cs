@@ -109,15 +109,18 @@ namespace EVF.Evaluation.Bll
             var kpiGroup = model.Where(x => x.KpiId == null || x.KpiId == 0);
             foreach (var item in kpiGroup)
             {
-                var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
-                if (temp.Count() > 0 && temp.Any(x => x.Score == 0))
+                var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && (x.KpiId != null && x.KpiId != 0));
+                if (temp.Count() > 0)
                 {
-                    result = UtilityService.InitialResultError(MessageValue.EvaluationLogSaveValidate, (int)System.Net.HttpStatusCode.BadRequest);
-                    break;
+                    if (temp.Any(x => x.RawScore == 0))
+                    {
+                        result = UtilityService.InitialResultError(MessageValue.EvaluationLogSaveValidate, (int)System.Net.HttpStatusCode.BadRequest);
+                        break;
+                    }
                 }
                 else
                 {
-                    if (item.Score == 0)
+                    if (item.RawScore == 0)
                     {
                         result = UtilityService.InitialResultError(MessageValue.EvaluationLogSaveValidate, (int)System.Net.HttpStatusCode.BadRequest);
                         break;
@@ -136,7 +139,7 @@ namespace EVF.Evaluation.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                model = this.SumKpiGroupScore(model);
+                model = this.SumKpiGroupScore(evaluationId, model);
                 var evaluationLog = new EvaluationLog
                 {
                     EvaluationId = evaluationId,
@@ -159,19 +162,68 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>
         /// <returns></returns>
-        private IEnumerable<EvaluationLogItemViewModel> SumKpiGroupScore(IEnumerable<EvaluationLogItemViewModel> model)
+        private IEnumerable<EvaluationLogItemViewModel> SumKpiGroupScore(int evaluationId, IEnumerable<EvaluationLogItemViewModel> model)
         {
-            var kpiGroup = model.Where(x => x.KpiId == null || x.KpiId == 0);
-            foreach (var item in kpiGroup)
+            var evaInfo = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(evaluationId);
+            var template = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == evaInfo.EvaluationTemplateId).FirstOrDefault();
+            var levelpointMax = _unitOfWork.GetRepository<LevelPointItem>().GetCache(x => x.LevelPointId == template.LevelPointId).Count();
+            var kpiGroups = model.Where(x => x.KpiId == null || x.KpiId == 0);
+            var kpis = model.Where(x => x.KpiId != null && x.KpiId != 0);
+            switch (evaInfo.WeightingKey)
             {
-                var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
-                if (temp.Count() > 0)
-                {
-                    var score = temp.Sum(x => x.Score);
-                    item.Score = score / temp.Count();
-                }
+                case "A2":
+                    foreach (var item in kpiGroups)
+                    {
+                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                        if (temp.Count() > 0)
+                        {
+                            var score = temp.Sum(x => x.RawScore);
+                            var sumMaxScore = temp.Sum(x => x.MaxScore);
+                            item.Score = this.CalculateScore(sumMaxScore, levelpointMax, score);
+                            item.RawScore = score;
+                        }
+                        else
+                        {
+                            item.Score = this.CalculateScore(item.MaxScore, levelpointMax, item.RawScore);
+                        }
+                    }
+                    foreach (var item in kpis)
+                    {
+                        item.Score = this.CalculateScore(item.MaxScore, levelpointMax, item.RawScore);
+                    }
+                    break;
+                default:
+                    foreach (var item in kpiGroups)
+                    {
+                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                        if (temp.Count() > 0)
+                        {
+                            var score = temp.Sum(x => x.RawScore);
+                            item.Score = score;
+                        }
+                    }
+                    foreach (var item in kpis)
+                    {
+                        item.Score = item.RawScore;
+                    }
+                    break;
             }
+            
             return model;
+        }
+
+        /// <summary>
+        /// Calculate score weighting key a2.
+        /// </summary>
+        /// <param name="maxScore">The max score.</param>
+        /// <param name="levelPointMax">The level point max.</param>
+        /// <param name="rawScore">The raw score.</param>
+        /// <returns></returns>
+        private int CalculateScore(int maxScore, int levelPointMax, int rawScore)
+        {
+            int maxRawScore = (maxScore * levelPointMax);
+            double result = (Convert.ToDouble(rawScore) / Convert.ToDouble(maxRawScore));
+            return Convert.ToInt32(result * 100);
         }
 
         /// <summary>
@@ -210,6 +262,52 @@ namespace EVF.Evaluation.Bll
             var evaluationAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId && x.AdUser == _token.AdUser).FirstOrDefault();
             evaluationAssign.IsAction = true;
             _unitOfWork.GetRepository<EvaluationAssign>().Update(evaluationAssign);
+        }
+
+        /// <summary>
+        /// Inital model for post method save.
+        /// </summary>
+        /// <param name="evaluationTemplateId">The evaluation template identity.</param>
+        /// <returns></returns>
+        public IEnumerable<EvaluationLogItemViewModel> GetModelEvaluation(int evaluationTemplateId)
+        {
+            var result = new List<EvaluationLogItemViewModel>();
+            var template = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == evaluationTemplateId).FirstOrDefault();
+            if (template != null)
+            {
+                var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == template.CriteriaId).FirstOrDefault();
+                var criteriaGroups = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteria.Id);
+                foreach (var item in criteriaGroups)
+                {
+                    result.Add(new EvaluationLogItemViewModel
+                    {
+                        Id = 0,
+                        KpiGroupId = item.KpiGroupId,
+                        KpiId = 0,
+                        LevelPoint = 0,
+                        Score = 0,
+                        RawScore = 0,
+                        Reason = string.Empty,
+                        MaxScore = item.MaxScore.Value
+                    });
+                    var criteriaItems = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => x.CriteriaGroupId == item.Id);
+                    foreach (var subItem in criteriaItems)
+                    {
+                        result.Add(new EvaluationLogItemViewModel
+                        {
+                            Id = 0,
+                            KpiGroupId = item.KpiGroupId,
+                            KpiId = subItem.KpiId,
+                            LevelPoint = 0,
+                            Score = 0,
+                            RawScore = 0,
+                            Reason = string.Empty,
+                            MaxScore = subItem.MaxScore.Value
+                        });
+                    }
+                }
+            }
+            return result;
         }
 
         #endregion

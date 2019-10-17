@@ -311,7 +311,7 @@ namespace EVF.Evaluation.Bll
         private int GetSequence(int kpiGroupId, int? kpiId, int criteriaId)
         {
             int result = 0;
-            if (kpiId.HasValue)
+            if (kpiId.HasValue && kpiId.Value != 0)
             {
                 result = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == kpiGroupId && x.KpiId == kpiId).FirstOrDefault().Sequence.Value;
             }
@@ -363,7 +363,7 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private double GetTotalScore(IEnumerable<SummaryEvaluationDetailViewModel> summaryEvaluations)
         {
-            var groupSummary = summaryEvaluations.Where(x => !x.KpiId.HasValue);
+            var groupSummary = summaryEvaluations.Where(x => !x.KpiId.HasValue || x.KpiId == 0);
             double rawTotalScore = groupSummary.Sum(x => x.Score);
             int countKpiGroup = groupSummary.Count();
             return rawTotalScore / Convert.ToDouble(countKpiGroup);
@@ -508,16 +508,6 @@ namespace EVF.Evaluation.Bll
                 result.Add(item.Step.Value, item.AdUser);
             }
             return result;
-        }
-
-        public void SendEmail()
-        {
-
-        }
-
-        public void PrintReport()
-        {
-
         }
 
         #endregion

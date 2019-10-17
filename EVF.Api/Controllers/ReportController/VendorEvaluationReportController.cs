@@ -42,7 +42,7 @@ namespace EVF.Api.Controllers.ReportController
         public IActionResult PreviewFile()
         {
             var result = _report.Try();
-            Response.Headers.Add("Content-Disposition", "inline; filename=" + result.FileName + ".pdf");
+            Response.Headers.Add("Content-Disposition", "inline; filename=" + result.FileName);
             return File(result.FileContent, "application/pdf");
         }
 
@@ -51,7 +51,8 @@ namespace EVF.Api.Controllers.ReportController
         public IActionResult DownloadFile()
         {
             var result = _report.Try();
-            return File(result.FileContent, "application/pdf", result.FileName);
+            Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);
+            return File(result.FileContent, "application/octet-stream");
         }
 
         #endregion

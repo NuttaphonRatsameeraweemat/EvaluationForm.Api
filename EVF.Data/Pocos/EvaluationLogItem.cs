@@ -19,5 +19,6 @@ namespace EVF.Data.Pocos
         public int? LevelPoint { get; set; }
         [StringLength(255)]
         public string Reason { get; set; }
+        public int? RawScore { get; set; }
     }
 }

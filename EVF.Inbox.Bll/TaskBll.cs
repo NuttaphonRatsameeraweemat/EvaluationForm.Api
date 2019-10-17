@@ -110,6 +110,8 @@ namespace EVF.Inbox.Bll
                         item.PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == temp.PurchasingOrg)?.PurchaseName;
                         item.GradeName = this.GetGrade(template.GradeId.Value, temp.TotalScore.Value);
                         item.ProcessName = processCode.FirstOrDefault(x => x.ProcessCode == item.ProcessCode)?.ProcessName;
+                        item.GradeId = template.GradeId.Value;
+                        item.EvaluationTemplateId = template.Id;
                         break;
                 }
             }

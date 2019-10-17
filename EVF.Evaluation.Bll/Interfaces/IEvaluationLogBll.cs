@@ -30,5 +30,11 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>
         ResultViewModel Save(int evaluationId, IEnumerable<EvaluationLogItemViewModel> model);
+        /// <summary>
+        /// Inital model for post method save.
+        /// </summary>
+        /// <param name="evaluationTemplateId">The evaluation template identity.</param>
+        /// <returns></returns>
+        IEnumerable<EvaluationLogItemViewModel> GetModelEvaluation(int evaluationTemplateId);
     }
 }

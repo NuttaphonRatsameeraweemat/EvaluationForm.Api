@@ -54,6 +54,13 @@ namespace EVF.Api.Controllers.EvaluationController
             return Ok(_evaluationLog.GetEvaluationLogById(id));
         }
 
+        [HttpGet]
+        [Route("GetModelEvaluation")]
+        public IActionResult GetModelEvaluation(int evaluationTemplateId)
+        {
+            return Ok(_evaluationLog.GetModelEvaluation(evaluationTemplateId));
+        }
+
         [HttpPost]
         [Route("Save/{evaluationId}")]
         [Authorize(Roles = EvaluationViewModel.RoleForManageData)]

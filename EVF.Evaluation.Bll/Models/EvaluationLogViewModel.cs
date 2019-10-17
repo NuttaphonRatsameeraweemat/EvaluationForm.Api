@@ -30,6 +30,8 @@ namespace EVF.Evaluation.Bll.Models
         public int? LevelPoint { get; set; }
         [MaxLength(255)]
         public string Reason { get; set; }
+        public int MaxScore { get; set; }
+        public int RawScore { get; set; }
     }
 
 }
