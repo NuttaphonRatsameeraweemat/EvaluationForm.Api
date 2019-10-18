@@ -148,6 +148,8 @@ namespace EVF.CentralSetting.Bll
             {
                 var data = _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x => x.Id == model.Id).FirstOrDefault();
                 data.EvaluatorGroupName = model.EvaluatorGroupName;
+                data.PeriodId = model.PeriodId;
+                data.PeriodItemId = model.PeriodItemId;
                 data.LastModifyBy = _token.EmpNo;
                 data.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluatorGroup>().Update(data);

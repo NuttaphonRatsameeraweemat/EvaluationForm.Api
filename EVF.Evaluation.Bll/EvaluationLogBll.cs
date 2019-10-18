@@ -234,6 +234,7 @@ namespace EVF.Evaluation.Bll
         private void SaveItem(int evaluationLogId, IEnumerable<EvaluationLogItemViewModel> model)
         {
             var evaluationLogItems = _mapper.Map<IEnumerable<EvaluationLogItemViewModel>, IEnumerable<EvaluationLogItem>>(model);
+            evaluationLogItems.Select(c => { c.Id = 0; return c; }).ToList();
             evaluationLogItems.Select(c => { c.EvaluationLogId = evaluationLogId; return c; }).ToList();
             _unitOfWork.GetRepository<EvaluationLogItem>().AddRange(evaluationLogItems);
         }

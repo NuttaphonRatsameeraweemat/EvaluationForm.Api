@@ -160,8 +160,9 @@ namespace EVF.CentralSetting.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var PurchasingOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == purOrg);
+                var purchasingOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == purOrg);
                 this.DeleteItem(_unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.PuchaseOrg == purOrg));
+                _unitOfWork.GetRepository<PurchaseOrg>().RemoveRange(purchasingOrg);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCachePurchasingOrg();

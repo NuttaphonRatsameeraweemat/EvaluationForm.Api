@@ -19,5 +19,7 @@ namespace EVF.Data.Pocos
         public DateTime? LastModifyDate { get; set; }
         [Column("PeriodItemID")]
         public int? PeriodItemId { get; set; }
+        [Column("PeriodID")]
+        public int? PeriodId { get; set; }
     }
 }

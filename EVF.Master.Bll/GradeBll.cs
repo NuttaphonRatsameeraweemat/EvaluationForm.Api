@@ -96,6 +96,7 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public ResultViewModel ValidateData(GradeViewModel model)
         {
+            //Change
             var result = new ResultViewModel();
             int oldEnd = int.MinValue;
             foreach (var item in model.GradeItems)

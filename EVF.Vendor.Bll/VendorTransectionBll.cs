@@ -140,6 +140,7 @@ namespace EVF.Vendor.Bll
         {
             var result = _mapper.Map<VendorTransection, VendorTransectionViewModel>(
                 _unitOfWork.GetRepository<VendorTransection>().Get(x => x.Id == id).FirstOrDefault());
+            result.VendorName = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == result.Vendor).FirstOrDefault().VendorName;
             return result;
         }
 

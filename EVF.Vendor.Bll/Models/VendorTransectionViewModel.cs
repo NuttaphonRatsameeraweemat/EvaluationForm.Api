@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,13 @@ namespace EVF.Vendor.Bll.Models
 
         public int Id { get; set; }
         public DateTime? ReceiptDate { get; set; }
+        public string ReceiptDateString
+        {
+            get
+            {
+                return ReceiptDate.Value.ToString(ConstantValue.DateTimeFormat);
+            }
+        }
         public string Vendor { get; set; }
         public string VendorName { get; set; }
         public string MaterialCode { get; set; }

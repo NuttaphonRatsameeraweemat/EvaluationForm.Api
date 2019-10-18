@@ -72,7 +72,7 @@ namespace EVF.Master.Bll
         public PeriodViewModel GetDetail(int id)
         {
             var data = _mapper.Map<Period, PeriodViewModel>(
-                   _unitOfWork.GetRepository<Period>().GetById(id));
+                   _unitOfWork.GetRepository<Period>().GetCache(x=>x.Id == id).FirstOrDefault());
             data.PeriodItems = this.GetPeriodItem(id).ToList();
             return data;
         }

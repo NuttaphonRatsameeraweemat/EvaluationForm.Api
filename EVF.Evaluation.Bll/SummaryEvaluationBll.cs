@@ -233,6 +233,12 @@ namespace EVF.Evaluation.Bll
                 evaLog.ActionDate = item.ActionDate;
                 foreach (var logItem in log)
                 {
+                    bool isHaveKpi = false;
+                    if (logItem.KpiId == 0 || logItem.KpiId == null)
+                    {
+                        isHaveKpi = log.Any(x => x.KpiGroupId == logItem.KpiGroupId && (x.KpiId != 0 && x.KpiId != null));
+                    }
+                       
                     evaLog.EvaluationLogs.Add(new UserEvaluationLogItemViewModel
                     {
                         Id = logItem.Id,
@@ -241,7 +247,9 @@ namespace EVF.Evaluation.Bll
                         LevelPoint = logItem.LevelPoint,
                         Reason = logItem.Reason,
                         Score = logItem.Score,
-                        Sequence = this.GetSequence(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId)
+                        Sequence = this.GetSequence(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId),
+                        RawScore = isHaveKpi ? 0 : logItem.RawScore.Value,
+                        MaxScore = this.GetMaxScore(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId)
                     });
                 }
                 result.Add(evaLog);
@@ -316,6 +324,25 @@ namespace EVF.Evaluation.Bll
                 result = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiGroupId == kpiGroupId && x.KpiId == kpiId).FirstOrDefault().Sequence.Value;
             }
             else result = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId && x.KpiGroupId == kpiGroupId).FirstOrDefault().Sequence.Value;
+            return result;
+        }
+
+        /// <summary>
+        /// Get Max score.
+        /// </summary>
+        /// <param name="kpiGroupId">The identity kpi group.</param>
+        /// <param name="kpiId">The identity kpi.</param>
+        /// <param name="criteriaId">The identity criteria.</param>
+        /// <returns></returns>
+        private int GetMaxScore(int kpiGroupId, int? kpiId, int criteriaId)
+        {
+            int result = 0;
+            var criteria = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaId && x.KpiGroupId == kpiGroupId).FirstOrDefault();
+            if (kpiId.HasValue && kpiId.Value != 0)
+            {
+                result = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => x.CriteriaGroupId == criteria.Id && x.KpiId == kpiId).FirstOrDefault().MaxScore.Value;
+            }
+            else result = criteria.MaxScore.Value;
             return result;
         }
 
