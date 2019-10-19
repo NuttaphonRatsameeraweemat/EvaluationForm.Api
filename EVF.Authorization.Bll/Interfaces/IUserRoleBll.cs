@@ -36,6 +36,6 @@ namespace EVF.Authorization.Bll.Interfaces
         /// </summary>
         /// <param name="adUser">THe identity user.</param>
         /// <returns></returns>
-        ResultViewModel Delete(string adUser);
+        ResultViewModel Delete(UserRoleRequestDeleteModel adUser);
     }
 }

@@ -75,14 +75,14 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
-        public IActionResult Delete([FromBody]string adUser)
+        public IActionResult Delete([FromBody]UserRoleRequestDeleteModel model)
         {
             IActionResult response;
-            if (string.IsNullOrEmpty(adUser))
+            if (string.IsNullOrEmpty(model.AdUser))
             {
                 response = BadRequest(UtilityService.InitialResultError(ConstantValue.ArgullmentNullOrEmptyMessage, (int)HttpStatusCode.BadRequest));
             }
-            else response = Ok(_userRole.Delete(adUser));
+            else response = Ok(_userRole.Delete(model));
             return response;
         }
 

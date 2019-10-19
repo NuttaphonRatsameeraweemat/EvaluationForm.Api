@@ -27,4 +27,11 @@ namespace EVF.Authorization.Bll.Models
         public List<int> RoleList { get; set; }
 
     }
+
+    public class UserRoleRequestDeleteModel
+    {
+        [Required]
+        public string AdUser { get; set; }
+    }
+
 }

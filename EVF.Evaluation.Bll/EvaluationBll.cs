@@ -304,7 +304,7 @@ namespace EVF.Evaluation.Bll
                 {
                     data.IsReject = true;
                     data.ReasonReject = model.Reason;
-                    _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                    _unitOfWork.GetRepository<EvaluationAssign>().Update(data);
                     _unitOfWork.Complete(scope);
                 }
             }

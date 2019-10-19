@@ -114,12 +114,12 @@ namespace EVF.Authorization.Bll
         /// </summary>
         /// <param name="adUser">THe identity user.</param>
         /// <returns></returns>
-        public ResultViewModel Delete(string adUser)
+        public ResultViewModel Delete(UserRoleRequestDeleteModel model)
         {
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var userRoles = _unitOfWork.GetRepository<UserRoles>().GetCache(x => x.AdUser == adUser);
+                var userRoles = _unitOfWork.GetRepository<UserRoles>().GetCache(x => x.AdUser == model.AdUser);
                 _unitOfWork.GetRepository<UserRoles>().RemoveRange(userRoles);
                 _unitOfWork.Complete(scope);
             }

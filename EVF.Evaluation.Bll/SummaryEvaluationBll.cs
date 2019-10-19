@@ -165,7 +165,7 @@ namespace EVF.Evaluation.Bll
             var result = this.GetHeaderInformation(data);
             result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
             result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value));
-            result.Total = this.GetTotalScore(result.Summarys);
+            result.Total = this.GetTotalScore(result.Summarys, data.WeightingKey);
             if (double.IsNaN(result.Total))
             {
                 result.Total = 0;
@@ -238,7 +238,7 @@ namespace EVF.Evaluation.Bll
                     {
                         isHaveKpi = log.Any(x => x.KpiGroupId == logItem.KpiGroupId && (x.KpiId != 0 && x.KpiId != null));
                     }
-                       
+
                     evaLog.EvaluationLogs.Add(new UserEvaluationLogItemViewModel
                     {
                         Id = logItem.Id,
@@ -388,12 +388,21 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="summaryEvaluations">The summary information.</param>
         /// <returns></returns>
-        private double GetTotalScore(IEnumerable<SummaryEvaluationDetailViewModel> summaryEvaluations)
+        private double GetTotalScore(IEnumerable<SummaryEvaluationDetailViewModel> summaryEvaluations, string weigtingKey)
         {
+            double result = 0;
             var groupSummary = summaryEvaluations.Where(x => !x.KpiId.HasValue || x.KpiId == 0);
             double rawTotalScore = groupSummary.Sum(x => x.Score);
-            int countKpiGroup = groupSummary.Count();
-            return rawTotalScore / Convert.ToDouble(countKpiGroup);
+            if (!string.Equals(weigtingKey, "A2", StringComparison.OrdinalIgnoreCase))
+            {
+                result = rawTotalScore;
+            }
+            else
+            {
+                int countKpiGroup = groupSummary.Count();
+                result = rawTotalScore / Convert.ToDouble(countKpiGroup);
+            }
+            return result;
         }
 
         /// <summary>
