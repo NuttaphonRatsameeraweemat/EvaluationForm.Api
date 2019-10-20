@@ -190,6 +190,7 @@ namespace EVF.Api.Extensions
         public static void ConfigureReportBll(this IServiceCollection services)
         {
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IVendorEvaluationReportBll, VendorEvaluationReportBll>();
         }
 
         /// <summary>

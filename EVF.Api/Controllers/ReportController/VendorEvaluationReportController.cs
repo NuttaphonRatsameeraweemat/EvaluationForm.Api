@@ -19,7 +19,11 @@ namespace EVF.Api.Controllers.ReportController
         /// The cache manager provides cache functionality.
         /// </summary>
         private readonly IReportService _report;
-
+        /// <summary>
+        /// The cache manager provides cache functionality.
+        /// </summary>
+        private readonly IVendorEvaluationReportBll _vendorEvaluationReport;
+        
         #endregion
 
         #region [Constructors]
@@ -28,14 +32,29 @@ namespace EVF.Api.Controllers.ReportController
         ///  Initializes a new instance of the <see cref="VendorEvaluationReportController" /> class.
         /// </summary>
         /// <param name="report"></param>
-        public VendorEvaluationReportController(IReportService report)
+        public VendorEvaluationReportController(IReportService report, IVendorEvaluationReportBll vendorEvaluationReport)
         {
             _report = report;
+            _vendorEvaluationReport = vendorEvaluationReport;
         }
 
         #endregion
 
         #region [Methods]
+
+        [HttpGet]
+        [Route("GetList")]
+        public IActionResult GetList()
+        {
+            return Ok(_vendorEvaluationReport.GetList());
+        }
+
+        [HttpGet]
+        [Route("GetListByPeriod")]
+        public IActionResult GetListByPeriod(int periodItemId)
+        {
+            return Ok(_vendorEvaluationReport.GetList(periodItemId));
+        }
 
         [HttpGet]
         [Route("PreviewFile")]

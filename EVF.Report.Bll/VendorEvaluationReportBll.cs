@@ -56,6 +56,18 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="periodItemId">The period item identity target.</param>
         /// <returns></returns>
+        public IEnumerable<EvaluationReportViewModel> GetList()
+        {
+            var data = _unitOfWork.GetRepository<Evaluation>().Get(x =>  x.Status == ConstantValue.WorkflowStatusApproved);
+            return this.InitalViewModel(data);
+
+        }
+
+        /// <summary>
+        /// Get evaluation list status approved only.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity target.</param>
+        /// <returns></returns>
         public IEnumerable<EvaluationReportViewModel> GetList(int periodItemId)
         {
             var data = _unitOfWork.GetRepository<Evaluation>().Get(x => x.PeriodItemId == periodItemId &&

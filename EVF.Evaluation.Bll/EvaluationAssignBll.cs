@@ -123,7 +123,7 @@ namespace EVF.Evaluation.Bll
 
             _unitOfWork.GetRepository<EvaluationAssign>().AddRange(result);
         }
-        
+
         /// <summary>
         /// Add new evaluator to evaluation form task.
         /// </summary>
@@ -134,15 +134,16 @@ namespace EVF.Evaluation.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var data = this.InitialEvaluationAssign(model.EvaluationId, 
-                    _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == model.ToAdUser).FirstOrDefault(), 
+                var data = this.InitialEvaluationAssign(model.EvaluationId,
+                    _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == model.ToAdUser).FirstOrDefault(),
                     ConstantValue.UserTypeEvaluator);
                 _unitOfWork.GetRepository<EvaluationAssign>().Add(data);
+                this.UpdateEvaluationStatus(model.EvaluationId);
                 _unitOfWork.Complete(scope);
             }
             return result;
         }
-        
+
         /// <summary>
         /// Edit new evaluator to evaluation form task.
         /// </summary>
@@ -164,7 +165,7 @@ namespace EVF.Evaluation.Bll
             }
             return result;
         }
-        
+
         /// <summary>
         /// Remove evaluation assign task.
         /// </summary>
@@ -175,8 +176,9 @@ namespace EVF.Evaluation.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                _unitOfWork.GetRepository<EvaluationAssign>().Remove(
-                    _unitOfWork.GetRepository<EvaluationAssign>().GetById(id));
+                var deleteData = _unitOfWork.GetRepository<EvaluationAssign>().GetById(id);
+                _unitOfWork.GetRepository<EvaluationAssign>().Remove(deleteData);
+                this.IsEvaluationFinish(deleteData.EvaluationId.Value, deleteData.Id);
                 _unitOfWork.Complete(scope);
             }
             return result;
@@ -201,6 +203,32 @@ namespace EVF.Evaluation.Bll
                 IsAction = isAction,
                 UserType = userType
             };
+        }
+
+        /// <summary>
+        /// Validate evaluation all user is action or not.
+        /// </summary>
+        /// <param name="evaluationId">The evaluation identity.</param>
+        private void IsEvaluationFinish(int evaluationId, int id)
+        {
+            var evaluationAssigns = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId && x.Id != id);
+            if (!evaluationAssigns.Any(x => !x.IsAction.Value))
+            {
+                var evaluation = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => x.Id == evaluationId).FirstOrDefault();
+                evaluation.Status = ConstantValue.EvaComplete;
+                _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(evaluation);
+            }
+        }
+
+        /// <summary>
+        /// Validate evaluation all user is action or not.
+        /// </summary>
+        /// <param name="evaluationId">The evaluation identity.</param>
+        private void UpdateEvaluationStatus(int evaluationId)
+        {
+            var evaluation = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => x.Id == evaluationId).FirstOrDefault();
+            evaluation.Status = ConstantValue.EvaWaiting;
+            _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(evaluation);
         }
 
         #endregion
