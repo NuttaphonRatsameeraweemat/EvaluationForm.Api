@@ -55,9 +55,11 @@ namespace EVF.Report.Bll
 
         public ResponseFileModel Try()
         {
-            using (HttpResponseMessage response = _client.PostAsync(
-                                                    this.CallCommonApi(string.Format("{0}/{1}", "VendorEvaluationReport", "Trys")),
-                                                    UtilityService.SerializeContent(this.InitialModel())).Result)
+            //using (HttpResponseMessage response = _client.PostAsync(
+            //                                        this.CallCommonApi(string.Format("{0}/{1}", "VendorEvaluationReport", "Try")),
+            //                                        UtilityService.SerializeContent(this.InitialModel())).Result)
+            using (HttpResponseMessage response = _client.GetAsync(
+                                                                    this.CallCommonApi(string.Format("{0}/{1}", "VendorEvaluationReport", "Try"))).Result)
             {
                 if (!response.IsSuccessStatusCode)
                 {
