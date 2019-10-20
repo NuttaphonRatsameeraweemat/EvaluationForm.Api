@@ -174,7 +174,7 @@ namespace EVF.Evaluation.Bll
                 case "A2":
                     foreach (var item in kpiGroups)
                     {
-                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && (x.KpiId != null && x.KpiId != 0));
                         if (temp.Count() > 0)
                         {
                             var score = temp.Sum(x => x.RawScore);
@@ -195,7 +195,7 @@ namespace EVF.Evaluation.Bll
                 default:
                     foreach (var item in kpiGroups)
                     {
-                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && x.KpiId != null);
+                        var temp = model.Where(x => x.KpiGroupId == item.KpiGroupId && (x.KpiId != null && x.KpiId != 0));
                         if (temp.Count() > 0)
                         {
                             var score = temp.Sum(x => x.RawScore);

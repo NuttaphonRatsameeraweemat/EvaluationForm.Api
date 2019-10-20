@@ -170,6 +170,7 @@ namespace EVF.Evaluation.Bll
             {
                 result.Total = 0;
             }
+            else result.Total = Math.Round(result.Total);
             result.GradeName = this.GetGrade(templateInfo.GradeId.Value, result.Total);
             return result;
         }
@@ -268,12 +269,14 @@ namespace EVF.Evaluation.Bll
             var userResult = new List<SummaryEvaluationDetailViewModel>();
             var purUser = userLists.FirstOrDefault(x => x.UserType == ConstantValue.UserTypePurchasing);
             var users = userLists.Where(x => x.UserType == ConstantValue.UserTypeEvaluator);
+            int userCount = 0;
             purResult = this.GetLastEvaluation(purUser.EvaluationLogs, purResult);
             foreach (var item in users)
             {
                 userResult = this.GetLastEvaluation(item.EvaluationLogs, userResult);
+                userCount++;
             }
-            return this.SummaryScore(purResult, userResult, percenConfigId);
+            return this.SummaryScore(purResult, userResult, percenConfigId, userCount);
         }
 
         /// <summary>
@@ -353,11 +356,10 @@ namespace EVF.Evaluation.Bll
         /// <param name="userResult">The users score.</param>
         /// <returns></returns>
         private IEnumerable<SummaryEvaluationDetailViewModel> SummaryScore(IEnumerable<SummaryEvaluationDetailViewModel> purResult,
-                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult, int percenConfigId)
+                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult, int percenConfigId, int userCount)
         {
             var result = new List<SummaryEvaluationDetailViewModel>();
             var percentageConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.Id == percenConfigId).FirstOrDefault();
-            int userCount = userResult.Count();
             if (userCount > 0 && purResult.Count() <= 0)
             {
                 foreach (var item in userResult)
