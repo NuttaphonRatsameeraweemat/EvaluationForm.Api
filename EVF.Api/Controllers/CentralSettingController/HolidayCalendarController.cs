@@ -76,15 +76,9 @@ namespace EVF.Api.Controllers
 
         [HttpPost]
         [Route("Delete")]
-        public IActionResult Delete([FromBody]string year)
+        public IActionResult Delete([FromBody]HolidayDeleteRequestModel model)
         {
-            IActionResult response;
-            if (string.IsNullOrEmpty(year) || !Regex.IsMatch(year, ConstantValue.RegexYearFormat))
-            {
-                response = BadRequest(UtilityService.InitialResultError(ConstantValue.YearIncorrectFormat, (int)HttpStatusCode.BadRequest));
-            }
-            else response = Ok(_holidayCalendar.Delete(year));
-            return response;
+            return Ok(_holidayCalendar.Delete(model));
         }
 
         #endregion

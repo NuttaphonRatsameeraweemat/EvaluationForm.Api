@@ -32,8 +32,8 @@ namespace EVF.CentralSetting.Bll.Interfaces
         /// <summary>
         /// Remove holiday calendar year group.
         /// </summary>
-        /// <param name="year">The target year holiday.</param>
+        /// <param name="model">The target year holiday.</param>
         /// <returns></returns>
-        ResultViewModel Delete(string year);
+        ResultViewModel Delete(HolidayDeleteRequestModel model);
     }
 }

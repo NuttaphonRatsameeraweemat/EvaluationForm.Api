@@ -31,4 +31,12 @@ namespace EVF.CentralSetting.Bll.Models
         }
 
     }
+
+    public class HolidayDeleteRequestModel
+    {
+        [Required]
+        [RegularExpression(ConstantValue.RegexYearFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
+        public string Year { get; set; }
+    }
+
 }

@@ -190,12 +190,12 @@ namespace EVF.CentralSetting.Bll
         /// </summary>
         /// <param name="year">The target year holiday.</param>
         /// <returns></returns>
-        public ResultViewModel Delete(string year)
+        public ResultViewModel Delete(HolidayDeleteRequestModel model)
         {
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var data = _unitOfWork.GetRepository<HolidayCalendar>().GetCache(x => x.Year == year);
+                var data = _unitOfWork.GetRepository<HolidayCalendar>().GetCache(x => x.Year == model.Year);
                 _unitOfWork.GetRepository<HolidayCalendar>().RemoveRange(data);
                 _unitOfWork.Complete(scope);
             }
