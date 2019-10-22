@@ -145,6 +145,17 @@ namespace EVF.Helper
                                        System.Globalization.DateTimeStyles.None, out DateTime temp) ? temp : throw new ArgumentException($"DateTime incorrect format : {value}");
         }
 
+        /// <summary>
+        /// Convert Datetime to string format.
+        /// </summary>
+        /// <param name="value">The datetime value.</param>
+        /// <param name="format">The datetime format.</param>
+        /// <returns></returns>
+        public static string DateTimeToString(DateTime value, string format)
+        {
+            return value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
 
         /// <summary>
         /// Calculate average score.

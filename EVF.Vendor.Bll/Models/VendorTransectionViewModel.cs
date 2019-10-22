@@ -1,4 +1,5 @@
-﻿using EVF.Helper.Components;
+﻿using EVF.Helper;
+using EVF.Helper.Components;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +18,7 @@ namespace EVF.Vendor.Bll.Models
         {
             get
             {
-                return ReceiptDate.Value.ToString(ConstantValue.DateTimeFormat);
+                return UtilityService.DateTimeToString(ReceiptDate.Value, ConstantValue.DateTimeFormat);
             }
         }
         public string Vendor { get; set; }

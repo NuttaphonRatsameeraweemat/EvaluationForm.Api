@@ -141,8 +141,8 @@ namespace EVF.Evaluation.Bll
                     Status = status[0],
                     //Display Value.
                     CompanyName = comList.FirstOrDefault(x => x.SapcomCode == item.ComCode)?.LongText,
-                    StartEvaDateString = periodTemp.StartEvaDate.Value.ToString(ConstantValue.DateTimeFormat),
-                    EndEvaDateString = periodTemp.EndEvaDate.Value.ToString(ConstantValue.DateTimeFormat),
+                    StartEvaDateString = UtilityService.DateTimeToString(periodTemp.StartEvaDate.Value, ConstantValue.DateTimeFormat),
+                    EndEvaDateString = UtilityService.DateTimeToString(periodTemp.EndEvaDate.Value, ConstantValue.DateTimeFormat),
                     PurchasingOrgName = purList.FirstOrDefault(x => x.PurchaseOrg1 == item.PurchasingOrg)?.PurchaseName,
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
                     EvaluationTemplateName = evaluationTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)?.EvaluationTemplateName,

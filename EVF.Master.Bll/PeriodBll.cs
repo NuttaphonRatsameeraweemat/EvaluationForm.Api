@@ -89,8 +89,8 @@ namespace EVF.Master.Bll
                    _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == periodId));
             foreach (var item in data)
             {
-                item.StartEvaDateString = item.StartEvaDate.ToString(ConstantValue.DateTimeFormat);
-                item.EndEvaDateString = item.EndEvaDate.ToString(ConstantValue.DateTimeFormat);
+                item.StartEvaDateString = UtilityService.DateTimeToString(item.StartEvaDate, ConstantValue.DateTimeFormat);
+                item.EndEvaDateString = UtilityService.DateTimeToString(item.EndEvaDate, ConstantValue.DateTimeFormat);
             }
             return data;
         }

@@ -81,9 +81,9 @@ namespace EVF.CentralSetting.Bll
             var data = _unitOfWork.GetRepository<HolidayCalendar>().GetCache(x => x.Year == year);
             foreach (var item in data)
             {
-                result.HolidayList.Add(new HolidayCalendarViewModel.HolidayCalendarDetail
+                result.HolidayList.Add(new HolidayCalendarDetail
                 {
-                    HolidayDateString = item.HolidayDate.Value.ToString(ConstantValue.DateTimeFormat),
+                    HolidayDateString = UtilityService.DateTimeToString(item.HolidayDate.Value,ConstantValue.DateTimeFormat),
                     Description = item.Description
                 });
             }

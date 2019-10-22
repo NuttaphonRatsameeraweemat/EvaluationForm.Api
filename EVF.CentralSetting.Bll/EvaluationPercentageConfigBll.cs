@@ -61,8 +61,8 @@ namespace EVF.CentralSetting.Bll
                     Id = item.Id,
                     UserPercentage = item.UserPercentage,
                     PurchasePercentage = item.PurchasePercentage,
-                    StartDate = item.StartDate.Value.ToString(ConstantValue.DateTimeFormat),
-                    EndDate = item.EndDate.HasValue ? item.EndDate.Value.ToString(ConstantValue.DateTimeFormat) : string.Empty
+                    StartDate = UtilityService.DateTimeToString(item.StartDate.Value,ConstantValue.DateTimeFormat),
+                    EndDate = item.EndDate.HasValue ? UtilityService.DateTimeToString(item.EndDate.Value, ConstantValue.DateTimeFormat) : string.Empty
                 });
             }
             return result;
@@ -81,8 +81,8 @@ namespace EVF.CentralSetting.Bll
                 Id = data.Id,
                 UserPercentage = data.UserPercentage,
                 PurchasePercentage = data.PurchasePercentage,
-                StartDate = data.StartDate.Value.ToString(ConstantValue.DateTimeFormat),
-                EndDate = data.EndDate.HasValue ? data.EndDate.Value.ToString(ConstantValue.DateTimeFormat) : string.Empty
+                StartDate = UtilityService.DateTimeToString(data.StartDate.Value, ConstantValue.DateTimeFormat),
+                EndDate = data.EndDate.HasValue ? UtilityService.DateTimeToString(data.EndDate.Value, ConstantValue.DateTimeFormat) : string.Empty
             };
         }
 
