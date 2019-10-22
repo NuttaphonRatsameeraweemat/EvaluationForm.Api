@@ -44,6 +44,10 @@ namespace EVF.Vendor.Bll.Models
         [Required]
         public int PeriodItemId { get; set; }
         [Required]
+        public string StartDate { get; set; }
+        [Required]
+        public string EndDate { get; set; }
+        [Required]
         public string ComCode { get; set; }
         [Required]
         public string PurchaseOrg { get; set; }

@@ -155,10 +155,8 @@ namespace EVF.Data
 
             modelBuilder.Entity<PurchaseOrgItem>(entity =>
             {
-                entity.HasKey(e => e.PuchaseOrg)
+                entity.HasKey(e => new { e.PuchaseOrg, e.AdUser })
                     .HasName("PK__Purchase__A58DDCA0F9A98ACA");
-
-                entity.Property(e => e.PuchaseOrg).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<ValueHelp>(entity =>

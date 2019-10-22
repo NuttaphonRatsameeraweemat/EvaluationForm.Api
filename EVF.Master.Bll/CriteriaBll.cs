@@ -68,7 +68,8 @@ namespace EVF.Master.Bll
         public IEnumerable<CriteriaViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Criteria>, IEnumerable<CriteriaViewModel>>(
-                   _unitOfWork.GetRepository<Criteria>().GetCache());
+                   _unitOfWork.GetRepository<Criteria>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                                  x => x.OrderBy(y => y.CriteriaName)));
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace EVF.Master.Bll
         public CriteriaViewModel GetDetail(int id)
         {
             var data = _mapper.Map<Criteria, CriteriaViewModel>(
-                   _unitOfWork.GetRepository<Criteria>().GetById(id));
+                   _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == id).FirstOrDefault());
             data.CriteriaGroups = this.GetCriteriaGroups(id).ToList();
             return data;
         }
@@ -159,7 +160,7 @@ namespace EVF.Master.Bll
                     int scoreGroup = item.CriteriaItems.Sum(x => x.MaxScore);
                     if (scoreGroup > item.MaxScore || scoreGroup < item.MaxScore)
                     {
-                        result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup, 
+                        result = UtilityService.InitialResultError(MessageValue.CriteriaItemScoreGreatethanScoreGroup,
                                                                 (int)HttpStatusCode.BadRequest);
                         break;
                     }
@@ -182,6 +183,7 @@ namespace EVF.Master.Bll
                 this.SetIsDefault(model);
                 criteria.CreateBy = _token.EmpNo;
                 criteria.CreateDate = DateTime.Now;
+                criteria.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<Criteria>().Add(criteria);
                 _unitOfWork.Complete();
                 this.SaveCriteriaGroup(criteria.Id, model.CriteriaGroups);
@@ -236,7 +238,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 this.SetIsDefault(model);
-                var criteria = _unitOfWork.GetRepository<Criteria>().GetById(model.Id);
+                var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
                 criteria.CriteriaName = model.CriteriaName;
                 criteria.IsDefault = model.IsDefault;
                 criteria.LastModifyBy = _token.EmpNo;
@@ -299,7 +301,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 _unitOfWork.GetRepository<Criteria>().Remove(
-                    _unitOfWork.GetRepository<Criteria>().GetById(id));
+                    _unitOfWork.GetRepository<Criteria>().GetCache(x=>x.Id == id).FirstOrDefault());
                 this.DeleteCriteriaGroups(_unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == id));
                 _unitOfWork.Complete(scope);
             }
@@ -315,7 +317,8 @@ namespace EVF.Master.Bll
         {
             if (model.IsDefault)
             {
-                var data = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
+                var data = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.CreateByPurchaseOrg == _token.PurchasingOrg[0] &&
+                                                                               x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
                 if (data != null && data.Id != model.Id)
                 {
                     data.IsDefault = false;

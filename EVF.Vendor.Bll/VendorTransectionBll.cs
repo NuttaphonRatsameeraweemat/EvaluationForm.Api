@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using EVF.Vendor.Bll.Interfaces;
@@ -79,7 +81,7 @@ namespace EVF.Vendor.Bll
         private IEnumerable<VendorTransectionViewModel> SearchTransection(VendorTransectionSearchViewModel model)
         {
             return _mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
-                    this.GetTransections(model.PeriodItemId,new string[] { model.PurGroup }));
+                    this.GetTransections(model.StartDate, model.EndDate, new string[] { model.PurGroup }));
         }
 
         /// <summary>
@@ -100,35 +102,38 @@ namespace EVF.Vendor.Bll
         /// <summary>
         /// Get Vendor transection.
         /// </summary>
-        /// <param name="model">The criteria search vendor transection model.</param>
+        /// <param name="startDateString">The start transection date.</param>
+        /// <param name="endDateString">The end transection date.</param>
+        /// <param name="purGroup">The purGroup code.</param>
         /// <returns></returns>
-        public IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup)
+        public IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup)
         {
-            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemid).FirstOrDefault();
-            var startReceipt = periodItem.StartEvaDate.Value.AddMonths(-6);
+            var startDate = UtilityService.ConvertToDateTime(startDateString, ConstantValue.DateTimeFormat);
+            var endDate = UtilityService.ConvertToDateTime(endDateString, ConstantValue.DateTimeFormat);
             return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
                                                                            _token.PurchasingOrg.Contains(x.PurorgCode) &&
-                                                                                   x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
-                                                                                   x.ReceiptDate.Value.Date >= startReceipt.Date);
+                                                                                   x.ReceiptDate.Value.Date >= startDate.Date &&
+                                                                                   x.ReceiptDate.Value.Date <= endDate.Date);
         }
 
         /// <summary>
         /// Get Transection list by condition.
         /// </summary>
-        /// <param name="periodItemid">The period item identity.</param>
+        /// <param name="startDateString">The start transection date.</param>
+        /// <param name="endDateString">The end transection date.</param>
         /// <param name="purGroup">The purGroup code.</param>
         /// <param name="comCode">The company code.</param>
         /// <param name="purOrg">The purchase org.</param>
         /// <returns></returns>
-        public IEnumerable<VendorTransection> GetTransections(int periodItemid, string[] purGroup, string comCode, string purOrg)
+        public IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg)
         {
-            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemid).FirstOrDefault();
-            var startReceipt = periodItem.StartEvaDate.Value.AddMonths(-6);
+            var startDate = UtilityService.ConvertToDateTime(startDateString, ConstantValue.DateTimeFormat);
+            var endDate = UtilityService.ConvertToDateTime(endDateString, ConstantValue.DateTimeFormat);
             return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
                                                                                    x.CompanyCode == comCode &&
                                                                                    x.PurorgCode == purOrg &&
-                                                                                   x.ReceiptDate.Value.Date <= periodItem.StartEvaDate.Value.Date &&
-                                                                                   x.ReceiptDate.Value.Date >= startReceipt.Date);
+                                                                                   x.ReceiptDate.Value.Date >= startDate.Date &&
+                                                                                   x.ReceiptDate.Value.Date <= endDate.Date);
         }
 
         /// <summary>

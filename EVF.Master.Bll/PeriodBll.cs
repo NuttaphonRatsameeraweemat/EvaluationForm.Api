@@ -61,7 +61,8 @@ namespace EVF.Master.Bll
         public IEnumerable<PeriodViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
-                   _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderByDescending(y => y.Year)));
+                   _unitOfWork.GetRepository<Period>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                       orderBy: x => x.OrderByDescending(y => y.Year).ThenByDescending(y => y.Name)));
         }
 
         /// <summary>
@@ -72,7 +73,7 @@ namespace EVF.Master.Bll
         public PeriodViewModel GetDetail(int id)
         {
             var data = _mapper.Map<Period, PeriodViewModel>(
-                   _unitOfWork.GetRepository<Period>().GetCache(x=>x.Id == id).FirstOrDefault());
+                   _unitOfWork.GetRepository<Period>().GetCache(x => x.Id == id).FirstOrDefault());
             data.PeriodItems = this.GetPeriodItem(id).ToList();
             return data;
         }
@@ -107,6 +108,7 @@ namespace EVF.Master.Bll
                 var periodGroup = _mapper.Map<PeriodViewModel, Period>(model);
                 periodGroup.CreateBy = _token.EmpNo;
                 periodGroup.CreateDate = DateTime.Now;
+                periodGroup.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<Period>().Add(periodGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(periodGroup.Id, this.InitialEvaluationDate(model.PeriodItems));
@@ -140,6 +142,7 @@ namespace EVF.Master.Bll
             {
                 var periodGroup = _unitOfWork.GetRepository<Period>().GetById(model.Id);
                 periodGroup.Year = Convert.ToInt32(model.Year);
+                periodGroup.Name = model.Name;
                 periodGroup.LastModifyBy = _token.EmpNo;
                 periodGroup.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<Period>().Update(periodGroup);

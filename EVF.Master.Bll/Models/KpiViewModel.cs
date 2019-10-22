@@ -10,14 +10,16 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
+        [MaxLength(200)]
         public string KpiNameTh { get; set; }
         [Required]
+        [MaxLength(200)]
         public string KpiNameEn { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string KpiShortTextTh { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string KpiShortTextEn { get; set; }
         public bool IsUse { get; set; }
     }

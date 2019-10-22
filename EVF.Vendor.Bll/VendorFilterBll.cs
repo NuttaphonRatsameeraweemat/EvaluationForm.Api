@@ -108,7 +108,7 @@ namespace EVF.Vendor.Bll
         }
 
         /// <summary>
-        /// Initial mapping entity model to view model.
+        /// Initial mapping collection entity model to collection view model.
         /// </summary>
         /// <param name="vendorFilters">The vendor filter entity model data.</param>
         /// <returns></returns>
@@ -276,7 +276,7 @@ namespace EVF.Vendor.Bll
         {
             var result = new List<VendorFilterResponseViewModel>();
             var purGroups = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.WeightingKey == model.WeightingKey && x.EvaStatus.Value).Select(x => x.PurGroup).ToArray();
-            var transectionList = _vendorTransection.GetTransections(model.PeriodItemId, purGroups, model.ComCode, model.PurchaseOrg);
+            var transectionList = _vendorTransection.GetTransections(model.StartDate, model.EndDate, purGroups, model.ComCode, model.PurchaseOrg);
             transectionList = this.FilterCondition(transectionList, model.WeightingKey);
             var vendorInfo = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var exitsVendors = this.GetExistVendorFilter(model);

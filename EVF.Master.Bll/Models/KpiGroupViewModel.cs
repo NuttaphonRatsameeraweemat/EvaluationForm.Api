@@ -15,14 +15,16 @@ namespace EVF.Master.Bll.Models
 
         public int Id { get; set; }
         [Required]
+        [MaxLength(200)]
         public string KpiGroupNameTh { get; set; }
         [Required]
+        [MaxLength(200)]
         public string KpiGroupNameEn { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string KpiGroupShortTextTh { get; set; }
         [Required]
-        [MaxLength(20)]
+        [MaxLength(40)]
         public string KpiGroupShortTextEn { get; set; }
         public string SapScoreField { get; set; }
         public bool IsUse { get; set; }

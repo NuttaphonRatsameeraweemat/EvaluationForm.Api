@@ -58,7 +58,8 @@ namespace EVF.Master.Bll
         public IEnumerable<KpiViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Kpi>, IEnumerable<KpiViewModel>>(
-                   _unitOfWork.GetRepository<Kpi>().GetCache());
+                   _unitOfWork.GetRepository<Kpi>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                             x => x.OrderBy(y => y.KpiNameTh).ThenBy(y => y.KpiNameEn)));
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace EVF.Master.Bll
         public KpiViewModel GetDetail(int id)
         {
             return _mapper.Map<Kpi, KpiViewModel>(
-                   _unitOfWork.GetRepository<Kpi>().GetById(id));
+                   _unitOfWork.GetRepository<Kpi>().GetCache(x => x.Id == id).FirstOrDefault());
         }
 
         /// <summary>
@@ -82,10 +83,11 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var Kpi = _mapper.Map<KpiViewModel, Kpi>(model);
-                Kpi.CreateBy = _token.EmpNo;
-                Kpi.CreateDate = DateTime.Now;
-                _unitOfWork.GetRepository<Kpi>().Add(Kpi);
+                var kpi = _mapper.Map<KpiViewModel, Kpi>(model);
+                kpi.CreateBy = _token.EmpNo;
+                kpi.CreateDate = DateTime.Now;
+                kpi.CreateByPurchaseOrg = _token.PurchasingOrg[0];
+                _unitOfWork.GetRepository<Kpi>().Add(kpi);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheKpi();
@@ -102,7 +104,7 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var kpi = _unitOfWork.GetRepository<Kpi>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
+                var kpi = _unitOfWork.GetRepository<Kpi>().GetCache(x => x.Id == model.Id).FirstOrDefault();
                 kpi.KpiNameTh = model.KpiNameTh;
                 kpi.KpiNameEn = model.KpiNameEn;
                 kpi.KpiShortTextTh = model.KpiShortTextTh;
@@ -126,10 +128,10 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var Kpi = _unitOfWork.GetRepository<Kpi>().GetById(id);
-                _unitOfWork.GetRepository<Kpi>().Remove(Kpi);
-                var KpiGroupItem = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiId == id);
-                _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(KpiGroupItem);
+                var kpi = _unitOfWork.GetRepository<Kpi>().GetCache(x=>x.Id == id).FirstOrDefault();
+                _unitOfWork.GetRepository<Kpi>().Remove(kpi);
+                var kpiGroupItem = _unitOfWork.GetRepository<KpiGroupItem>().GetCache(x => x.KpiId == id);
+                _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(kpiGroupItem);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheKpi();

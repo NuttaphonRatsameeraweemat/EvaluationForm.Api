@@ -79,7 +79,8 @@ namespace EVF.Master.Bll
         public IEnumerable<EvaluationTemplateViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache());
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                                            x => x.OrderBy(y => y.EvaluationTemplateName)));
         }
 
         /// <summary>
@@ -91,7 +92,9 @@ namespace EVF.Master.Bll
         {
             var levelPointIds = this.GetLevelPointIds(weightingKey);
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => levelPointIds.Contains(x.LevelPointId.Value)));
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) &&
+                                                                                 levelPointIds.Contains(x.LevelPointId.Value),
+                                                                            x => x.OrderBy(y => y.EvaluationTemplateName)));
         }
 
         /// <summary>
@@ -129,6 +132,7 @@ namespace EVF.Master.Bll
                 var evaluationTemplate = _mapper.Map<EvaluationTemplateViewModel, EvaluationTemplate>(model);
                 evaluationTemplate.CreateBy = _token.EmpNo;
                 evaluationTemplate.CreateDate = DateTime.Now;
+                evaluationTemplate.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<EvaluationTemplate>().Add(evaluationTemplate);
                 _unitOfWork.Complete();
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
@@ -175,7 +179,7 @@ namespace EVF.Master.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetById(id);
+                var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == id).FirstOrDefault();
                 _unitOfWork.GetRepository<EvaluationTemplate>().Remove(evaluationTemplate);
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
                                      evaluationTemplate.LevelPointId.Value, id, false);

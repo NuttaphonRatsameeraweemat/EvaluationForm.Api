@@ -27,7 +27,13 @@ namespace EVF.Master.Bll.Interfaces
         /// Validate Data before insert and update kpi group.
         /// </summary>
         /// <returns></returns>
-        ResultViewModel ValidateData();
+        ResultViewModel ValidateData(KpiGroupViewModel model);
+        /// <summary>
+        /// Validate kpi group any duplicate item.
+        /// </summary>
+        /// <param name="model">The kpi group information.</param>
+        /// <returns></returns>
+        ResultViewModel ValidateDuplicatesItems(KpiGroupViewModel model);
         /// <summary>
         /// Insert new Kpi group.
         /// </summary>

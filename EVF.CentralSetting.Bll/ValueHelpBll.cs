@@ -47,7 +47,7 @@ namespace EVF.CentralSetting.Bll
         public IEnumerable<ValueHelpViewModel> Get(string type)
         {
             return _mapper.Map<IEnumerable<ValueHelp>, IEnumerable<ValueHelpViewModel>>(
-                _unitOfWork.GetRepository<ValueHelp>().Get(x => x.ValueType == type, x => x.OrderBy(y => y.Sequence)));
+                _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == type, x => x.OrderBy(y => y.Sequence)));
         }
 
         /// <summary>
@@ -61,7 +61,10 @@ namespace EVF.CentralSetting.Bll
             var purGroup = _unitOfWork.GetRepository<PurGroupWeightingKey>().GetCache(x => x.EvaStatus.Value && weightingKeys.Contains(x.WeightingKey));
             foreach (var item in purGroup)
             {
-                result.Add(new ValueHelpViewModel { ValueKey = item.PurGroup, ValueText = item.Description });
+                if (!result.Any(x => x.ValueKey == item.PurGroup))
+                {
+                    result.Add(new ValueHelpViewModel { ValueKey = item.PurGroup, ValueText = string.Format("{0} - {1}", item.PurGroup, item.Description) });
+                }
             }
             return result;
         }

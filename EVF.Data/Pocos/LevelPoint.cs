@@ -21,5 +21,7 @@ namespace EVF.Data.Pocos
         public DateTime? LastModifyDate { get; set; }
         [StringLength(10)]
         public string WeightingKey { get; set; }
+        [StringLength(4)]
+        public string CreateByPurchaseOrg { get; set; }
     }
 }

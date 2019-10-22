@@ -164,7 +164,7 @@ namespace EVF.Evaluation.Bll
             var templateInfo = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault();
             var result = this.GetHeaderInformation(data);
             result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
-            result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value));
+            result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value, data.WeightingKey));
             result.Total = this.GetTotalScore(result.Summarys, data.WeightingKey);
             if (double.IsNaN(result.Total))
             {
@@ -263,7 +263,7 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="userLists">The evaluators list.</param>
         /// <returns></returns>
-        private IEnumerable<SummaryEvaluationDetailViewModel> GetSummaryPoint(IEnumerable<UserEvaluationViewModel> userLists, int percenConfigId)
+        private IEnumerable<SummaryEvaluationDetailViewModel> GetSummaryPoint(IEnumerable<UserEvaluationViewModel> userLists, int percenConfigId, string weightingKey)
         {
             var purResult = new List<SummaryEvaluationDetailViewModel>();
             var userResult = new List<SummaryEvaluationDetailViewModel>();
@@ -276,7 +276,7 @@ namespace EVF.Evaluation.Bll
                 userResult = this.GetLastEvaluation(item.EvaluationLogs, userResult);
                 userCount++;
             }
-            return this.SummaryScore(purResult, userResult, percenConfigId, userCount);
+            return this.SummaryScore(purResult, userResult, percenConfigId, userCount, weightingKey);
         }
 
         /// <summary>
@@ -356,7 +356,8 @@ namespace EVF.Evaluation.Bll
         /// <param name="userResult">The users score.</param>
         /// <returns></returns>
         private IEnumerable<SummaryEvaluationDetailViewModel> SummaryScore(IEnumerable<SummaryEvaluationDetailViewModel> purResult,
-                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult, int percenConfigId, int userCount)
+                                                                             IEnumerable<SummaryEvaluationDetailViewModel> userResult, 
+                                                                             int percenConfigId, int userCount, string weightingKey)
         {
             var result = new List<SummaryEvaluationDetailViewModel>();
             var percentageConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.Id == percenConfigId).FirstOrDefault();
@@ -366,7 +367,7 @@ namespace EVF.Evaluation.Bll
                 {
                     result.Add(this.InitialModel(item, UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
                                                                                      percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
-                                                 percentageConfig));
+                                                 percentageConfig, weightingKey));
                 }
             }
             else
@@ -379,7 +380,7 @@ namespace EVF.Evaluation.Bll
                     {
                         uPoint = UtilityService.AverageScore(userPoint.Score, userCount);
                     }
-                    result.Add(this.InitialModel(item, uPoint, percentageConfig));
+                    result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey));
                 }
             }
             return result;
@@ -427,13 +428,19 @@ namespace EVF.Evaluation.Bll
         /// <param name="score">The score.</param>
         /// <returns></returns>
         private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
-                                                              EvaluationPercentageConfig percentageConfig)
+                                                              EvaluationPercentageConfig percentageConfig, string weightingKey)
         {
+            double totalScore = 0;
+            if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
+            {
+                totalScore = Math.Round((item.Score + score) / 2);
+            }
+            else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage);
             return new SummaryEvaluationDetailViewModel
             {
                 KpiGroupId = item.KpiGroupId,
                 KpiId = item.KpiId,
-                Score = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
+                Score = totalScore,
                 Sequence = item.Sequence
             };
         }

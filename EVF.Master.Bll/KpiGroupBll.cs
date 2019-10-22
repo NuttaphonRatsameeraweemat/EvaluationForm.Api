@@ -65,7 +65,8 @@ namespace EVF.Master.Bll
         public IEnumerable<KpiGroupViewModel> GetList()
         {
             var result = new List<KpiGroupViewModel>();
-            var data = _unitOfWork.GetRepository<KpiGroup>().GetCache();
+            var data = _unitOfWork.GetRepository<KpiGroup>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                                      x => x.OrderBy(y => y.KpiGroupNameTh).ThenBy(y => y.KpiGroupNameEn));
             var sapFields = _unitOfWork.GetRepository<SapFields>().GetCache();
             foreach (var item in data)
             {
@@ -84,7 +85,7 @@ namespace EVF.Master.Bll
         public KpiGroupViewModel GetDetail(int id)
         {
             var result = new KpiGroupViewModel();
-            var data = _unitOfWork.GetRepository<KpiGroup>().GetById(id);
+            var data = _unitOfWork.GetRepository<KpiGroup>().GetCache(x => x.Id == id).FirstOrDefault();
             result = _mapper.Map<KpiGroup, KpiGroupViewModel>(data);
             result.SapScoreField = _unitOfWork.GetRepository<SapFields>().GetCache(x => x.Id == data.SapFieldsId).FirstOrDefault()?.SapFields1;
             result.KpiGroupItems = this.GetKpiGroupItem(id).ToList();
@@ -140,14 +141,32 @@ namespace EVF.Master.Bll
         /// <summary>
         /// Validate Data before insert and update kpi group.
         /// </summary>
+        /// <param name="model">The kpi group information.</param>
         /// <returns></returns>
-        public ResultViewModel ValidateData()
+        public ResultViewModel ValidateData(KpiGroupViewModel model)
         {
             var result = new ResultViewModel();
             var sapFields = _unitOfWork.GetRepository<SapFields>().GetCache(x => !x.IsUse).FirstOrDefault();
             if (sapFields == null)
             {
                 result = UtilityService.InitialResultError(MessageValue.KpiGroupOverFiftySapFields, (int)System.Net.HttpStatusCode.BadRequest);
+            }
+            result = this.ValidateDuplicatesItems(model);
+            return result;
+        }
+
+        /// <summary>
+        /// Validate kpi group any duplicate item.
+        /// </summary>
+        /// <param name="model">The kpi group information.</param>
+        /// <returns></returns>
+        public ResultViewModel ValidateDuplicatesItems(KpiGroupViewModel model)
+        {
+            var result = new ResultViewModel();
+            var duplicates = model.KpiGroupItems.GroupBy(s => s).SelectMany(grp => grp.Skip(1));
+            if (duplicates.Count() > 0)
+            {
+                result = UtilityService.InitialResultError(MessageValue.KpiGroupItemsDuplicates, (int)System.Net.HttpStatusCode.BadRequest);
             }
             return result;
         }
@@ -166,6 +185,7 @@ namespace EVF.Master.Bll
                 kpiGroup.SapFieldsId = this.GetSapFields();
                 kpiGroup.CreateBy = _token.EmpNo;
                 kpiGroup.CreateDate = DateTime.Now;
+                kpiGroup.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<KpiGroup>().Add(kpiGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(kpiGroup.Id, model.KpiGroupItems);
@@ -261,7 +281,7 @@ namespace EVF.Master.Bll
         private void DeleteItem(IEnumerable<KpiGroupItem> model)
         {
             _unitOfWork.GetRepository<KpiGroupItem>().RemoveRange(model);
-            this.UpdateKpiUsingFlag(model.FirstOrDefault() != null ? model.FirstOrDefault().KpiGroupId.Value : 0, 
+            this.UpdateKpiUsingFlag(model.FirstOrDefault() != null ? model.FirstOrDefault().KpiGroupId.Value : 0,
                                  model.Select(x => x.KpiId.Value).ToArray(), false);
         }
 

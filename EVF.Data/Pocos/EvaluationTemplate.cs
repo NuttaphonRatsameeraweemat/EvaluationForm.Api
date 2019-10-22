@@ -24,5 +24,7 @@ namespace EVF.Data.Pocos
         public string LastModifyBy { get; set; }
         public DateTime? LastModifyDate { get; set; }
         public bool? IsUse { get; set; }
+        [StringLength(4)]
+        public string CreateByPurchaseOrg { get; set; }
     }
 }

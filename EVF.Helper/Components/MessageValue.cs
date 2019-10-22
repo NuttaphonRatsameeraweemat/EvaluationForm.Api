@@ -17,6 +17,7 @@ namespace EVF.Helper.Components
         public const string CriteriaItemScoreGreatethanScoreGroup = "ขออภัย คะแนนกลุ่มตัวชี้วัด ไม่สามารถน้อยกว่าหรือมากกว่า คะแนนตัวชี้วัดรวมกันได้";
         public const string EvaluationRejectTaskIsAction = "ขออภัย ไม่สามารถปฎิเสธงานที่ทำการประเมินแล้วได้";
         public const string KpiGroupOverFiftySapFields = "ขออภัย ไม่สามารถสร้างกลุ่มตัวชี้วัด เกิน 50 กลุ่มได้";
+        public const string KpiGroupItemsDuplicates = "ขออภัย ไม่สามารถเลือกกลุ่มตัวชี้วัดซ้ำกันได้";
         public const string IsUseMessageFormat = "ขออภัย ไม่สามารถแก้ไข หรือ ลบ {0} เนื่องจากมีการนำไปใช้งานแล้ว";
         public const string HttpBadRequestMessage = "กรุณา กรอกข้อมูลให้ถูกต้อง";
         public const string KpiMessage = "ตัวชี้วัด";

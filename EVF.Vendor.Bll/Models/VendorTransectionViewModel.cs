@@ -1,6 +1,7 @@
 ﻿using EVF.Helper.Components;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace EVF.Vendor.Bll.Models
@@ -44,7 +45,11 @@ namespace EVF.Vendor.Bll.Models
 
     public class VendorTransectionSearchViewModel
     {
-        public int PeriodItemId { get; set; }
+        [Required]
+        public string StartDate { get; set; }
+        [Required]
+        public string EndDate { get; set; }
+        [Required]
         public string PurGroup { get; set; }
     }
 

@@ -65,7 +65,7 @@ namespace EVF.Api.Controllers
         public IActionResult Save([FromBody]KpiGroupViewModel model)
         {
             IActionResult response;
-            var result = _kpiGroup.ValidateData();
+            var result = _kpiGroup.ValidateData(model);
             if (result.IsError)
             {
                 response = BadRequest(result);
@@ -80,7 +80,12 @@ namespace EVF.Api.Controllers
         public IActionResult Edit([FromBody]KpiGroupViewModel model)
         {
             IActionResult response;
-            if (_kpiGroup.IsUse(model.Id))
+            var result = _kpiGroup.ValidateDuplicatesItems(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else if (_kpiGroup.IsUse(model.Id))
             {
                 response = BadRequest(UtilityService.InitialResultError(string.Format(MessageValue.IsUseMessageFormat, MessageValue.KpiMessage),
                                       (int)System.Net.HttpStatusCode.BadRequest));

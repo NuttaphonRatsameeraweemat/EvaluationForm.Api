@@ -62,7 +62,8 @@ namespace EVF.Master.Bll
         public IEnumerable<LevelPointViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<LevelPoint>, IEnumerable<LevelPointViewModel>>(
-                   _unitOfWork.GetRepository<LevelPoint>().GetCache());
+                   _unitOfWork.GetRepository<LevelPoint>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                                    x => x.OrderBy(y => y.Name)));
         }
 
         /// <summary>
@@ -104,6 +105,7 @@ namespace EVF.Master.Bll
                 this.SetIsDefault(model);
                 levelPointGroup.CreateBy = _token.EmpNo;
                 levelPointGroup.CreateDate = DateTime.Now;
+                levelPointGroup.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<LevelPoint>().Add(levelPointGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(levelPointGroup.Id, model.LevelPointItems);
@@ -207,7 +209,8 @@ namespace EVF.Master.Bll
         {
             if (model.IsDefault)
             {
-                var data = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
+                var data = _unitOfWork.GetRepository<LevelPoint>().GetCache(x => x.CreateByPurchaseOrg == _token.PurchasingOrg[0] &&
+                                                                                 x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
                 if (data != null && data.Id != model.Id)
                 {
                     data.IsDefault = false;

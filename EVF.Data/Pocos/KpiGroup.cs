@@ -9,13 +9,13 @@ namespace EVF.Data.Pocos
     {
         [Column("ID")]
         public int Id { get; set; }
-        [StringLength(255)]
+        [StringLength(200)]
         public string KpiGroupNameTh { get; set; }
-        [StringLength(255)]
+        [StringLength(200)]
         public string KpiGroupNameEn { get; set; }
-        [StringLength(20)]
+        [StringLength(40)]
         public string KpiGroupShortTextTh { get; set; }
-        [StringLength(20)]
+        [StringLength(40)]
         public string KpiGroupShortTextEn { get; set; }
         [StringLength(11)]
         public string CreateBy { get; set; }
@@ -26,5 +26,7 @@ namespace EVF.Data.Pocos
         public bool? IsUse { get; set; }
         [Column("SapFieldsID")]
         public int? SapFieldsId { get; set; }
+        [StringLength(4)]
+        public string CreateByPurchaseOrg { get; set; }
     }
 }

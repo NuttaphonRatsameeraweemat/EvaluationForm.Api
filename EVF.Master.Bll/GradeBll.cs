@@ -62,7 +62,8 @@ namespace EVF.Master.Bll
         public IEnumerable<GradeViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Grade>, IEnumerable<GradeViewModel>>(
-                   _unitOfWork.GetRepository<Grade>().GetCache());
+                   _unitOfWork.GetRepository<Grade>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                                                               x => x.OrderBy(y => y.Name)));
         }
 
         /// <summary>
@@ -73,7 +74,7 @@ namespace EVF.Master.Bll
         public GradeViewModel GetDetail(int id)
         {
             var data = _mapper.Map<Grade, GradeViewModel>(
-                   _unitOfWork.GetRepository<Grade>().GetById(id));
+                   _unitOfWork.GetRepository<Grade>().GetCache(x => x.Id == id).FirstOrDefault());
             data.GradeItems = this.GetGradeItem(id).ToList();
             return data;
         }
@@ -96,8 +97,8 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public ResultViewModel ValidateData(GradeViewModel model)
         {
-            //Change
             var result = new ResultViewModel();
+            model.GradeItems = model.GradeItems.OrderBy(x => x.StartPoint).ToList();
             int oldEnd = int.MinValue;
             foreach (var item in model.GradeItems)
             {
@@ -130,6 +131,7 @@ namespace EVF.Master.Bll
                 this.SetIsDefault(model);
                 gradeGroup.CreateBy = _token.EmpNo;
                 gradeGroup.CreateDate = DateTime.Now;
+                gradeGroup.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<Grade>().Add(gradeGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(gradeGroup.Id, model.GradeItems);
@@ -162,7 +164,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 this.SetIsDefault(model);
-                var gradeGroup = _unitOfWork.GetRepository<Grade>().GetById(model.Id);
+                var gradeGroup = _unitOfWork.GetRepository<Grade>().GetCache(x=>x.Id == model.Id).FirstOrDefault();
                 gradeGroup.Name = model.Name;
                 gradeGroup.IsDefault = model.IsDefault;
                 gradeGroup.LastModifyBy = _token.EmpNo;
@@ -207,7 +209,7 @@ namespace EVF.Master.Bll
             using (TransactionScope scope = new TransactionScope())
             {
                 _unitOfWork.GetRepository<Grade>().Remove(
-                    _unitOfWork.GetRepository<Grade>().GetById(id));
+                    _unitOfWork.GetRepository<Grade>().GetCache(x=>x.Id == id).FirstOrDefault());
                 this.DeleteItem(_unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == id));
                 _unitOfWork.Complete(scope);
             }
@@ -246,7 +248,8 @@ namespace EVF.Master.Bll
         {
             if (model.IsDefault)
             {
-                var data = _unitOfWork.GetRepository<Grade>().GetCache(x => x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
+                var data = _unitOfWork.GetRepository<Grade>().GetCache(x => x.CreateByPurchaseOrg == _token.PurchasingOrg[0] &&
+                                                                            x.IsDefault != null && x.IsDefault.Value).FirstOrDefault();
                 if (data != null && data.Id != model.Id)
                 {
                     data.IsDefault = false;
