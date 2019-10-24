@@ -27,6 +27,11 @@ namespace EVF.Helper
         /// </summary>
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// The NLog logger connection object.
+        /// </summary>
+        private static readonly ILogger loggerConnection = LogManager.GetLogger("ConnectionProfile");
+
         #endregion
 
         #region [Methods]
@@ -76,6 +81,16 @@ namespace EVF.Helper
         public void LogWarn(string message)
         {
             logger.Warn(message);
+        }
+
+        /// <summary>
+        /// Log the connection information.
+        /// </summary>
+        /// <param name="context">Http request infomation</param>
+        public void LogConnection(HttpContext context)
+        {
+            loggerConnection.Info(string.Format("IP:{0}| User-Agent {1}", context.Connection.RemoteIpAddress, 
+                                                                          context.Request.Headers["User-Agent"].ToString()));
         }
 
         #endregion

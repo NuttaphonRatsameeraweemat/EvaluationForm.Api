@@ -71,6 +71,7 @@ namespace EVF.Helper
         {
             _logger.CreateNewSession(httpContext);
             _logger.LogInfo($"About to start {httpContext.Request.Method} {httpContext.Request.GetDisplayUrl()} request");
+            _logger.LogConnection(httpContext);
         }
 
         /// <summary>

@@ -35,6 +35,10 @@ namespace EVF.Helper.Interfaces
         /// <param name="ex">The exception.</param>
         /// <param name="message">The additional message.</param>
         void LogError(Exception ex, string message = null);
-
+        /// <summary>
+        /// Log the connection information.
+        /// </summary>
+        /// <param name="context">Http request infomation</param>
+        void LogConnection(HttpContext context);
     }
 }
