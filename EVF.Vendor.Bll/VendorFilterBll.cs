@@ -213,6 +213,39 @@ namespace EVF.Vendor.Bll
         }
 
         /// <summary>
+        /// Create VendorFilter collection.
+        /// </summary>
+        /// <param name="model">The vendor filter collection value.</param>
+        /// <returns></returns>
+        public ResultViewModel SaveList(VendorFilterCollectionRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var vendorFilters = new List<VendorFilter>();
+                var createDate = DateTime.Now;
+                foreach (var item in model.VendorFilterItems)
+                {
+                    vendorFilters.Add(new VendorFilter
+                    {
+                        AssignTo = item.AssignTo,
+                        CompanyCode = model.CompanyCode,
+                        IsSending = false,
+                        PeriodItemId = model.PeriodItemId,
+                        PurchasingOrg = model.PurchasingOrg,
+                        VendorNo = item.VendorNo,
+                        WeightingKey = model.WeightingKey,
+                        CreateBy = _token.EmpNo,
+                        CreateDate = createDate
+                    });
+                }
+                _unitOfWork.GetRepository<VendorFilter>().AddRange(vendorFilters);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Change Assign to VendorFilter.
         /// </summary>
         /// <param name="model">The Vendor filter assign to information.</param>

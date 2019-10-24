@@ -59,6 +59,21 @@ namespace EVF.Data.Pocos
         [Column("PURGrop_Code")]
         [StringLength(3)]
         public string PurgropCode { get; set; }
+        [Column("GJAHR", TypeName = "numeric(4, 0)")]
+        public decimal? Gjahr { get; set; }
+        [Column("BELNR")]
+        [StringLength(10)]
+        public string Belnr { get; set; }
+        [Column("BUZEI", TypeName = "numeric(4, 0)")]
+        public decimal? Buzei { get; set; }
+        [Column("PARA")]
+        public int? Para { get; set; }
+        [Column("Short_Text")]
+        [StringLength(40)]
+        public string ShortText { get; set; }
+        [Column("Purch_Doc")]
+        [StringLength(10)]
+        public string PurchDoc { get; set; }
         [Column("DataUpdate_Date", TypeName = "datetime")]
         public DateTime? DataUpdateDate { get; set; }
         [StringLength(2)]

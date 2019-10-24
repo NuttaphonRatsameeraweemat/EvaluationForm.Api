@@ -7,7 +7,9 @@ using EVF.Tranfer.Service.Bll.Interfaces;
 using EVF.Tranfer.Service.Data.Pocos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Transactions;
 using static EVF.Tranfer.Service.Data.UnitOfWorkControl;
 
 namespace EVF.Tranfer.Service.Bll
@@ -16,7 +18,7 @@ namespace EVF.Tranfer.Service.Bll
     {
 
         #region [Fields]
-        
+
         /// <summary>
         /// The utilities unit of work for manipulating utilities data in spe database.
         /// </summary>
@@ -67,15 +69,62 @@ namespace EVF.Tranfer.Service.Bll
         public ResultViewModel TranferVendorTransection()
         {
             var result = new ResultViewModel();
-            var vendorTransections = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get();
-            var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransections);
-            _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
-            _evfUnitOfWork.Complete();
-            System.Threading.Tasks.Task.Run(() =>
+            var vendorTransaction = _evfUnitOfWork.GetRepository<VendorTransaction>().Get().Select(x => x.DataUpdateDate).Distinct();
+            var vendorTransactionsMaster = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get(x => !vendorTransaction.Contains(x.DataUpdateDate)).ToList();
+            using (var scope = new TransactionScope())
             {
-                this.LogTranferData(data);
-            });
+                var transactionUpdate = this.UpdateTransaction(vendorTransactionsMaster);
+                var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransactionsMaster);
+                _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
+                _evfUnitOfWork.GetRepository<VendorTransaction>().UpdateRange(transactionUpdate);
+                _evfUnitOfWork.Complete(scope);
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    this.LogTranferData(data);
+                    this.LogTranferData(transactionUpdate);
+                });
+            }
             return result;
+        }
+
+        /// <summary>
+        /// Validate exits transection update or not.
+        /// </summary>
+        /// <param name="vendorTransactionsMaster">The vendor transection.</param>
+        /// <returns></returns>
+        private IEnumerable<VendorTransaction> UpdateTransaction(List<SPE_TRANSAC_PO_QA> vendorTransactionsMaster)
+        {
+            var transactionUpdate = new List<VendorTransaction>();
+            foreach (var item in vendorTransactionsMaster.ToList())
+            {
+                var transaction = _evfUnitOfWork.GetRepository<VendorTransaction>().Get(x => x.Gjahr == item.Gjahr &&
+                                                                                      x.Belnr == item.Belnr &&
+                                                                                      x.Buzei == item.Buzei &&
+                                                                                      x.Para == item.Para).FirstOrDefault();
+                if (transaction != null)
+                {
+                    transaction = this.MappingVendorTransaction(item, transaction);
+                    transactionUpdate.Add(transaction);
+                    vendorTransactionsMaster.Remove(item);
+                }
+            }
+            return transactionUpdate;
+        }
+
+        /// <summary>
+        /// Mapping model vendor transaction.
+        /// </summary>
+        /// <param name="master">The vendor transaction from brb util.</param>
+        /// <param name="transaction">The vendor transaction from spe database.</param>
+        /// <returns></returns>
+        private VendorTransaction MappingVendorTransaction(SPE_TRANSAC_PO_QA master, VendorTransaction transaction)
+        {
+            int id = transaction.Id;
+            string weightingKey = transaction.MarkWeightingKey;
+            transaction = _mapper.Map<SPE_TRANSAC_PO_QA, VendorTransaction>(master, transaction);
+            transaction.Id = id;
+            transaction.MarkWeightingKey = weightingKey;
+            return transaction;
         }
 
         /// <summary>

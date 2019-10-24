@@ -72,6 +72,14 @@ namespace EVF.Api.Controllers.VendorController
         }
 
         [HttpPost]
+        [Route("SaveList")]
+        [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
+        public IActionResult SaveList([FromBody]VendorFilterCollectionRequestViewModel model)
+        {
+            return Ok(_vendorFilter.SaveList(model));
+        }
+
+        [HttpPost]
         [Route("ChangeAssignToSave")]
         [Authorize(Roles = VendorFilterViewModel.RoleForManageData)]
         public IActionResult ChangeAssignToSave([FromBody]VendorFilterEditRequestViewModel model)

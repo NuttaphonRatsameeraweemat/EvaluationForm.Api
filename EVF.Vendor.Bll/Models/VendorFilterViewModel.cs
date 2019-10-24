@@ -89,6 +89,33 @@ namespace EVF.Vendor.Bll.Models
         public string AssignTo { get; set; }
     }
 
+    public class VendorFilterCollectionRequestViewModel
+    {
+
+        public VendorFilterCollectionRequestViewModel()
+        {
+            VendorFilterItems = new List<VendorFilterItemRequestViewModel>();
+        }
+
+        [Required]
+        public int? PeriodItemId { get; set; }
+        [Required]
+        public string CompanyCode { get; set; }
+        [Required]
+        public string PurchasingOrg { get; set; }
+        [Required]
+        public string WeightingKey { get; set; }
+        public List<VendorFilterItemRequestViewModel> VendorFilterItems { get; set; }
+    }
+
+    public class VendorFilterItemRequestViewModel
+    {
+        [Required]
+        public string VendorNo { get; set; }
+        [Required]
+        public string AssignTo { get; set; }
+    }
+
     public class VendorFilterEditRequestViewModel
     {
         public int Id { get; set; }

@@ -175,6 +175,8 @@ namespace EVF.Data
 
             modelBuilder.Entity<VendorTransaction>(entity =>
             {
+                entity.Property(e => e.Belnr).IsUnicode(false);
+
                 entity.Property(e => e.Condition).IsUnicode(false);
 
                 entity.Property(e => e.Datatype).IsUnicode(false);
@@ -191,15 +193,21 @@ namespace EVF.Data
 
                 entity.Property(e => e.LineId).IsUnicode(false);
 
+                entity.Property(e => e.MarkWeightingKey).IsUnicode(false);
+
                 entity.Property(e => e.MaterialCode).IsUnicode(false);
 
                 entity.Property(e => e.MaterialGrp).IsUnicode(false);
+
+                entity.Property(e => e.PurchDoc).IsUnicode(false);
 
                 entity.Property(e => e.PurgropCode).IsUnicode(false);
 
                 entity.Property(e => e.PurorgCode).IsUnicode(false);
 
                 entity.Property(e => e.PurorgName).IsUnicode(false);
+
+                entity.Property(e => e.ShortText).IsUnicode(false);
 
                 entity.Property(e => e.UnitCode).IsUnicode(false);
 

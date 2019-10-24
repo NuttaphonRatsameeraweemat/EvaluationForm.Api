@@ -38,6 +38,12 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <returns></returns>
         ResultViewModel Save(VendorFilterRequestViewModel model);
         /// <summary>
+        /// Create VendorFilter collection.
+        /// </summary>
+        /// <param name="model">The vendor filter collection value.</param>
+        /// <returns></returns>
+        ResultViewModel SaveList(VendorFilterCollectionRequestViewModel model);
+        /// <summary>
         /// Change Assign to VendorFilter.
         /// </summary>
         /// <param name="model">The Vendor filter assign to information.</param>

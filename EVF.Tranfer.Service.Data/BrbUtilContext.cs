@@ -24,6 +24,11 @@ namespace EVF.Tranfer.Service.Data
         {
             modelBuilder.Entity<SPE_TRANSAC_PO_QA>(entity =>
             {
+                entity.HasKey(e => new { e.Gjahr, e.Belnr, e.Buzei, e.Para })
+                    .HasName("PK__VendorTr__3214EC27F65E5B23");
+                
+                entity.Property(e => e.Belnr).IsUnicode(false);
+
                 entity.Property(e => e.Condition).IsUnicode(false);
 
                 entity.Property(e => e.Datatype).IsUnicode(false);
@@ -44,11 +49,15 @@ namespace EVF.Tranfer.Service.Data
 
                 entity.Property(e => e.MaterialGrp).IsUnicode(false);
 
+                entity.Property(e => e.PurchDoc).IsUnicode(false);
+
                 entity.Property(e => e.PurgropCode).IsUnicode(false);
 
                 entity.Property(e => e.PurorgCode).IsUnicode(false);
 
                 entity.Property(e => e.PurorgName).IsUnicode(false);
+
+                entity.Property(e => e.ShortText).IsUnicode(false);
 
                 entity.Property(e => e.UnitCode).IsUnicode(false);
 
