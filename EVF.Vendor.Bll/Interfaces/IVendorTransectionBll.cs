@@ -26,7 +26,7 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="endDateString">The end transection date.</param>
         /// <param name="purGroup">The purGroup code.</param>
         /// <returns></returns>
-        IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup);
+        IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup);
         /// <summary>
         /// Get Transection list by condition.
         /// </summary>
@@ -36,7 +36,7 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="comCode">The company code.</param>
         /// <param name="purOrg">The purchase org.</param>
         /// <returns></returns>
-        IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg);
+        IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg);
         /// <summary>
         /// Get Detail of VendorTransection.
         /// </summary>

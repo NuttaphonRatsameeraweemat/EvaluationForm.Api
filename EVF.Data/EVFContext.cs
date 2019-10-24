@@ -61,7 +61,7 @@ namespace EVF.Data
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
         public virtual DbSet<Vendor> Vendor { get; set; }
         public virtual DbSet<VendorFilter> VendorFilter { get; set; }
-        public virtual DbSet<VendorTransection> VendorTransection { get; set; }
+        public virtual DbSet<VendorTransaction> VendorTransaction { get; set; }
         public virtual DbSet<WorkflowActivityLog> WorkflowActivityLog { get; set; }
         public virtual DbSet<WorkflowActivityStep> WorkflowActivityStep { get; set; }
         public virtual DbSet<WorkflowDelegate> WorkflowDelegate { get; set; }
@@ -173,7 +173,7 @@ namespace EVF.Data
                 entity.Property(e => e.VendorNo).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<VendorTransection>(entity =>
+            modelBuilder.Entity<VendorTransaction>(entity =>
             {
                 entity.Property(e => e.Condition).IsUnicode(false);
 

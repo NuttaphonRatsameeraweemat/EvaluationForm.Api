@@ -322,7 +322,7 @@ namespace EVF.Vendor.Bll
         /// <param name="transectionList">The vendor transection list.</param>
         /// <param name="weightingKey">The weighting key.</param>
         /// <returns></returns>
-        private IEnumerable<VendorTransection> FilterCondition(IEnumerable<VendorTransection> transectionList, string weightingKey)
+        private IEnumerable<VendorTransaction> FilterCondition(IEnumerable<VendorTransaction> transectionList, string weightingKey)
         {
             switch (weightingKey)
             {

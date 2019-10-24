@@ -6,6 +6,7 @@ using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EVF.Hr.Bll
@@ -55,7 +56,7 @@ namespace EVF.Hr.Bll
         public IEnumerable<HrCompanyViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Hrcompany>, IEnumerable<HrCompanyViewModel>>(
-                   _unitOfWork.GetRepository<Hrcompany>().GetCache(x=>x.ComCode == _token.ComCode));
+                   _unitOfWork.GetRepository<Hrcompany>().GetCache(x => _token.ComCode.Contains(x.ComCode)));
         }
 
         /// <summary>
@@ -67,8 +68,8 @@ namespace EVF.Hr.Bll
             return _mapper.Map<IEnumerable<Hrcompany>, IEnumerable<HrCompanyViewModel>>(
                    _unitOfWork.GetRepository<Hrcompany>().GetCache());
         }
-        
+
         #endregion
-        
+
     }
 }

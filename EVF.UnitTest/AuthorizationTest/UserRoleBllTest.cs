@@ -117,7 +117,7 @@ namespace EVF.UnitTest.AuthorizationTest
             try
             {
                 adUser = _config.DomainUser + adUser;
-                var response = _userRole.Delete(adUser);
+                var response = _userRole.Delete(new Authorization.Bll.Models.UserRoleRequestDeleteModel { AdUser = adUser });
                 Console.WriteLine(response);
             }
             catch (Exception ex)

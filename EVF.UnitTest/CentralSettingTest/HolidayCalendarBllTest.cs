@@ -118,7 +118,7 @@ namespace EVF.UnitTest.CentralSettingTest
         {
             try
             {
-                var response = _holiday.Delete(year);
+                var response = _holiday.Delete(new CentralSetting.Bll.Models.HolidayDeleteRequestModel { Year = year });
                 Console.WriteLine(response);
             }
             catch (Exception ex)

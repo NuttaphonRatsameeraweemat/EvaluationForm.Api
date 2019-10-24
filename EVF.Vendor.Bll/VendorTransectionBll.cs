@@ -60,8 +60,8 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public IEnumerable<VendorTransectionViewModel> GetList()
         {
-            return this.InitialVendorName(_mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
-                _unitOfWork.GetRepository<VendorTransection>().Get()));
+            return this.InitialVendorName(_mapper.Map<IEnumerable<VendorTransaction>, IEnumerable<VendorTransectionViewModel>>(
+                _unitOfWork.GetRepository<VendorTransaction>().Get()));
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         private IEnumerable<VendorTransectionViewModel> SearchTransection(VendorTransectionSearchViewModel model)
         {
-            return _mapper.Map<IEnumerable<VendorTransection>, IEnumerable<VendorTransectionViewModel>>(
+            return _mapper.Map<IEnumerable<VendorTransaction>, IEnumerable<VendorTransectionViewModel>>(
                     this.GetTransections(model.StartDate, model.EndDate, new string[] { model.PurGroup }));
         }
 
@@ -106,11 +106,11 @@ namespace EVF.Vendor.Bll
         /// <param name="endDateString">The end transection date.</param>
         /// <param name="purGroup">The purGroup code.</param>
         /// <returns></returns>
-        public IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup)
+        public IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup)
         {
             var startDate = UtilityService.ConvertToDateTime(startDateString, ConstantValue.DateTimeFormat);
             var endDate = UtilityService.ConvertToDateTime(endDateString, ConstantValue.DateTimeFormat);
-            return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
+            return _unitOfWork.GetRepository<VendorTransaction>().Get(x => purGroup.Contains(x.PurgropCode) &&
                                                                            _token.PurchasingOrg.Contains(x.PurorgCode) &&
                                                                                    x.ReceiptDate.Value.Date >= startDate.Date &&
                                                                                    x.ReceiptDate.Value.Date <= endDate.Date);
@@ -125,11 +125,11 @@ namespace EVF.Vendor.Bll
         /// <param name="comCode">The company code.</param>
         /// <param name="purOrg">The purchase org.</param>
         /// <returns></returns>
-        public IEnumerable<VendorTransection> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg)
+        public IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg)
         {
             var startDate = UtilityService.ConvertToDateTime(startDateString, ConstantValue.DateTimeFormat);
             var endDate = UtilityService.ConvertToDateTime(endDateString, ConstantValue.DateTimeFormat);
-            return _unitOfWork.GetRepository<VendorTransection>().Get(x => purGroup.Contains(x.PurgropCode) &&
+            return _unitOfWork.GetRepository<VendorTransaction>().Get(x => purGroup.Contains(x.PurgropCode) &&
                                                                                    x.CompanyCode == comCode &&
                                                                                    x.PurorgCode == purOrg &&
                                                                                    x.ReceiptDate.Value.Date >= startDate.Date &&
@@ -143,8 +143,8 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public VendorTransectionViewModel GetDetail(int id)
         {
-            var result = _mapper.Map<VendorTransection, VendorTransectionViewModel>(
-                _unitOfWork.GetRepository<VendorTransection>().Get(x => x.Id == id).FirstOrDefault());
+            var result = _mapper.Map<VendorTransaction, VendorTransectionViewModel>(
+                _unitOfWork.GetRepository<VendorTransaction>().Get(x => x.Id == id).FirstOrDefault());
             result.VendorName = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == result.Vendor).FirstOrDefault().VendorName;
             return result;
         }
@@ -159,9 +159,9 @@ namespace EVF.Vendor.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var data = _unitOfWork.GetRepository<VendorTransection>().GetById(model.Id);
+                var data = _unitOfWork.GetRepository<VendorTransaction>().GetById(model.Id);
                 data.MarkWeightingKey = model.WeightingKey;
-                _unitOfWork.GetRepository<VendorTransection>().Update(data);
+                _unitOfWork.GetRepository<VendorTransaction>().Update(data);
                 _unitOfWork.Complete(scope);
             }
             return result;

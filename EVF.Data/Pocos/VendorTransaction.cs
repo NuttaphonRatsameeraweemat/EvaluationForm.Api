@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EVF.Data.Pocos
 {
-    public partial class VendorTransection
+    public partial class VendorTransaction
     {
         [Column("ID")]
         public int Id { get; set; }

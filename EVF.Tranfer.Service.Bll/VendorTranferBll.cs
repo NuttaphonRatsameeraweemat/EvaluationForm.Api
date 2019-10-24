@@ -69,15 +69,54 @@ namespace EVF.Tranfer.Service.Bll
         {
             var result = new ResultViewModel();
             var vendorMaster = _dmUnitOfWork.GetRepository<ZNCR_03>().Get();
-            var allVendorNo = _evfUnitOfWork.GetRepository<Vendor>().Get().Select(x => x.VendorNo).ToArray();
-            vendorMaster = vendorMaster.Where(x => !allVendorNo.Contains(x.VendorNo));
-            var data = _mapper.Map<IEnumerable<ZNCR_03>, IEnumerable<Vendor>>(vendorMaster);
-            _evfUnitOfWork.GetRepository<Vendor>().AddRange(data);
+            var speVendor = _evfUnitOfWork.GetRepository<Vendor>().Get();
+            //Add new vendor
+            var data = this.AddNewVendor(vendorMaster, speVendor);
+            //Update exits vendor information
+            var updateData = this.UpdateVendorInformation(vendorMaster, speVendor);
             _evfUnitOfWork.Complete();
             System.Threading.Tasks.Task.Run(() =>
             {
                 this.LogTranferData(data);
+                this.LogTranferData(updateData);
             });
+            return result;
+        }
+
+        /// <summary>
+        /// Add new vendor from zncr 03.
+        /// </summary>
+        /// <param name="vendorMaster">The vendor master from zncr 03.</param>
+        /// <param name="speVendor">The vendor master in spe.</param>
+        /// <returns></returns>
+        private IEnumerable<Vendor> AddNewVendor(IEnumerable<ZNCR_03> vendorMaster, IEnumerable<Vendor> speVendor)
+        {
+            var allVendorNo = speVendor.Select(x => x.VendorNo).ToArray();
+            vendorMaster = vendorMaster.Where(x => !allVendorNo.Contains(x.VendorNo));
+            var data = _mapper.Map<IEnumerable<ZNCR_03>, IEnumerable<Vendor>>(vendorMaster);
+            _evfUnitOfWork.GetRepository<Vendor>().AddRange(data);
+            return data;
+        }
+
+        /// <summary>
+        /// Update vendor information.
+        /// </summary>
+        /// <param name="vendorMaster">The vendor master from zncr 03.</param>
+        /// <param name="speVendor">The vendor master in spe.</param>
+        /// <returns></returns>
+        private IEnumerable<Vendor> UpdateVendorInformation(IEnumerable<ZNCR_03> vendorMaster, IEnumerable<Vendor> speVendor)
+        {
+            var result = new List<Vendor>();
+            foreach (var item in speVendor)
+            {
+                var temp = vendorMaster.FirstOrDefault(x => x.VendorNo == item.VendorNo);
+                if (temp != null && temp.CreateDate != item.CreateDate)
+                {
+                    this.MappingFieldsVendor(item, temp);
+                    result.Add(item);
+                }
+            }
+            _evfUnitOfWork.GetRepository<Vendor>().UpdateRange(result);
             return result;
         }
 
@@ -91,6 +130,23 @@ namespace EVF.Tranfer.Service.Bll
             var vendor = _evfUnitOfWork.GetRepository<Vendor>().Get(x => x.VendorNo == vendorNo).FirstOrDefault();
             var vendorMaster = _dmUnitOfWork.GetRepository<ZNCR_03>().Get(x => x.VendorNo == vendorNo).FirstOrDefault();
             //Update Fields value.
+            this.MappingFieldsVendor(vendor, vendorMaster);
+            _evfUnitOfWork.GetRepository<Vendor>().Update(vendor);
+            _evfUnitOfWork.Complete();
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                this.LogTranferData(vendor);
+            });
+            return result;
+        }
+
+        /// <summary>
+        /// Mapping fields vendor information.
+        /// </summary>
+        /// <param name="vendor">The vendor master from spe.</param>
+        /// <param name="vendorMaster">The vendor master from zncr 03.</param>
+        private void MappingFieldsVendor(Vendor vendor, ZNCR_03 vendorMaster)
+        {
             vendor.Address = vendorMaster.Address;
             vendor.CountyDesc = vendorMaster.CountyDesc;
             vendor.CountyKey = vendorMaster.CountyKey;
@@ -115,13 +171,6 @@ namespace EVF.Tranfer.Service.Bll
             vendor.VendAccGrpName = vendorMaster.VendAccGrpName;
             vendor.VendorAccGrp = vendorMaster.VendorAccGrp;
             vendor.VendorName = vendorMaster.VendorName;
-            _evfUnitOfWork.GetRepository<Vendor>().Update(vendor);
-            _evfUnitOfWork.Complete();
-            System.Threading.Tasks.Task.Run(() =>
-            {
-                this.LogTranferData(vendor);
-            });
-            return result;
         }
 
         /// <summary>

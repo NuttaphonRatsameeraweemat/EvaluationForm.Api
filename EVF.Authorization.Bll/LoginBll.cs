@@ -129,6 +129,12 @@ namespace EVF.Authorization.Bll
             _identity.AddClaim(new Claim(ConstantValue.ClamisOrg, data.OrgId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisPosition, data.PositionId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, data.ComCode));
+            //Add authority company
+            var authorityList = _unitOfWork.GetRepository<AuthorityCompany>().GetCache(x => x.AdUser == data.Aduser);
+            foreach (var item in authorityList)
+            {
+                _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, item.ComCode));
+            }
             //Add purchase org
             var purOrgs = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.AdUser == data.Aduser);
             foreach (var item in purOrgs)

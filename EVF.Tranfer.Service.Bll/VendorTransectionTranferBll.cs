@@ -68,8 +68,8 @@ namespace EVF.Tranfer.Service.Bll
         {
             var result = new ResultViewModel();
             var vendorTransections = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get();
-            var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransection>>(vendorTransections);
-            _evfUnitOfWork.GetRepository<VendorTransection>().AddRange(data);
+            var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransections);
+            _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
             _evfUnitOfWork.Complete();
             System.Threading.Tasks.Task.Run(() =>
             {
@@ -82,7 +82,7 @@ namespace EVF.Tranfer.Service.Bll
         /// Logging debug when tranfer is finish. 
         /// </summary>
         /// <param name="evfData"></param>
-        private void LogTranferData(IEnumerable<VendorTransection> vendorTransections)
+        private void LogTranferData(IEnumerable<VendorTransaction> vendorTransections)
         {
             foreach (var item in vendorTransections)
             {

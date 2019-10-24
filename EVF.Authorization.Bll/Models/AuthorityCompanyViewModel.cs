@@ -7,6 +7,11 @@ namespace EVF.Authorization.Bll.Models
 {
     public class AuthorityCompanyViewModel
     {
+        public AuthorityCompanyViewModel()
+        {
+            ComCode = new List<string>();
+        }
+
         public const string RoleForManageData = "Role_MA_AuthorityCompany";
         public const string RoleForDisplayData = "Role_DS_AuthorityCompany";
 
@@ -18,4 +23,11 @@ namespace EVF.Authorization.Bll.Models
         public string FirstnameTH { get; set; }
         public string LastnameTH { get; set; }
     }
+
+    public class AuthorityCompanyRequestViewModel
+    {
+        [Required]
+        public string AdUser { get; set; }
+    }
+
 }

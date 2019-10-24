@@ -60,7 +60,19 @@ namespace EVF.Helper
         /// <summary>
         /// Get Company code value from payload token.
         /// </summary>
-        public string ComCode => _httpContext.User.Claims.FirstOrDefault(x => x.Type == ConstantValue.ClamisComCode)?.Value;
+        public string[] ComCode
+        {
+            get
+            {
+                var result = new List<string>();
+                var comList = _httpContext.User.Claims.Where(x => x.Type == ConstantValue.ClamisComCode);
+                foreach (var item in comList)
+                {
+                    result.Add(item.Value);
+                }
+                return result.ToArray();
+            }
+        }
         /// <summary>
         /// Get Purchasing org value from payload token.
         /// </summary>
