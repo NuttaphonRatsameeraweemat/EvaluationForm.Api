@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
 using EVF.Tranfer.Service.Bll.Interfaces;
@@ -71,10 +72,11 @@ namespace EVF.Tranfer.Service.Bll
             var result = new ResultViewModel();
             var vendorTransaction = _evfUnitOfWork.GetRepository<VendorTransaction>().Get().Select(x => x.DataUpdateDate).Distinct();
             var vendorTransactionsMaster = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get(x => !vendorTransaction.Contains(x.DataUpdateDate)).ToList();
-            using (var scope = new TransactionScope())
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 30, 0)))
             {
                 var transactionUpdate = this.UpdateTransaction(vendorTransactionsMaster);
                 var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransactionsMaster);
+                data.Select(c => { c.ElasticStatus = ConstantValue.ElasticStatusWaiting; return c; }).ToList();
                 _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
                 _evfUnitOfWork.GetRepository<VendorTransaction>().UpdateRange(transactionUpdate);
                 _evfUnitOfWork.Complete(scope);
@@ -95,12 +97,22 @@ namespace EVF.Tranfer.Service.Bll
         private IEnumerable<VendorTransaction> UpdateTransaction(List<SPE_TRANSAC_PO_QA> vendorTransactionsMaster)
         {
             var transactionUpdate = new List<VendorTransaction>();
+            var gjharArray = vendorTransactionsMaster.Select(x => x.Gjahr).ToArray().Distinct();
+            var belnrArray = vendorTransactionsMaster.Select(x => x.Belnr).ToArray().Distinct();
+            var buzeiArray = vendorTransactionsMaster.Select(x => x.Buzei).ToArray().Distinct();
+            var paraArray = vendorTransactionsMaster.Select(x => x.Para).ToArray().Distinct();
+
+            var transactionList = _evfUnitOfWork.GetRepository<VendorTransaction>().Get(x => gjharArray.Contains(x.Gjahr) &&
+                                                                                            belnrArray.Contains(x.Belnr) &&
+                                                                                            buzeiArray.Contains(x.Buzei.Value) &&
+                                                                                            paraArray.Contains(x.Para.Value));
+
             foreach (var item in vendorTransactionsMaster.ToList())
             {
-                var transaction = _evfUnitOfWork.GetRepository<VendorTransaction>().Get(x => x.Gjahr == item.Gjahr &&
+                var transaction = transactionList.FirstOrDefault(x => x.Gjahr == item.Gjahr &&
                                                                                       x.Belnr == item.Belnr &&
                                                                                       x.Buzei == item.Buzei &&
-                                                                                      x.Para == item.Para).FirstOrDefault();
+                                                                                      x.Para == item.Para);
                 if (transaction != null)
                 {
                     transaction = this.MappingVendorTransaction(item, transaction);
@@ -124,6 +136,7 @@ namespace EVF.Tranfer.Service.Bll
             transaction = _mapper.Map<SPE_TRANSAC_PO_QA, VendorTransaction>(master, transaction);
             transaction.Id = id;
             transaction.MarkWeightingKey = weightingKey;
+            transaction.ElasticStatus = ConstantValue.ElasticStatusUpdate;
             return transaction;
         }
 

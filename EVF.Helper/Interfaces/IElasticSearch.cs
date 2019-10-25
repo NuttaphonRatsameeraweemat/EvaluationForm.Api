@@ -13,6 +13,12 @@ namespace EVF.Helper.Interfaces
         /// <returns></returns>
         ElasticClient GetClient();
         /// <summary>
+        /// Mapping model and create index.
+        /// </summary>
+        /// <param name="index">The index name.</param>
+        /// <returns></returns>
+        string Mapping(string index);
+        /// <summary>
         /// Get data from elastic search.
         /// </summary>
         /// <param name="searchFunc">The search descriptor and query container for filter.</param>

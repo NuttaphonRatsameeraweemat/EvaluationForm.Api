@@ -128,6 +128,8 @@ namespace EVF.Api.Extensions
             CreateMap<VendorTransaction, VendorTransectionViewModel>();
             CreateMap<VendorTransectionViewModel, VendorTransaction>();
             CreateMap<VendorFilterRequestViewModel, VendorFilter>();
+            CreateMap<VendorTransectionElasticSearchModel, VendorTransaction>();
+            CreateMap<VendorTransaction, VendorTransectionElasticSearchModel>();
         }
 
         /// <summary>

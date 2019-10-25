@@ -23,6 +23,8 @@ using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll;
 using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
+using EVF.Vendor.Bll.Interfaces;
+using EVF.Vendor.Bll;
 
 namespace EVF.UnitTest
 {
@@ -59,6 +61,7 @@ namespace EVF.UnitTest
             this.ConfigureLoggerService(services);
             this.ConfigureEvaluationBll(services);
             this.ConfigureWorkflowBll(services);
+            this.ConfigureVendorBll(services);
 
             ServiceProvider = services.BuildServiceProvider();
         }
@@ -175,6 +178,17 @@ namespace EVF.UnitTest
         }
 
         /// <summary>
+        /// Dependency Injection Vendor Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureVendorBll(IServiceCollection services)
+        {
+            services.AddScoped<IVendorBll, VendorBll>();
+            services.AddScoped<IVendorFilterBll, VendorFilterBll>();
+            services.AddScoped<IVendorTransectionBll, VendorTransectionBll>();
+        }
+
+        /// <summary>
         /// Register service components class.
         /// </summary>
         /// <param name="services">The service collection.</param>
@@ -183,6 +197,7 @@ namespace EVF.UnitTest
             services.AddSingleton<IConfigSetting, ConfigSetting>();
             services.AddSingleton<IAdService, AdService>();
             services.AddSingleton<IK2Service, K2Service>();
+            services.AddSingleton(typeof(IElasticSearch<>), typeof(ElasticSearch<>));
 
             services.AddTransient<IManageToken, ManageToken>(c => new ManageToken(this.InitialHttpContext()));
         }
@@ -221,7 +236,8 @@ namespace EVF.UnitTest
             identity.AddClaim(new Claim(ConstantValue.ClamisName, string.Format(ConstantValue.EmpTemplate, "สัญชัย", "ต้นพุดซา")));
             identity.AddClaim(new Claim(ConstantValue.ClamisOrg, "10001416"));
             identity.AddClaim(new Claim(ConstantValue.ClamisPosition, "20000641"));
-            identity.AddClaim(new Claim(ConstantValue.ClamisComCode, "10000001"));
+            identity.AddClaim(new Claim(ConstantValue.ClamisComCode, "1600"));
+            identity.AddClaim(new Claim(ConstantValue.ClamisPurchasing, "1600"));
             var user = new GenericPrincipal(new ClaimsIdentity(identity), new string[] { "ADMIN" });
             httpContext.User = user;
 

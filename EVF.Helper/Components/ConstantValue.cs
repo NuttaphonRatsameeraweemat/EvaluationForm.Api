@@ -62,6 +62,13 @@ namespace EVF.Helper.Components
         //Purchasing Type
         public const string PurchasingTypeAdmin = "A";
         public const string PurchasingTypeUser = "U";
+        //Vendor transaction elastic status
+        public const string ElasticStatusWaiting = "W";
+        public const string ElasticStatusAdded = "C";
+        public const string ElasticStatusUpdate = "U";
+        //ElasticSearch Index and type.
+        public const string VendorTransactionType = "vendortransaction_type";
+        public const string VendorTransactionIndex = "vendortransaction_index";
         //Activity Workflow
         public const string ActivityRequest = "SendRequest";
         public const string ActivityApprove = "Approve";

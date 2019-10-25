@@ -78,5 +78,7 @@ namespace EVF.Data.Pocos
         public DateTime? DataUpdateDate { get; set; }
         [StringLength(2)]
         public string MarkWeightingKey { get; set; }
+        [StringLength(1)]
+        public string ElasticStatus { get; set; }
     }
 }
