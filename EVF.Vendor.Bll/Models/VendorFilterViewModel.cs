@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -44,8 +45,10 @@ namespace EVF.Vendor.Bll.Models
         [Required]
         public int PeriodItemId { get; set; }
         [Required]
+        [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string StartDate { get; set; }
         [Required]
+        [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string EndDate { get; set; }
         [Required]
         public string ComCode { get; set; }

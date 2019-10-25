@@ -34,5 +34,7 @@ namespace EVF.Data.Pocos
         [StringLength(255)]
         public string Category { get; set; }
         public string Remark { get; set; }
+        [StringLength(20)]
+        public string SendToEvaluationSapResultStatus { get; set; }
     }
 }

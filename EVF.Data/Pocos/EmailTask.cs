@@ -14,7 +14,7 @@ namespace EVF.Data.Pocos
         [StringLength(4)]
         public string TaskCode { get; set; }
         [Required]
-        [StringLength(40)]
+        [StringLength(100)]
         public string TaskBy { get; set; }
         [Required]
         [StringLength(20)]

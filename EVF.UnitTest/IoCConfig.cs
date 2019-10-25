@@ -19,6 +19,10 @@ using EVF.Helper.Components;
 using System.Security.Principal;
 using EVF.Hr.Bll.Interfaces;
 using EVF.Hr.Bll;
+using EVF.Evaluation.Bll.Interfaces;
+using EVF.Evaluation.Bll;
+using EVF.Workflow.Bll.Interfaces;
+using EVF.Workflow.Bll;
 
 namespace EVF.UnitTest
 {
@@ -53,6 +57,8 @@ namespace EVF.UnitTest
             this.ConfigureComponent(services);
             this.ConfigureHttpContextAccessor(services);
             this.ConfigureLoggerService(services);
+            this.ConfigureEvaluationBll(services);
+            this.ConfigureWorkflowBll(services);
 
             ServiceProvider = services.BuildServiceProvider();
         }
@@ -143,6 +149,29 @@ namespace EVF.UnitTest
             services.AddScoped<IHolidayCalendarBll, HolidayCalendarBll>();
             services.AddScoped<IValueHelpBll, ValueHelpBll>();
             services.AddScoped<IApprovalBll, ApprovalBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Evaluation Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        private void ConfigureEvaluationBll(IServiceCollection services)
+        {
+            services.AddScoped<IEvaluationBll, EvaluationBll>();
+            services.AddScoped<IEvaluationAssignBll, EvaluationAssignBll>();
+            services.AddScoped<IEvaluationLogBll, EvaluationLogBll>();
+            services.AddScoped<ISummaryEvaluationBll, SummaryEvaluationBll>();
+            services.AddScoped<IEvaluationSapResultBll, EvaluationSapResultBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Workflow Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureWorkflowBll(IServiceCollection services)
+        {
+            services.AddScoped<IWorkflowBll, WorkflowBll>();
+            services.AddScoped<IWorkflowDelegateBll, WorkflowDelegateBll>();
         }
 
         /// <summary>

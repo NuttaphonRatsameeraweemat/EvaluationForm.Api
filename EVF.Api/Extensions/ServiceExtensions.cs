@@ -140,6 +140,7 @@ namespace EVF.Api.Extensions
             services.AddScoped<IEvaluationAssignBll, EvaluationAssignBll>();
             services.AddScoped<IEvaluationLogBll, EvaluationLogBll>();
             services.AddScoped<ISummaryEvaluationBll, SummaryEvaluationBll>();
+            services.AddScoped<IEvaluationSapResultBll, EvaluationSapResultBll>();
         }
 
         /// <summary>

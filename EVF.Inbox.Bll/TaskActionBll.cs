@@ -19,6 +19,10 @@ namespace EVF.Inbox.Bll
         /// The summary evaluation manager provides summary evaluation functionality.
         /// </summary>
         private readonly ISummaryEvaluationBll _summaryEvaluation;
+        /// <summary>
+        /// The evaluation sap result manager provides evaluation sap result functionality.
+        /// </summary>
+        private readonly IEvaluationSapResultBll _evaluationSapResult;
 
         #endregion
 
@@ -28,9 +32,11 @@ namespace EVF.Inbox.Bll
         /// Initializes a new instance of the <see cref="TaskActionBll" /> class.
         /// </summary>
         /// <param name="summaryEvaluation">The summary evaluation manager provides summary evaluation functionality.</param>
-        public TaskActionBll(ISummaryEvaluationBll summaryEvaluation)
+        /// <param name="evaluationSapResult">The evaluation sap result manager provides evaluation sap result functionality.</param>
+        public TaskActionBll(ISummaryEvaluationBll summaryEvaluation, IEvaluationSapResultBll evaluationSapResult)
         {
             _summaryEvaluation = summaryEvaluation;
+            _evaluationSapResult = evaluationSapResult;
         }
 
         #endregion
@@ -50,6 +56,10 @@ namespace EVF.Inbox.Bll
             {
                 case ConstantValue.EvaluationProcessCode:
                     result = _summaryEvaluation.SubmitAction(this.InitialWorkflowViewModel(model, action));
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        _evaluationSapResult.Save(model.DataId);
+                    });
                     break;
             }
             return result;

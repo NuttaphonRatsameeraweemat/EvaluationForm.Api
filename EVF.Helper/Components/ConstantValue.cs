@@ -53,6 +53,9 @@ namespace EVF.Helper.Components
         //Sending vendor status
         public const string VendorWaiting = "WAITING";
         public const string VendorSending = "SEND";
+        //Send to evaluation sap result status.
+        public const string SendToEvaluationSapResultComplete = "Complete";
+        public const string SendToEvaluationSapResultFailed = "Failed";
         //Vendor Condition
         public const string VendorConditionMoreThan = "MoreThan";
         public const string VendorConditionOther = "Other";
