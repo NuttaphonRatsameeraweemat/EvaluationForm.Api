@@ -113,9 +113,11 @@ namespace EVF.Evaluation.Bll
             IEnumerable<Data.Pocos.Evaluation> data)
         {
             var result = new List<EvaluationViewModel>();
+            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
             foreach (var item in data)
             {
                 var periodTemp = periodList.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                var valueHelp = valueHelpList.FirstOrDefault(x => x.ValueKey == item.WeightingKey);
                 var status = this.GetStatus(item.Status);
                 result.Add(new EvaluationViewModel
                 {
@@ -135,7 +137,8 @@ namespace EVF.Evaluation.Bll
                     PurchasingOrgName = purList.FirstOrDefault(x => x.PurchaseOrg1 == item.PurchasingOrg)?.PurchaseName,
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
                     EvaluationTemplateName = evaluationTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)?.EvaluationTemplateName,
-                    StatusName = status[1]
+                    StatusName = status[1],
+                    WeightingKeyName = valueHelp.ValueText
                 });
             }
             return result;

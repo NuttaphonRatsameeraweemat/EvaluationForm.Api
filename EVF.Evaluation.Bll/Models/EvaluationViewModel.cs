@@ -23,6 +23,7 @@ namespace EVF.Evaluation.Bll.Models
         public string Status { get; set; }
 
         //Display
+        public string WeightingKeyName { get; set; }
         public string VendorName { get; set; }
         public string EvaluationTemplateName { get; set; }
         public string CompanyName { get; set; }

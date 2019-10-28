@@ -124,9 +124,11 @@ namespace EVF.Evaluation.Bll
             IEnumerable<Data.Pocos.Evaluation> data, bool isAction)
         {
             var result = new List<EvaluationViewModel>();
+            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
             foreach (var item in data)
             {
                 var periodTemp = periodList.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                var valueHelp = valueHelpList.FirstOrDefault(x => x.ValueKey == item.WeightingKey);
                 var status = this.GetStatus(isAction, periodTemp);
                 result.Add(new EvaluationViewModel
                 {
@@ -148,7 +150,8 @@ namespace EVF.Evaluation.Bll
                     EvaluationTemplateName = evaluationTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)?.EvaluationTemplateName,
                     StatusName = status[1],
                     Categorys = item.Category.Split(','),
-                    Remark = item.Remark
+                    Remark = item.Remark,
+                    WeightingKeyName = valueHelp.ValueText
                 });
             }
             return result;
