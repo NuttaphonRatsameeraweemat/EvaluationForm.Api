@@ -185,6 +185,7 @@ namespace EVF.CentralSetting.Bll
             {
                 var approval = _unitOfWork.GetRepository<Approval>().GetCache(x => x.Id == id);
                 this.DeleteItem(_unitOfWork.GetRepository<ApprovalItem>().GetCache(x => x.ApprovalId == id));
+                _unitOfWork.GetRepository<Approval>().RemoveRange(approval);
                 _unitOfWork.Complete(scope);
             }
             this.ReloadCacheApproval();
