@@ -43,7 +43,7 @@ namespace EVF.Evaluation.Bll.Models
 
         public int Id { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedEvaluationTemplate)]
-        public int EvaluationTemplateId { get; set; }
+        public int? EvaluationTemplateId { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedVendor)]
         public string VendorNo { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedWeightingKey)]
@@ -53,7 +53,7 @@ namespace EVF.Evaluation.Bll.Models
         [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
         public string PurchasingOrg { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
-        public int PeriodItemId { get; set; }
+        public int? PeriodItemId { get; set; }
 
         public int EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }

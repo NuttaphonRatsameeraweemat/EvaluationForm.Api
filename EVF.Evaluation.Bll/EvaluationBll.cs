@@ -214,7 +214,7 @@ namespace EVF.Evaluation.Bll
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
                 _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, this.GetEvaluatorGroup(model.EvaluatorList, model.EvaluatorGroup));
-                _vendorFilter.UpdateStatus(model.PeriodItemId, model.ComCode, model.PurchasingOrg, model.WeightingKey, model.VendorNo);
+                _vendorFilter.UpdateStatus(model.PeriodItemId.Value, model.ComCode, model.PurchasingOrg, model.WeightingKey, model.VendorNo);
                 this.SetEvaluationTemplateFlagUsing(evaluation.EvaluationTemplateId.Value);
                 if (model.ImageList != null && model.ImageList.Count > 0)
                 {
