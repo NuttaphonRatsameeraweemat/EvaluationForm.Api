@@ -56,7 +56,7 @@ namespace EVF.Hr.Bll
         public IEnumerable<HrCompanyViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Hrcompany>, IEnumerable<HrCompanyViewModel>>(
-                   _unitOfWork.GetRepository<Hrcompany>().GetCache(x => _token.ComCode.Contains(x.ComCode)));
+                   _unitOfWork.GetRepository<Hrcompany>().GetCache(x => _token.ComCode.Contains(x.SapcomCode)));
         }
 
         /// <summary>

@@ -119,7 +119,7 @@ namespace EVF.Authorization.Bll
                 OrgId = data.OrgId,
                 PositionId = data.PositionId
             };
-
+            var sapComCode = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.ComCode == data.ComCode).FirstOrDefault()?.SapcomCode;
             var roleList = _roleBll.GetCompositeRoleItemByAdUser(login.Username);
             _identity = new ClaimsIdentity();
             _identity.AddClaim(new Claim(ClaimTypes.Name, data.Aduser));
@@ -128,7 +128,7 @@ namespace EVF.Authorization.Bll
             _identity.AddClaim(new Claim(ConstantValue.ClamisName, string.Format(ConstantValue.EmpTemplate, data.FirstnameTh, data.LastnameTh)));
             _identity.AddClaim(new Claim(ConstantValue.ClamisOrg, data.OrgId));
             _identity.AddClaim(new Claim(ConstantValue.ClamisPosition, data.PositionId));
-            _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, data.ComCode));
+            _identity.AddClaim(new Claim(ConstantValue.ClamisComCode, sapComCode));
             //Add authority company
             var authorityList = _unitOfWork.GetRepository<AuthorityCompany>().GetCache(x => x.AdUser == data.Aduser);
             foreach (var item in authorityList)
