@@ -57,6 +57,7 @@ namespace EVF.Evaluation.Bll.Models
 
         public int EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }
+        [Required(ErrorMessage = MessageValue.PleaseSelectedEvaluatorPurchase)]
         public string EvaluatorPurchasing { get; set; }
 
         public string[] Categorys { get; set; }

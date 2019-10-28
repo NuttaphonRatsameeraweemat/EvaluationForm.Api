@@ -35,6 +35,7 @@ namespace EVF.Helper.Components
         public const string PleaseSelectedCompany = "กรุณาเลือก บริษัท";
         public const string PleaseSelectedPurchaseOrg = "กรุณาเลือก กลุ่มจัดซื้อ";
         public const string PleaseSelectedPeriod = "กรุณาเลือก ระยะเวลา";
+        public const string PleaseSelectedEvaluatorPurchase = "กรุณาเลือก จัดซื้อผู้ประเมิน";
         public const string PleaseSelectedKpiGroup = "กรุณาเลือก กลุ่มการประเมิน";
         public const string PleaseSelectedCriteria = "กรุณาเลือก หลักเกณฑ์";
         public const string PleaseSelectedGrade = "กรุณาเลือก เกณฑ์การประเมิน";
