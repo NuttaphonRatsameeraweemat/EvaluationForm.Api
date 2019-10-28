@@ -17,11 +17,11 @@ namespace EVF.Master.Bll.Models
         [MaxLength(200, ErrorMessage = MessageValue.EvaluationTemplateNameOverLength)]
         public string EvaluationTemplateName { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedCriteria)]
-        public int CriteriaId { get; set; }
+        public int? CriteriaId { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedGrade)]
-        public int GradeId { get; set; }
+        public int? GradeId { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedLevelPoint)]
-        public int LevelPointId { get; set; }
+        public int? LevelPointId { get; set; }
         public bool IsUse { get; set; }
     }
 
