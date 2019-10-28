@@ -14,6 +14,11 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<PeriodViewModel> GetList();
         /// <summary>
+        /// Get Period list.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<PeriodResponseViewModel> GetListInformation();
+        /// <summary>
         /// Get Detail of period.
         /// </summary>
         /// <param name="id">The identity of period group.</param>

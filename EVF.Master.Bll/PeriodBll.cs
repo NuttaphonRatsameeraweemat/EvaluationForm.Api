@@ -61,8 +61,34 @@ namespace EVF.Master.Bll
         public IEnumerable<PeriodViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
-                   _unitOfWork.GetRepository<Period>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                       _unitOfWork.GetRepository<Period>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
                        orderBy: x => x.OrderByDescending(y => y.Year).ThenByDescending(y => y.Name)));
+        }
+
+        /// <summary>
+        /// Get Period list.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PeriodResponseViewModel> GetListInformation()
+        {
+            var result = new List<PeriodResponseViewModel>();
+            var periodList = _unitOfWork.GetRepository<Period>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                       orderBy: x => x.OrderByDescending(y => y.Year).ThenByDescending(y => y.Name));
+            var createList = periodList.Select(x => x.CreateBy).Distinct().ToArray();
+            var empList = _unitOfWork.GetRepository<Hremployee>().GetCache(x => createList.Contains(x.EmpNo));
+
+            foreach (var item in periodList)
+            {
+                var emp = empList.FirstOrDefault(x => x.EmpNo == item.CreateBy);
+                result.Add(new PeriodResponseViewModel
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Year = item.Year.ToString(),
+                    CreateByName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh)
+                });
+            }
+            return result;
         }
 
         /// <summary>

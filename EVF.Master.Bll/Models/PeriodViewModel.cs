@@ -25,4 +25,13 @@ namespace EVF.Master.Bll.Models
         public string Name { get; set; }
         public List<PeriodItemViewModel> PeriodItems { get; set; }
     }
+
+    public class PeriodResponseViewModel
+    {
+        public int Id { get; set; }
+        public string Year { get; set; }
+        public string Name { get; set; }
+        public string CreateByName { get; set; }
+    }
+
 }
