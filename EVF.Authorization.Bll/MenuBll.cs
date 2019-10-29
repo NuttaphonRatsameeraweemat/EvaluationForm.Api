@@ -68,6 +68,21 @@ namespace EVF.Authorization.Bll
         }
 
         /// <summary>
+        /// Redirect menu default first page case.
+        /// </summary>
+        /// <param name="menus">The menu current user.</param>
+        /// <returns></returns>
+        public string RedirectFirstPage(IEnumerable<MenuViewModel> menus)
+        {
+            string redirectCase = ConstantValue.RedirectEvaluation;
+            if (menus.Any(x => x.Url.Contains("Inbox")))
+            {
+                redirectCase = ConstantValue.RedirectInbox;
+            }
+            return redirectCase;
+        }
+
+        /// <summary>
         /// Get Side Menu Sorting.
         /// </summary>
         /// <param name="rolelist">The role user list can be visible menu.</param>

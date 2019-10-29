@@ -46,6 +46,8 @@ namespace EVF.Helper.Components
         public const string ItemMenuCode = "ITEM";
         public const string RoleDisplay = "Role_DS_";
         public const string RoleManage = "Role_MA_";
+        public const string RedirectInbox = "I";
+        public const string RedirectEvaluation = "E";
         //Evaluation Status
         public const string EvaWaiting = "EvaWaiting";
         public const string EvaComplete = "EvaComplete";

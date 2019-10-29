@@ -50,10 +50,12 @@ namespace EVF.Api.Controllers
             {
                 var model = _login.ManageClaimsIdentity(auth);
                 string token = _login.BuildToken();
+                var menu = _menu.GenerateMenu(auth.Username);
                 var responseMessage = new
                 {
                     Employee = model,
-                    Menu = _menu.GenerateMenu(auth.Username),
+                    Menu = menu,
+                    RedirectCase = _menu.RedirectFirstPage(menu),
                     Token = token
                 };
                 _login.SetupCookie(HttpContext, token);
