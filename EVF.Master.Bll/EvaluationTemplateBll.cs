@@ -273,6 +273,24 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Get evaluation template preview for display.
+        /// </summary>
+        /// <param name="model">The master data setup template.</param>
+        /// <returns></returns>
+        public EvaluationTemplateDisplayViewModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model)
+        {
+            var result = new EvaluationTemplateDisplayViewModel
+            {
+                Name = string.Empty,
+                Criteria = _criteria.GetDetail(model.CriteriaId.Value),
+                LevelPoint = _levelPoint.GetDetail(model.LevelPointId.Value),
+                Grade = _grade.GetDetail(model.GradeId.Value)
+            };
+            result.MaxTotalScore = this.GetMaxTotalScore(result.LevelPoint.WeightingKey, result.LevelPoint.LevelPointItems.Count, result.Criteria);
+            return result;
+        }
+
+        /// <summary>
         /// Get Max total score calculate for a2 type.
         /// </summary>
         /// <param name="weightingKey">The weighting key.</param>

@@ -138,7 +138,8 @@ namespace EVF.Evaluation.Bll
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
                     EvaluationTemplateName = evaluationTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)?.EvaluationTemplateName,
                     StatusName = status[1],
-                    WeightingKeyName = valueHelp.ValueText
+                    WeightingKeyName = valueHelp.ValueText,
+                    CreateDate = UtilityService.DateTimeToString(item.CreateDate.Value, ConstantValue.DateTimeFormat)
                 });
             }
             return result;

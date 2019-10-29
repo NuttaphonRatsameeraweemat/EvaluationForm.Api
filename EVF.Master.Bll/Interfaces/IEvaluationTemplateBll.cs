@@ -56,6 +56,12 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         EvaluationTemplateDisplayViewModel LoadTemplate(int id);
         /// <summary>
+        /// Get evaluation template preview for display.
+        /// </summary>
+        /// <param name="model">The master data setup template.</param>
+        /// <returns></returns>
+        EvaluationTemplateDisplayViewModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model);
+        /// <summary>
         /// Validate grade is using in evaluation template or not.
         /// </summary>
         /// <param name="id">The grade identity.</param>

@@ -1,8 +1,11 @@
-﻿using EVF.Data.Repository.Interfaces;
+﻿using EVF.Data.Pocos;
+using EVF.Data.Repository.Interfaces;
 using EVF.Helper.Interfaces;
 using EVF.Report.Bll.Interfaces;
+using EVF.Report.Bll.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace EVF.Report.Bll
@@ -40,7 +43,18 @@ namespace EVF.Report.Bll
 
         #region [Methods]
 
+        public void ExportSummaryReport(EvaluationSummaryReportRequestModel model)
+        {
 
+        }
+
+        private void GetData(EvaluationSummaryReportRequestModel model)
+        {
+            if (!string.IsNullOrEmpty(model.ComCode))
+            {
+
+            }
+        }
 
         #endregion
 

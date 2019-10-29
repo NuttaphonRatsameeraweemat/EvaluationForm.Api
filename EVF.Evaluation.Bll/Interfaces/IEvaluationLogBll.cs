@@ -31,6 +31,11 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <param name="model">The evaluation log item information value.</param>
         ResultViewModel Save(int evaluationId, IEnumerable<EvaluationLogItemViewModel> model);
         /// <summary>
+        /// Insert new evaluation log when purchase user edit score.
+        /// </summary>
+        /// <param name="model">The evaluation log item information value.</param>
+        ResultViewModel SavePurchaseEditScore(int evaluationId, IEnumerable<EvaluationLogItemViewModel> model);
+        /// <summary>
         /// Inital model for post method save.
         /// </summary>
         /// <param name="evaluationTemplateId">The evaluation template identity.</param>

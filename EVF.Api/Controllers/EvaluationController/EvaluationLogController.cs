@@ -76,6 +76,21 @@ namespace EVF.Api.Controllers.EvaluationController
             return response;
         }
 
+        [HttpPost]
+        [Route("SavePurchaseEditScore/{evaluationId}")]
+        [Authorize(Roles = EvaluationViewModel.RoleForManageData)]
+        public IActionResult SavePurchaseEditScore(int evaluationId, [FromBody]IEnumerable<EvaluationLogItemViewModel> model)
+        {
+            IActionResult response;
+            var result = _evaluationLog.ValidateData(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_evaluationLog.SavePurchaseEditScore(evaluationId, model));
+            return response;
+        }
+
         #endregion
 
     }

@@ -191,7 +191,6 @@ namespace EVF.Vendor.Bll
         {
             ISearchRequest searchFunc(SearchDescriptor<VendorTransectionElasticSearchModel> s) => s
                                                                        .Index(ConstantValue.VendorTransactionIndex)
-                                                                       .Type(ConstantValue.VendorTransactionType)
                                                                        .Query(q =>
                                                                                       //Filter
                                                                                       q.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
@@ -214,7 +213,6 @@ namespace EVF.Vendor.Bll
             var endDate = UtilityService.ConvertToDateTime(search.EndDate, ConstantValue.DateTimeFormat);
             ISearchRequest searchFunc(SearchDescriptor<VendorTransectionElasticSearchModel> s) => s
                                                                        .Index(ConstantValue.VendorTransactionIndex)
-                                                                       .Type(ConstantValue.VendorTransactionType)
                                                                        .From(0)
                                                                        .Take(1000)
                                                                        .Query(q =>
@@ -302,7 +300,6 @@ namespace EVF.Vendor.Bll
         public string ReImportTransaction()
         {
             _elasticSearch.DeleteAll(ConstantValue.VendorTransactionIndex, ConstantValue.VendorTransactionType);
-            _elasticSearch.Mapping(ConstantValue.VendorTransactionIndex);
             var transactionList = _unitOfWork.GetRepository<VendorTransaction>().Get();
             var result = _mapper.Map<IEnumerable<VendorTransaction>, IEnumerable<VendorTransectionElasticSearchModel>>(transactionList);
             this.InitialVendorName(result);

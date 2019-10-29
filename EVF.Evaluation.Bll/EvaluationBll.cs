@@ -151,7 +151,8 @@ namespace EVF.Evaluation.Bll
                     StatusName = status[1],
                     Categorys = item.Category.Split(','),
                     Remark = item.Remark,
-                    WeightingKeyName = valueHelp.ValueText
+                    WeightingKeyName = valueHelp.ValueText,
+                    CreateDate = UtilityService.DateTimeToString(item.CreateDate.Value, ConstantValue.DateTimeFormat)
                 });
             }
             return result;

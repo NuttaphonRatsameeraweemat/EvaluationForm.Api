@@ -34,4 +34,14 @@ namespace EVF.Master.Bll.Models
         public GradeViewModel Grade { get; set; }
     }
 
+    public class EvaluationTemplatePreviewRequestModel
+    {
+        [Required]
+        public int? CriteriaId { get; set; }
+        [Required]
+        public int? LevelPointId { get; set; }
+        [Required]
+        public int? GradeId { get; set; }
+    }
+
 }

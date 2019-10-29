@@ -31,6 +31,7 @@ namespace EVF.Evaluation.Bll.Models
         public string StartEvaDateString { get; set; }
         public string EndEvaDateString { get; set; }
         public string StatusName { get; set; }
+        public string CreateDate { get; set; }
         public string[] Categorys { get; set; }
         public string Remark { get; set; }
     }

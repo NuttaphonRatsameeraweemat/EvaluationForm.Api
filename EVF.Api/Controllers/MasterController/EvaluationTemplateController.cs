@@ -66,6 +66,13 @@ namespace EVF.Api.Controllers.MasterController
             return Ok(_evaluationTemplate.LoadTemplate(id));
         }
 
+        [HttpGet]
+        [Route("PreviewTemplate")]
+        public IActionResult PreviewTemplate([FromQuery]EvaluationTemplatePreviewRequestModel model)
+        {
+            return Ok(_evaluationTemplate.PreviewTemplate(model));
+        }
+
         [HttpPost]
         [Route("Save")]
         [Authorize(Roles = EvaluationTemplateViewModel.RoleForManageData)]

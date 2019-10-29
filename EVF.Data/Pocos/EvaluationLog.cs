@@ -16,5 +16,9 @@ namespace EVF.Data.Pocos
         [StringLength(100)]
         public string AdUser { get; set; }
         public DateTime? ActionDate { get; set; }
+        [StringLength(100)]
+        public string ActionBy { get; set; }
+        [StringLength(11)]
+        public string ActionByUserCode { get; set; }
     }
 }

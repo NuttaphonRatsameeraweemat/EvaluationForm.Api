@@ -131,7 +131,10 @@ namespace EVF.CentralSetting.Bll
             var evaluatorGroupItems = new List<EvaluatorGroupItem>();
             foreach (var item in adUsers)
             {
-                evaluatorGroupItems.Add(new EvaluatorGroupItem { EvaluatorGroupId = evaluatorGroupId, AdUser = item });
+                if (!string.IsNullOrEmpty(item))
+                {
+                    evaluatorGroupItems.Add(new EvaluatorGroupItem { EvaluatorGroupId = evaluatorGroupId, AdUser = item });
+                }
             }
             _unitOfWork.GetRepository<EvaluatorGroupItem>().AddRange(evaluatorGroupItems);
         }

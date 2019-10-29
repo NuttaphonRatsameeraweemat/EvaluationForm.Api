@@ -158,6 +158,37 @@ namespace EVF.Evaluation.Bll
         }
 
         /// <summary>
+        /// Insert new evaluation log when purchase user edit score.
+        /// </summary>
+        /// <param name="model">The evaluation log item information value.</param>
+        public ResultViewModel SavePurchaseEditScore(int evaluationId, IEnumerable<EvaluationLogItemViewModel> model)
+        {
+            var result = new ResultViewModel();
+            using (TransactionScope scope = new TransactionScope())
+            {
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId && 
+                                                                                       x.UserType == ConstantValue.UserTypePurchasing).FirstOrDefault();
+                model = this.SumKpiGroupScore(evaluationId, model);
+                var evaluationLog = new EvaluationLog
+                {
+                    EvaluationId = evaluationId,
+                    ActionDate = DateTime.Now,
+                    EmpNo = evaAssign.EmpNo,
+                    AdUser = evaAssign.AdUser,
+                    ActionBy = _token.AdUser,
+                    ActionByUserCode = _token.EmpNo
+                };
+                this.SetIsAction(evaluationId);
+                _unitOfWork.GetRepository<EvaluationLog>().Add(evaluationLog);
+                _unitOfWork.Complete();
+                this.SaveItem(evaluationLog.Id, model);
+                this.IsEvaluationFinish(evaluationId);
+                _unitOfWork.Complete(scope);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Sum Kpi Group Score.
         /// </summary>
         /// <param name="model">The evaluation log item information value.</param>

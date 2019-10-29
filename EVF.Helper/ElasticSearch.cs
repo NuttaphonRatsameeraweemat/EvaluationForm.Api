@@ -54,7 +54,7 @@ namespace EVF.Helper
         {
             var result = string.Empty;
             var client = this.GetClient();
-            var response = client.CreateIndex(index);
+            var response = client.IndexDocument(index);
             if (!response.IsValid)
             {
                 result = response.ServerError.ToString();
@@ -95,7 +95,7 @@ namespace EVF.Helper
 
             var client = this.GetClient();
             var id = Convert.ToInt32(model.GetType().GetProperty("Id").GetValue(model, null));
-            var response = client.Index<T>(model, i => i.Index(index).Type(type).Id(id));
+            var response = client.Index<T>(model, i => i.Index(index).Id(id));
             if (!response.IsValid)
             {
                 result = response.ServerError.ToString();
@@ -117,7 +117,7 @@ namespace EVF.Helper
 
             var client = this.GetClient();
             var id = Convert.ToInt32(model.GetType().GetProperty("Id").GetValue(model, null));
-            var response = client.Update<T>(id, i => i.Index(index).Type(type).Doc(model).RetryOnConflict(10));
+            var response = client.Update<T>(id, i => i.Index(index).Doc(model).RetryOnConflict(10));
             if (!response.IsValid)
             {
                 result = response.ServerError.ToString();
@@ -138,7 +138,7 @@ namespace EVF.Helper
             string result = string.Empty;
 
             var client = this.GetClient();
-            var deleteResponse = client.Delete<T>(id, d => d.Index(index).Type(type));
+            var deleteResponse = client.Delete<T>(id, d => d.Index(index));
 
             if (!deleteResponse.IsValid)
             {
@@ -159,17 +159,17 @@ namespace EVF.Helper
             string result = string.Empty;
 
             var client = this.GetClient();
-            var deleteResponse = client.DeleteByQuery<T>(d => d.Index(index).Type(type).Query(q => q.MatchAll()));
-            var deleteIndexResponse = client.DeleteIndex(index);
+            var deleteResponse = client.DeleteByQuery<T>(d => d.Index(index).Query(q => q.MatchAll()));
+            //var deleteIndexResponse = client.Delete()
 
-            if (!deleteIndexResponse.IsValid)
-            {
-                result = deleteIndexResponse.ServerError.ToString();
-            }
+            //if (!deleteIndexResponse.IsValid)
+            //{
+            //    result = deleteIndexResponse.ServerError.ToString();
+            //}
 
-            if (!deleteIndexResponse.IsValid)
+            if (!deleteResponse.IsValid)
             {
-                result = string.IsNullOrEmpty(result) ? deleteIndexResponse.ServerError.ToString() : result + ", " + deleteIndexResponse.ServerError.ToString();
+                result = string.IsNullOrEmpty(result) ? deleteResponse.ServerError.ToString() : result + ", " + deleteResponse.ServerError.ToString();
             }
 
             return result;
@@ -211,7 +211,7 @@ namespace EVF.Helper
                     bulkList.Add(new BulkCreateOperation<T>(item) { Id = id });
                 }
 
-                var response = client.Bulk(b => b.CreateMany(exportList, (bd, item) => bd.Index(index).Type(type).Document(item).Id(Convert.ToInt32(item.GetType().GetProperty("Id").GetValue(item, null)))));
+                var response = client.Bulk(b => b.CreateMany(exportList, (bd, item) => bd.Index(index).Document(item).Id(Convert.ToInt32(item.GetType().GetProperty("Id").GetValue(item, null)))));
                 if (response.Errors)
                 {
                     result = result + response.ServerError.ToString() + " ,";

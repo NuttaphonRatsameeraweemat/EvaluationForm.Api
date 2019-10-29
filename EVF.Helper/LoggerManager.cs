@@ -25,7 +25,12 @@ namespace EVF.Helper
         /// <summary>
         /// The NLog logger object.
         /// </summary>
-        private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger loggerInfo = LogManager.GetLogger("InfoProfile");
+
+        /// <summary>
+        /// The NLog logger error object.
+        /// </summary>
+        private static readonly ILogger loggerError = LogManager.GetLogger("ErrorProfile");
 
         /// <summary>
         /// The NLog logger connection object.
@@ -52,7 +57,7 @@ namespace EVF.Helper
         /// <param name="message">The message.</param>
         public void LogDebug(string message)
         {
-            logger.Debug(message);
+            loggerInfo.Debug(message);
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace EVF.Helper
         /// <param name="message">The additional message.</param>
         public void LogError(Exception ex, string message = null)
         {
-            logger.Error(ex, message ?? string.Empty);
+            loggerError.Error(ex, message ?? string.Empty);
         }
 
         /// <summary>
@@ -71,7 +76,7 @@ namespace EVF.Helper
         /// <param name="message">The message.</param>
         public void LogInfo(string message)
         {
-            logger.Info(message);
+            loggerInfo.Info(message);
         }
 
         /// <summary>
@@ -80,7 +85,7 @@ namespace EVF.Helper
         /// <param name="message">The message.</param>
         public void LogWarn(string message)
         {
-            logger.Warn(message);
+            loggerInfo.Warn(message);
         }
 
         /// <summary>

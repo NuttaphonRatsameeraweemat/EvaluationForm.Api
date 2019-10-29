@@ -115,6 +115,7 @@ namespace EVF.Authorization.Bll
                 EmpNo = data.EmpNo,
                 FirstNameTH = data.FirstnameTh,
                 LastNameTH = data.LastnameTh,
+                AdUser = data.Aduser,
                 ComCode = data.ComCode,
                 OrgId = data.OrgId,
                 PositionId = data.PositionId
