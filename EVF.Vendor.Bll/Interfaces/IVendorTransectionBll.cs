@@ -41,7 +41,7 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="comCode">The company code.</param>
         /// <param name="purOrg">The purchase org.</param>
         /// <returns></returns>
-        IEnumerable<VendorTransectionElasticSearchModel> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg);
+        IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg);
         /// <summary>
         /// Get Detail of VendorTransection.
         /// </summary>

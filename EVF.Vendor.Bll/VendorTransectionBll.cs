@@ -142,11 +142,16 @@ namespace EVF.Vendor.Bll
         /// <param name="comCode">The company code.</param>
         /// <param name="purOrg">The purchase org.</param>
         /// <returns></returns>
-        public IEnumerable<VendorTransectionElasticSearchModel> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg)
+        public IEnumerable<VendorTransaction> GetTransections(string startDateString, string endDateString, string[] purGroup, string comCode, string purOrg)
         {
             var startDate = UtilityService.ConvertToDateTime(startDateString, ConstantValue.DateTimeFormat);
             var endDate = UtilityService.ConvertToDateTime(endDateString, ConstantValue.DateTimeFormat);
-            return _elasticSearch.SearchFilter(this.GetQueryFilter(startDate, endDate, purGroup, comCode, purOrg));
+            return _unitOfWork.GetRepository<VendorTransaction>().Get(x => purGroup.Contains(x.PurgropCode) &&
+                                                                                   x.CompanyCode == comCode &&
+                                                                                   x.PurorgCode == purOrg &&
+                                                                                   x.ReceiptDate.Value.Date >= startDate.Date &&
+                                                                                   x.ReceiptDate.Value.Date <= endDate.Date);
+            //return _elasticSearch.SearchFilter(this.GetQueryFilter(startDate, endDate, purGroup, comCode, purOrg));
         }
 
         /// <summary>
@@ -191,12 +196,27 @@ namespace EVF.Vendor.Bll
         {
             ISearchRequest searchFunc(SearchDescriptor<VendorTransectionElasticSearchModel> s) => s
                                                                        .Index(ConstantValue.VendorTransactionIndex)
+                                                                       .From(0)
+                                                                       .Take(1000)
                                                                        .Query(q =>
-                                                                                      //Filter
-                                                                                      q.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
-                                                                                      q.Terms(t => t.Field(f => f.PurorgCode).Terms(purOrg)) &&
-                                                                                      q.Terms(t => t.Field(f => f.CompanyCode).Terms(comCode)) &&
-                                                                                      q.Terms(t => t.Field(f => f.PurgropCode).Terms(purGroup))
+                                                                         q.Bool(b =>
+                                                                             //b.Must(m =>
+                                                                             //    m.Match(mm =>
+                                                                             //        mm.Field(f => purGroup.Contains(f.PurgropCode))
+                                                                             //          .Field(f => _token.PurchasingOrg.Contains(f.PurorgCode))
+                                                                             //    ))
+                                                                             b.Filter(ff =>
+                                                                                  //ff.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) 
+                                                                                  ff.Terms(t => t.Field(f => f.PurgropCode).Terms(purGroup))
+                                                                                  //ff.Term(t => t.Field(f => f.CompanyCode).Value(comCode)) &&
+                                                                                  //ff.Term(t => t.Field(f => f.PurgropCode).Value(purOrg))
+                                                                             )
+                                                                           )
+                                                                             //Filter
+                                                                             //q.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
+                                                                             //q.Terms(t => t.Field(f => f.PurorgCode).Terms(purOrg)) &&
+                                                                             //q.Terms(t => t.Field(f => f.CompanyCode).Terms(comCode)) &&
+                                                                             //q.Terms(t => t.Field(f => f.PurgropCode).Terms(purGroup))
                                                                              )
                                                                        .Sort(m => m.Descending(f => f.Id));
             return searchFunc;
@@ -213,14 +233,22 @@ namespace EVF.Vendor.Bll
             var endDate = UtilityService.ConvertToDateTime(search.EndDate, ConstantValue.DateTimeFormat);
             ISearchRequest searchFunc(SearchDescriptor<VendorTransectionElasticSearchModel> s) => s
                                                                        .Index(ConstantValue.VendorTransactionIndex)
-                                                                       .From(0)
-                                                                       .Take(1000)
+                                                                       //.From(0)
+                                                                       //.Take(1000)
                                                                        .Query(q =>
-                                                                                      //Filter
-                                                                                      q.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
-                                                                                      q.Terms(t => t.Field(f => f.PurorgCode).Terms(_token.PurchasingOrg)) &&
-                                                                                      q.Terms(t => t.Field(f => f.PurgropCode).Terms(search.PurGroup))
-                                                                             )
+                                                                                //q.Bool(b =>
+                                                                                //    //b.Must(m =>
+                                                                                //    //    m.Match(mm =>
+                                                                                //    //        mm.Field(f => search.PurGroup.Contains(f.PurgropCode))
+                                                                                //    //          .Field(f => _token.PurchasingOrg.Contains(f.PurorgCode))
+                                                                                //    //    ))
+                                                                                //    //b.Filter(ff =>
+                                                                                //    //   // ff.DateRange(t => t.Field(f => f.ReceiptDate).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
+                                                                                //    //    ff.Term(t => t.Field(f => f.PurgropCode).Value(search.PurGroup))
+                                                                                //    //)
+                                                                                //  )
+                                                                                q.Match(m => m.Field(f => search.PurGroup.Contains(f.PurgropCode)))
+                                                                              )
                                                                        .Sort(m => m.Descending(f => f.Id));
             return searchFunc;
         }

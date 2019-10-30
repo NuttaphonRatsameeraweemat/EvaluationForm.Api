@@ -31,7 +31,7 @@ namespace EVF.Evaluation.Bll.Models
         [MaxLength(255)]
         public string Reason { get; set; }
         public int MaxScore { get; set; }
-        public int RawScore { get; set; }
+        public double RawScore { get; set; }
     }
 
 }

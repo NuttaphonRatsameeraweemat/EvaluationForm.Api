@@ -62,7 +62,7 @@ namespace EVF.Master.Bll
         {
             return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
                        _unitOfWork.GetRepository<Period>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
-                       orderBy: x => x.OrderByDescending(y => y.Year).ThenByDescending(y => y.Name)));
+                       orderBy: x => x.OrderByDescending(y => y.Year).ThenBy(y => y.Name)));
         }
 
         /// <summary>

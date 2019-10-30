@@ -69,7 +69,7 @@ namespace EVF.Evaluation.Bll.Models
         public int? LevelPoint { get; set; }
         public string Reason { get; set; }
         public int Sequence { get; set; }
-        public int RawScore { get; set; }
+        public double RawScore { get; set; }
         public int MaxScore { get; set; }
     }
 

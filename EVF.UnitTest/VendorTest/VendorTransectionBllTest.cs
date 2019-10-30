@@ -62,6 +62,19 @@ namespace EVF.UnitTest.VendorTest
         }
 
         [Fact]
+        public void GetTransections()
+        {
+            try
+            {
+                var list = _vendorTransection.GetTransections("2018-01-29", "2019-10-29", new string[] { "311", "911" }, "1600", "1600");
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.Message);
+            }
+        }
+
+        [Fact]
         public void ReImportTransaction()
         {
             try

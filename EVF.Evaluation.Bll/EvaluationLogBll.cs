@@ -166,7 +166,7 @@ namespace EVF.Evaluation.Bll
             var result = new ResultViewModel();
             using (TransactionScope scope = new TransactionScope())
             {
-                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId && 
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId &&
                                                                                        x.UserType == ConstantValue.UserTypePurchasing).FirstOrDefault();
                 model = this.SumKpiGroupScore(evaluationId, model);
                 var evaluationLog = new EvaluationLog
@@ -178,7 +178,6 @@ namespace EVF.Evaluation.Bll
                     ActionBy = _token.AdUser,
                     ActionByUserCode = _token.EmpNo
                 };
-                this.SetIsAction(evaluationId);
                 _unitOfWork.GetRepository<EvaluationLog>().Add(evaluationLog);
                 _unitOfWork.Complete();
                 this.SaveItem(evaluationLog.Id, model);
@@ -230,16 +229,16 @@ namespace EVF.Evaluation.Bll
                         if (temp.Count() > 0)
                         {
                             var score = temp.Sum(x => x.RawScore);
-                            item.Score = score;
+                            item.Score = Convert.ToInt32(Math.Round(score));
                         }
                     }
                     foreach (var item in kpis)
                     {
-                        item.Score = item.RawScore;
+                        item.Score = Convert.ToInt32(Math.Round(item.RawScore));
                     }
                     break;
             }
-            
+
             return model;
         }
 
@@ -250,10 +249,10 @@ namespace EVF.Evaluation.Bll
         /// <param name="levelPointMax">The level point max.</param>
         /// <param name="rawScore">The raw score.</param>
         /// <returns></returns>
-        private int CalculateScore(int maxScore, int levelPointMax, int rawScore)
+        private int CalculateScore(int maxScore, int levelPointMax, double rawScore)
         {
             int maxRawScore = (maxScore * levelPointMax);
-            double result = (Convert.ToDouble(rawScore) / Convert.ToDouble(maxRawScore));
+            double result = rawScore / Convert.ToDouble(maxRawScore);
             return Convert.ToInt32(result * 100);
         }
 

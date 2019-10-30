@@ -253,7 +253,7 @@ namespace EVF.Evaluation.Bll
                         Reason = logItem.Reason,
                         Score = logItem.Score,
                         Sequence = this.GetSequence(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId),
-                        RawScore = isHaveKpi ? 0 : logItem.RawScore.Value,
+                        RawScore = isHaveKpi ? 0 : Convert.ToDouble(logItem.RawScore.Value),
                         MaxScore = this.GetMaxScore(logItem.KpiGroupId.Value, logItem.KpiId, criteriaId)
                     });
                 }
