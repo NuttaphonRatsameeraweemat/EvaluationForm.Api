@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,11 +17,11 @@ namespace EVF.CentralSetting.Bll.Models
         public const string RoleForManageData = "Role_MA_PurchaseOrg";
         public const string RoleForDisplayData = "Role_DS_PurchaseOrg";
 
-        [Required]
-        [MaxLength(4)]
+        [Required(ErrorMessage = MessageValue.PleaseFillPurchaseOrgCode)]
+        [MaxLength(4, ErrorMessage = MessageValue.PurchaseOrgCodeOverLength)]
         public string PurchaseOrg1 { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillPurchaseOrgName)]
+        [MaxLength(200, ErrorMessage = MessageValue.PurchaseOrgNameOverLength)]
         public string PurchaseName { get; set; }
         public List<PurchasingOrgItemViewModel> PurchasingItems { get; set; }
     }

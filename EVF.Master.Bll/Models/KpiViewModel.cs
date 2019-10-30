@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EVF.Helper.Components;
+using System.ComponentModel.DataAnnotations;
 
 namespace EVF.Master.Bll.Models
 {
@@ -9,17 +10,17 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Kpi";
 
         public int Id { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillKpiNameTh)]
+        [MaxLength(200, ErrorMessage = MessageValue.KpiNameOverLength)]
         public string KpiNameTh { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillKpiNameEn)]
+        [MaxLength(200, ErrorMessage = MessageValue.KpiNameOverLength)]
         public string KpiNameEn { get; set; }
-        [Required]
-        [MaxLength(40)]
+        [Required(ErrorMessage = MessageValue.PleaseFillKpiShortTextTh)]
+        [MaxLength(40, ErrorMessage = MessageValue.KpiShortTextOverLength)]
         public string KpiShortTextTh { get; set; }
-        [Required]
-        [MaxLength(40)]
+        [Required(ErrorMessage = MessageValue.PleaseFillKpiShortTextEn)]
+        [MaxLength(40, ErrorMessage = MessageValue.KpiShortTextOverLength)]
         public string KpiShortTextEn { get; set; }
         public bool IsUse { get; set; }
     }

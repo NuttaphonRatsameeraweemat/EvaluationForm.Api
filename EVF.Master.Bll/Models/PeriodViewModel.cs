@@ -17,11 +17,11 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Period";
 
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedYear)]
         [RegularExpression(ConstantValue.RegexYearFormat, ErrorMessage = ConstantValue.YearIncorrectFormat)]
         public string Year { get; set; }
-        [Required]
-        [MaxLength(150)]
+        [Required(ErrorMessage = MessageValue.PleaseFillPeriodName)]
+        [MaxLength(150, ErrorMessage = MessageValue.PeriodNameOverLength)]
         public string Name { get; set; }
         public List<PeriodItemViewModel> PeriodItems { get; set; }
     }

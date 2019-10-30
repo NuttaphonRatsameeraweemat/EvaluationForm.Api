@@ -1,5 +1,7 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace EVF.Evaluation.Bll.Models
@@ -26,6 +28,7 @@ namespace EVF.Evaluation.Bll.Models
     {
         public int Id { get; set; }
         public int EvaluationId { get; set; }
+        [Required(ErrorMessage = MessageValue.PleaseSelectedToUser)]
         public string ToAdUser { get; set; }
     }
 

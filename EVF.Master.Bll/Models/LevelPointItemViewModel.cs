@@ -10,7 +10,8 @@ namespace EVF.Master.Bll.Models
     {
         public int Id { get; set; }
         public int LevelPointId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillLevelPointName)]
+        [MaxLength(100, ErrorMessage = MessageValue.LevelPointNameOverLength)]
         public string LevelPointName { get; set; }
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int PercentPoint { get; set; }

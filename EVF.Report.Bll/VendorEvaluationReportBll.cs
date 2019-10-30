@@ -58,7 +58,7 @@ namespace EVF.Report.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationReportViewModel> GetList()
         {
-            var data = _unitOfWork.GetRepository<Evaluation>().Get(x =>  x.Status == ConstantValue.WorkflowStatusApproved);
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x =>  x.Status == ConstantValue.WorkflowStatusApproved);
             return this.InitalViewModel(data);
 
         }
@@ -70,7 +70,7 @@ namespace EVF.Report.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationReportViewModel> GetList(int periodItemId)
         {
-            var data = _unitOfWork.GetRepository<Evaluation>().Get(x => x.PeriodItemId == periodItemId &&
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => x.PeriodItemId == periodItemId &&
                                                                         x.Status == ConstantValue.WorkflowStatusApproved);
             return this.InitalViewModel(data);
 
@@ -81,11 +81,11 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="data">The evaluation collection data.</param>
         /// <returns></returns>
-        private IEnumerable<EvaluationReportViewModel> InitalViewModel(IEnumerable<Evaluation> data)
+        private IEnumerable<EvaluationReportViewModel> InitalViewModel(IEnumerable<Data.Pocos.Evaluation> data)
         {
             var result = new List<EvaluationReportViewModel>();
             var vendors = data.Select(x => x.VendorNo).ToArray();
-            var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache(x => vendors.Contains(x.VendorNo));
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => vendors.Contains(x.VendorNo));
             var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
             var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
             var valueHelp = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);

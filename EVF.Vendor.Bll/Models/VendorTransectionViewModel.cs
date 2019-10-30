@@ -123,13 +123,13 @@ namespace EVF.Vendor.Bll.Models
 
     public class VendorTransectionSearchViewModel
     {
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedStartDate)]
         [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string StartDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedEndDate)]
         [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string EndDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurGroup)]
         public string PurGroup { get; set; }
     }
 
@@ -137,7 +137,7 @@ namespace EVF.Vendor.Bll.Models
     {
         [Required]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedWeightingKey)]
         [MaxLength(2)]
         public string WeightingKey { get; set; }
     }

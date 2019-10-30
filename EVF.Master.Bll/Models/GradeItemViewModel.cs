@@ -10,17 +10,17 @@ namespace EVF.Master.Bll.Models
     {
         public int Id { get; set; }
         public int? GradeId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillStartPoint)]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int? StartPoint { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillEndPoint)]
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int? EndPoint { get; set; }
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = MessageValue.PleaseFillGradeNameTh)]
+        [MaxLength(100, ErrorMessage = MessageValue.GradeNameOverLength)]
         public string GradeNameTh { get; set; }
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = MessageValue.PleaseFillGradeNameEn)]
+        [MaxLength(100, ErrorMessage = MessageValue.GradeNameOverLength)]
         public string GradeNameEn { get; set; }
     }
 }

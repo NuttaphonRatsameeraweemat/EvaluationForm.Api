@@ -30,33 +30,33 @@ namespace EVF.Vendor.Bll.Models
 
     public class VendorFilterCriteriaViewModel
     {
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
         public int? PeriodItemId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCompany)]
         public string CompanyCode { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
         public string PurchasingOrg { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedWeightingKey)]
         public string WeightingKey { get; set; }
     }
 
     public class VendorFilterSearchViewModel
     {
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
         public int PeriodItemId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedStartDate)]
         [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string StartDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedEndDate)]
         [RegularExpression(ConstantValue.RegexDateFormat, ErrorMessage = ConstantValue.DateIncorrectFormat)]
         public string EndDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCompany)]
         public string ComCode { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
         public string PurchaseOrg { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedWeightingKey)]
         public string WeightingKey { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCondition)]
         public string Condition { get; set; }
         public double TotalSales { get; set; }
     }
@@ -88,7 +88,7 @@ namespace EVF.Vendor.Bll.Models
         public string WeightingKey { get; set; }
         [Required]
         public string VendorNo { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedAssignTo)]
         public string AssignTo { get; set; }
     }
 
@@ -115,13 +115,15 @@ namespace EVF.Vendor.Bll.Models
     {
         [Required]
         public string VendorNo { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedAssignTo)]
         public string AssignTo { get; set; }
     }
 
     public class VendorFilterEditRequestViewModel
     {
+        [Required]
         public int Id { get; set; }
+        [Required(ErrorMessage = MessageValue.PleaseSelectedAssignTo)]
         public string AssignTo { get; set; }
     }
 

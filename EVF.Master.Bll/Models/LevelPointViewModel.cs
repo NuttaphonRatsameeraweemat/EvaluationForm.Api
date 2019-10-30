@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,10 +17,10 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_LevelPoint";
 
         public int Id { get; set; }
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = MessageValue.PleaseFillLevelPointName)]
+        [MaxLength(100, ErrorMessage = MessageValue.LevelPointNameOverLength)]
         public string Name { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedLevelPointCalculate)]
         public string WeightingKey { get; set; }
         public bool IsDefault { get; set; }
         public bool IsUse { get; set; }

@@ -21,9 +21,9 @@ namespace EVF.CentralSetting.Bll.Models
     public class EvaluationPercentageConfigRequestModel
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillPurchasePercentage)]
         public int PurchasePercentage { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseFillUserPercentage)]
         public int UserPercentage { get; set; }
     }
 

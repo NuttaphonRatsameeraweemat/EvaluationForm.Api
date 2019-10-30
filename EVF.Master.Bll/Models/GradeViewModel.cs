@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,8 +17,8 @@ namespace EVF.Master.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Grade";
 
         public int Id { get; set; }
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = MessageValue.PleaseFillGrade)]
+        [MaxLength(200, ErrorMessage = MessageValue.GradeOverLength)]
         public string Name { get; set; }
         public bool IsDefault { get; set; }
         public bool IsUse { get; set; }

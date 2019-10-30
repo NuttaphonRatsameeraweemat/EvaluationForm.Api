@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EVF.Helper.Components;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -16,7 +17,7 @@ namespace EVF.CentralSetting.Bll.Models
         public const string RoleForDisplayData = "Role_DS_Approval";
         
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
         public string PurchasingOrg { get; set; }
         public string PurchasingOrgName { get; set; }
         public List<ApprovalItemViewModel> ApprovalList { get; set; }
@@ -25,7 +26,7 @@ namespace EVF.CentralSetting.Bll.Models
     public class ApprovalItemViewModel
     {
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedApproval)]
         public string AdUser { get; set; }
         [Required]
         public int Step { get; set; }

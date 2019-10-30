@@ -36,11 +36,11 @@ namespace EVF.Master.Bll.Models
 
     public class EvaluationTemplatePreviewRequestModel
     {
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedCriteria)]
         public int? CriteriaId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedLevelPoint)]
         public int? LevelPointId { get; set; }
-        [Required]
+        [Required(ErrorMessage = MessageValue.PleaseSelectedGrade)]
         public int? GradeId { get; set; }
     }
 

@@ -1,5 +1,6 @@
 ﻿using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Evaluation.Bll.Interfaces;
 using EVF.Helper;
 using EVF.Helper.Interfaces;
 using EVF.Report.Bll.Interfaces;
@@ -22,6 +23,10 @@ namespace EVF.Report.Bll
         /// </summary>
         private readonly IUnitOfWork _unitOfWork;
         /// <summary>
+        /// The summary evaluation manager provides summary evaluation functionality.
+        /// </summary>
+        private readonly ISummaryEvaluationBll _summaryEvaluation;
+        /// <summary>
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
@@ -35,9 +40,10 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public EvaluationSummaryReportBll(IUnitOfWork unitOfWork, IManageToken token)
+        public EvaluationSummaryReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
         {
             _unitOfWork = unitOfWork;
+            _summaryEvaluation = summaryEvaluation;
             _token = token;
         }
 
@@ -53,12 +59,20 @@ namespace EVF.Report.Bll
         private void GetData(EvaluationSummaryReportRequestModel model)
         {
             var whereClause = this.BuildDynamicWhereClause(model);
+            var evaluationList = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(whereClause);
+
+            foreach (var evaluation in evaluationList)
+            {
+                var summary = _summaryEvaluation.GetDetail(evaluation.Id);
+                
+            }
+
         }
 
-        private Expression<Func<Evaluation, bool>> BuildDynamicWhereClause(EvaluationSummaryReportRequestModel model)
+        private Expression<Func<Data.Pocos.Evaluation, bool>> BuildDynamicWhereClause(EvaluationSummaryReportRequestModel model)
         {
             // simple method to dynamically plugin a where clause
-            var predicate = PredicateBuilder.True<Evaluation>(); // true -where(true) return all
+            var predicate = PredicateBuilder.True<Data.Pocos.Evaluation>(); // true -where(true) return all
             if (!string.IsNullOrEmpty(model.ComCode))
             {
                 predicate = predicate.And(s => s.ComCode == model.ComCode);
