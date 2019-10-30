@@ -371,7 +371,7 @@ namespace EVF.Evaluation.Bll
                 {
                     result.Add(this.InitialModel(item, UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
                                                                                      percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
-                                                 percentageConfig, weightingKey));
+                                                 percentageConfig, weightingKey, userCount));
                 }
             }
             else
@@ -384,7 +384,7 @@ namespace EVF.Evaluation.Bll
                     {
                         uPoint = UtilityService.AverageScore(userPoint.Score, userCount);
                     }
-                    result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey));
+                    result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey, userCount));
                 }
             }
             return result;
@@ -432,12 +432,17 @@ namespace EVF.Evaluation.Bll
         /// <param name="score">The score.</param>
         /// <returns></returns>
         private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
-                                                              EvaluationPercentageConfig percentageConfig, string weightingKey)
+                                                              EvaluationPercentageConfig percentageConfig, string weightingKey, int userCount)
         {
             double totalScore = 0;
             if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
-                totalScore = Math.Round((item.Score + score) / 2);
+                int divide = 1;
+                if (userCount != 0)
+                {
+                    divide += 1;
+                }
+                totalScore = Math.Round((item.Score + score) / divide); 
             }
             else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage);
             return new SummaryEvaluationDetailViewModel
