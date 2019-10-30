@@ -251,6 +251,11 @@ namespace EVF.Master.Bll
 
             this.SaveItem(kpiGroupId, kpiItemAdd);
             this.DeleteItem(kpiItemDelete);
+
+            var kpiIds = data.Where(x => kpiItemUpdate.Any(y => x.Id == y.Id)).Select(x => x.KpiId.Value).ToArray();
+
+            _kpi.SetIsUse(kpiItemUpdate.Select(x => x.KpiId.Value).ToArray(), true);
+            this.UpdateKpiUsingFlag(kpiGroupId, kpiIds, false);
             _unitOfWork.GetRepository<KpiGroupItem>().UpdateRange(kpiItemUpdate);
         }
 
