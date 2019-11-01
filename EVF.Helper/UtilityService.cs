@@ -178,11 +178,20 @@ namespace EVF.Helper
         /// <param name="userPercentage">The user score percentage.</param>
         /// <param name="purchasePercentange">The purchase score percentage.</param>
         /// <returns></returns>
-        public static double CalculateScore(double purScore, double userScore, int userPercentage, int purchasePercentange)
+        public static double CalculateScore(double purScore, double userScore, int userPercentage, int purchasePercentange, string weightingKey)
         {
-            purScore = (purScore * purchasePercentange) / 100;
-            userScore = (userScore * userPercentage) / 100;
-            return Math.Round(purScore + userScore);
+            double result = 0;
+            if (!string.Equals(weightingKey,"A2",StringComparison.OrdinalIgnoreCase))
+            {
+                result = purScore + userScore;
+            }
+            else
+            {
+                purScore = (purScore * purchasePercentange) / 100;
+                userScore = (userScore * userPercentage) / 100;
+                result = Math.Round(purScore + userScore);
+            }
+            return result;
         }
 
         /// <summary>

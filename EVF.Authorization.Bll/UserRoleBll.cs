@@ -147,8 +147,10 @@ namespace EVF.Authorization.Bll
             {
                 var data = result.FirstOrDefault(x => x.AdUser == item.AdUser);
                 var roleInfo = _unitOfWork.GetRepository<AppCompositeRole>().GetCache(x => x.Id == item.CompositeRoleId).FirstOrDefault();
-                
-                data.RoleDisplay += $"{roleInfo?.Name} ";
+                if (data != null)
+                {
+                    data.RoleDisplay += $"{roleInfo?.Name} ";
+                }
             }
             return result;
         }

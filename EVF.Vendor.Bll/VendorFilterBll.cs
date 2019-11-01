@@ -121,6 +121,7 @@ namespace EVF.Vendor.Bll
             var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
             var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
             var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeVendorSendingStatus);
+            var weightingKeyList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
             foreach (var item in vendorFilters)
             {
                 var temp = empList.FirstOrDefault(x => x.Aduser == item.AssignTo);
@@ -141,7 +142,8 @@ namespace EVF.Vendor.Bll
                     SendEvaluationDate = item.SendingEvaDate,
                     VendorNo = item.VendorNo,
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
-                    WeightingKey = item.WeightingKey
+                    WeightingKey = item.WeightingKey,
+                    WeightingKeyName = weightingKeyList.FirstOrDefault(x=>x.ValueKey == item.WeightingKey)?.ValueText
                 });
             }
             return result;
@@ -171,6 +173,7 @@ namespace EVF.Vendor.Bll
             var purOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == vendorFilter.PurchasingOrg).FirstOrDefault();
             var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == vendorFilter.VendorNo).FirstOrDefault();
             var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeVendorSendingStatus);
+            var weightingKeyList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
             return new VendorFilterViewModel
             {
                 Id = vendorFilter.Id,
@@ -188,7 +191,8 @@ namespace EVF.Vendor.Bll
                 SendEvaluationDate = vendorFilter.SendingEvaDate,
                 VendorNo = vendorFilter.VendorNo,
                 VendorName = vendor?.VendorName,
-                WeightingKey = vendorFilter.WeightingKey
+                WeightingKey = vendorFilter.WeightingKey,
+                WeightingKeyName = weightingKeyList.FirstOrDefault(x => x.ValueKey == vendorFilter.WeightingKey)?.ValueText
             };
         }
 
@@ -359,8 +363,8 @@ namespace EVF.Vendor.Bll
         {
             switch (weightingKey)
             {
+                case "A3":
                 case "A4":
-                case "A5":
                     transectionList = transectionList.Where(x => x.MarkWeightingKey == weightingKey);
                     break;
                 default:

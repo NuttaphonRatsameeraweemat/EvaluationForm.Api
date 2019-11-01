@@ -163,7 +163,7 @@ namespace EVF.Vendor.Bll
         {
             var result = _mapper.Map<VendorTransaction, VendorTransectionViewModel>(
                 _unitOfWork.GetRepository<VendorTransaction>().GetById(id));
-            result.VendorName = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == result.Vendor).FirstOrDefault().VendorName;
+            result.VendorName = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == result.Vendor).FirstOrDefault()?.VendorName;
             return result;
         }
 
@@ -182,7 +182,7 @@ namespace EVF.Vendor.Bll
                 _unitOfWork.GetRepository<VendorTransaction>().Update(data);
                 _unitOfWork.Complete(scope);
             }
-            this.ReImportTransactionById(model.Id);
+            //this.ReImportTransactionById(model.Id);
             return result;
         }
 

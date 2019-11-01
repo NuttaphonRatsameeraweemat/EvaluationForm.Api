@@ -217,12 +217,12 @@ namespace EVF.Evaluation.Bll
                 evaluation.CreateDate = DateTime.Now;
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Add(evaluation);
                 _unitOfWork.Complete();
-                _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, this.GetEvaluatorGroup(model.EvaluatorList, model.EvaluatorGroup));
+                _evaluationAssign.SaveList(evaluation.Id, model.EvaluatorPurchasing, this.GetEvaluatorGroup(model.EvaluatorList, model.EvaluatorGroup.HasValue ? model.EvaluatorGroup.Value : 0));
                 _vendorFilter.UpdateStatus(model.PeriodItemId.Value, model.ComCode, model.PurchasingOrg, model.WeightingKey, model.VendorNo);
                 this.SetEvaluationTemplateFlagUsing(evaluation.EvaluationTemplateId.Value);
                 if (model.ImageList != null && model.ImageList.Count > 0)
                 {
-                    UtilityService.SaveImages(model.ImageList, model.Id, ConstantValue.EvaluationProcessCode);
+                    UtilityService.SaveImages(model.ImageList, evaluation.Id, ConstantValue.EvaluationProcessCode);
                 }
                 _unitOfWork.Complete(scope);
             }

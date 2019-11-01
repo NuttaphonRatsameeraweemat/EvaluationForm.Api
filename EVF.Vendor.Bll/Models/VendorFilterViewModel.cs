@@ -19,6 +19,7 @@ namespace EVF.Vendor.Bll.Models
         public string PurchasingOrg { get; set; }
         public string PurchasingName { get; set; }
         public string WeightingKey { get; set; }
+        public string WeightingKeyName { get; set; }
         public string VendorNo { get; set; }
         public string VendorName { get; set; }
         public string AssignTo { get; set; }

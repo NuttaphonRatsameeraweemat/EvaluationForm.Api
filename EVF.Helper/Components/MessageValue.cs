@@ -20,6 +20,7 @@ namespace EVF.Helper.Components
         public const string KpiGroupItemsDuplicates = "ขออภัย ไม่สามารถเลือกกลุ่มการประเมินซ้ำกันได้";
         public const string IsUseMessageFormat = "ขออภัย ไม่สามารถแก้ไข หรือ ลบ {0} เนื่องจากมีการนำไปใช้งานแล้ว";
         public const string HttpBadRequestMessage = "กรุณา กรอกข้อมูลให้ถูกต้อง";
+        public const string DuplicateEvaluationAssign = "ขออภัย ไม่สามารถเลือกผู้ประเมินซ้ำกันได้";
         public const string KpiMessage = "หัวข้อการประเมิน";
         public const string KpiGroupMessage = "กลุ่มการประเมิน";
         public const string CriteriaMessage = "หลักเกณฑ์";

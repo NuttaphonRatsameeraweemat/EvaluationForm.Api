@@ -28,6 +28,12 @@ namespace EVF.Evaluation.Bll.Interfaces
         /// <param name="userList">The evaluator user list.</param>
         void SaveList(int evaluationId, string purchasingAdUser, string[] userList);
         /// <summary>
+        /// Validate evaluation save and edit before add data.
+        /// </summary>
+        /// <param name="model">The evaluation assign value.</param>
+        /// <returns></returns>
+        ResultViewModel ValidateData(EvaluationAssignRequestViewModel model);
+        /// <summary>
         /// Add new evaluator to evaluation form task.
         /// </summary>
         /// <param name="model">The information value evaluator.</param>

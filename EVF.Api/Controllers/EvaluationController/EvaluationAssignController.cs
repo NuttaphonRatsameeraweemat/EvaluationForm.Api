@@ -47,7 +47,14 @@ namespace EVF.Api.Controllers.EvaluationController
         [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
         public IActionResult Save([FromBody]EvaluationAssignRequestViewModel model)
         {
-            return Ok(_evaluationAssign.Save(model));
+            IActionResult response;
+            var result = _evaluationAssign.ValidateData(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_evaluationAssign.Save(model));
+            return response;
         }
 
         [HttpPost]
@@ -55,7 +62,14 @@ namespace EVF.Api.Controllers.EvaluationController
         [Authorize(Roles = EvaluationAssignViewModel.RoleForManageData)]
         public IActionResult Edit([FromBody]EvaluationAssignRequestViewModel model)
         {
-            return Ok(_evaluationAssign.Edit(model));
+            IActionResult response;
+            var result = _evaluationAssign.ValidateData(model);
+            if (result.IsError)
+            {
+                response = BadRequest(result);
+            }
+            else response = Ok(_evaluationAssign.Edit(model));
+            return response;
         }
 
         [HttpPost]

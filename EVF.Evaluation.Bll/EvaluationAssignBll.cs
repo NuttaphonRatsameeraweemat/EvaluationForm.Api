@@ -3,6 +3,7 @@ using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -117,11 +118,43 @@ namespace EVF.Evaluation.Bll
             result.Add(this.InitialEvaluationAssign(evaluationId, empList.FirstOrDefault(x => x.Aduser == purchasingAdUser), ConstantValue.UserTypePurchasing));
             foreach (var item in userList)
             {
-                var temp = empList.FirstOrDefault(x => x.Aduser == item);
-                result.Add(this.InitialEvaluationAssign(evaluationId, temp, ConstantValue.UserTypeEvaluator));
+                if (!result.Any(x=>x.AdUser == item))
+                {
+                    var temp = empList.FirstOrDefault(x => x.Aduser == item);
+                    result.Add(this.InitialEvaluationAssign(evaluationId, temp, ConstantValue.UserTypeEvaluator));
+                }
             }
 
             _unitOfWork.GetRepository<EvaluationAssign>().AddRange(result);
+        }
+
+        /// <summary>
+        /// Validate evaluation save and edit before add data.
+        /// </summary>
+        /// <param name="model">The evaluation assign value.</param>
+        /// <returns></returns>
+        public ResultViewModel ValidateData(EvaluationAssignRequestViewModel model)
+        {
+            var result = new ResultViewModel();
+
+            if (model.Id != 0)
+            {
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().GetById(model.Id);
+                if (evaAssign != null && evaAssign.AdUser == model.ToAdUser)
+                {
+                    result = UtilityService.InitialResultError(MessageValue.DuplicateEvaluationAssign, (int)System.Net.HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x=> x.EvaluationId == model.EvaluationId);
+                if (evaAssign.Any(x=>x.AdUser == model.ToAdUser))
+                {
+                    result = UtilityService.InitialResultError(MessageValue.DuplicateEvaluationAssign, (int)System.Net.HttpStatusCode.BadRequest);
+                }
+            }
+
+            return result;
         }
 
         /// <summary>

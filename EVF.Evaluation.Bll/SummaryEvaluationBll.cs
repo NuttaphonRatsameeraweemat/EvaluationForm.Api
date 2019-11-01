@@ -66,7 +66,12 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationViewModel> GetList()
         {
-            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => _token.PurchasingOrg.Contains(x.PurchasingOrg)));
+            //if admin get all else filter create by
+            var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.AdUser == _token.AdUser &&
+                                                                                         x.Type == ConstantValue.PurchasingTypeAdmin)
+                                                                                         .Select(x => x.PuchaseOrg).ToArray().Distinct();
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => purchaseOrg.Contains(x.PurchasingOrg) || 
+                                                                                                 x.CreateBy == _token.EmpNo));
         }
 
         /// <summary>
@@ -76,7 +81,12 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationViewModel> GetListSearch(int periodItemId)
         {
-            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => _token.PurchasingOrg.Contains(x.PurchasingOrg) &&
+            //if admin get all else filter create by
+            var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.AdUser == _token.AdUser &&
+                                                                                         x.Type == ConstantValue.PurchasingTypeAdmin)
+                                                                                         .Select(x => x.PuchaseOrg).ToArray().Distinct();
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => (purchaseOrg.Contains(x.PurchasingOrg) ||
+                                                                                                 x.CreateBy == _token.EmpNo) && 
                                                                                                  x.PeriodItemId == periodItemId));
         }
 
@@ -274,11 +284,10 @@ namespace EVF.Evaluation.Bll
             var purUser = userLists.FirstOrDefault(x => x.UserType == ConstantValue.UserTypePurchasing);
             var users = userLists.Where(x => x.UserType == ConstantValue.UserTypeEvaluator);
             int userCount = 0;
-            purResult = this.GetLastEvaluation(purUser.EvaluationLogs, purResult);
+            purResult = this.GetLastEvaluation(purUser.EvaluationLogs, purResult, ref userCount);
             foreach (var item in users)
             {
-                userResult = this.GetLastEvaluation(item.EvaluationLogs, userResult);
-                userCount++;
+                userResult = this.GetLastEvaluation(item.EvaluationLogs, userResult, ref userCount);
             }
             return this.SummaryScore(purResult, userResult, percenConfigId, userCount, weightingKey);
         }
@@ -289,7 +298,8 @@ namespace EVF.Evaluation.Bll
         /// <param name="evaluationLogs">The evaluation logs.</param>
         /// <param name="result">The summary result for return.</param>
         /// <returns></returns>
-        private List<SummaryEvaluationDetailViewModel> GetLastEvaluation(List<UserEvaluationDetailViewModel> evaluationLogs, List<SummaryEvaluationDetailViewModel> result)
+        private List<SummaryEvaluationDetailViewModel> GetLastEvaluation(List<UserEvaluationDetailViewModel> evaluationLogs, List<SummaryEvaluationDetailViewModel> result,
+                                                                         ref int userCount)
         {
             var lastEva = evaluationLogs.OrderByDescending(x => x.ActionDate).FirstOrDefault();
             if (lastEva != null)
@@ -312,6 +322,7 @@ namespace EVF.Evaluation.Bll
                         });
                     }
                 }
+                userCount++;
             }
             return result;
         }
@@ -369,9 +380,10 @@ namespace EVF.Evaluation.Bll
             {
                 foreach (var item in userResult)
                 {
-                    result.Add(this.InitialModel(item, UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
-                                                                                     percentageConfig.UserPercentage, percentageConfig.PurchasePercentage),
-                                                 percentageConfig, weightingKey, userCount));
+                    result.Add(this.InitialModel(new SummaryEvaluationDetailViewModel { KpiGroupId = item.KpiGroupId, KpiId = item.KpiId, Sequence = item.Sequence },
+                                                 UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
+                                                                                     percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey),
+                                                 percentageConfig, weightingKey, userCount, "fromUser"));
                 }
             }
             else
@@ -432,23 +444,24 @@ namespace EVF.Evaluation.Bll
         /// <param name="score">The score.</param>
         /// <returns></returns>
         private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
-                                                              EvaluationPercentageConfig percentageConfig, string weightingKey, int userCount)
+                                                              EvaluationPercentageConfig percentageConfig, string weightingKey, int userCount,
+                                                              string fromUser = "")
         {
             double totalScore = 0;
             if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
                 int divide = 1;
-                if (userCount != 0)
+                if (userCount != 0 && string.IsNullOrEmpty(fromUser))
                 {
                     divide += 1;
                 }
-                totalScore = Math.Round((item.Score + score) / divide); 
+                totalScore = Math.Round((item.Score + score) / userCount);
             }
-            else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage);
+            else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey);
             return new SummaryEvaluationDetailViewModel
             {
                 KpiGroupId = item.KpiGroupId,
-                KpiId = item.KpiId,
+                KpiId = item.KpiId.HasValue ? item.KpiId : 0,
                 Score = totalScore,
                 Sequence = item.Sequence
             };

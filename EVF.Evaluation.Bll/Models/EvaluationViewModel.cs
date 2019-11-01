@@ -57,7 +57,7 @@ namespace EVF.Evaluation.Bll.Models
         [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
         public int? PeriodItemId { get; set; }
 
-        public int EvaluatorGroup { get; set; }
+        public int? EvaluatorGroup { get; set; }
         public string[] EvaluatorList { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedEvaluatorPurchase)]
         public string EvaluatorPurchasing { get; set; }

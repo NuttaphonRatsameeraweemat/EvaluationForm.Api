@@ -97,6 +97,7 @@ namespace EVF.Inbox.Bll
             var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
             var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
             var processCode = _unitOfWork.GetRepository<WorkflowProcess>().GetCache();
+            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache();
 
             foreach (var item in result)
             {
@@ -105,6 +106,7 @@ namespace EVF.Inbox.Bll
                     case ConstantValue.EvaluationProcessCode:
                         var temp = evaInfoList.FirstOrDefault(x => x.Id == item.DataId);
                         var template = templateList.FirstOrDefault(x => x.Id == temp.EvaluationTemplateId);
+                        item.DocNo = temp.DocNo;
                         item.TotalScore = temp.TotalScore.Value;
                         item.VendorName = vendorList.FirstOrDefault(x => x.VendorNo == temp.VendorNo)?.VendorName;
                         item.PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == temp.PurchasingOrg)?.PurchaseName;
@@ -112,6 +114,7 @@ namespace EVF.Inbox.Bll
                         item.ProcessName = processCode.FirstOrDefault(x => x.ProcessCode == item.ProcessCode)?.ProcessName;
                         item.GradeId = template.GradeId.Value;
                         item.EvaluationTemplateId = template.Id;
+                        item.WeightingKeyName = valueHelpList.FirstOrDefault(x => x.ValueKey == temp.WeightingKey)?.ValueText;
                         break;
                 }
             }

@@ -17,6 +17,7 @@ namespace EVF.Inbox.Bll.Models
         public int DataId { get; set; }
 
         //Display information
+        public string DocNo { get; set; }
         public string ProcessName { get; set; }
         public string VendorName { get; set; }
         public string PurchaseOrgName { get; set; }
@@ -24,6 +25,7 @@ namespace EVF.Inbox.Bll.Models
         public int GradeId { get; set; }
         public int EvaluationTemplateId { get; set; }
         public string GradeName { get; set; }
+        public string WeightingKeyName { get; set; }
         public DateTime ReceiveDate { get; set; }
     }
 }
