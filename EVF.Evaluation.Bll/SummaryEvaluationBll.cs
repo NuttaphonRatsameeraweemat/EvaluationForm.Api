@@ -70,7 +70,7 @@ namespace EVF.Evaluation.Bll
             var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrgItem>().GetCache(x => x.AdUser == _token.AdUser &&
                                                                                          x.Type == ConstantValue.PurchasingTypeAdmin)
                                                                                          .Select(x => x.PuchaseOrg).ToArray().Distinct();
-            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => purchaseOrg.Contains(x.PurchasingOrg) || 
+            return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => purchaseOrg.Contains(x.PurchasingOrg) ||
                                                                                                  x.CreateBy == _token.EmpNo));
         }
 
@@ -86,7 +86,7 @@ namespace EVF.Evaluation.Bll
                                                                                          x.Type == ConstantValue.PurchasingTypeAdmin)
                                                                                          .Select(x => x.PuchaseOrg).ToArray().Distinct();
             return this.MappingModel(_unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => (purchaseOrg.Contains(x.PurchasingOrg) ||
-                                                                                                 x.CreateBy == _token.EmpNo) && 
+                                                                                                 x.CreateBy == _token.EmpNo) &&
                                                                                                  x.PeriodItemId == periodItemId));
         }
 
@@ -177,9 +177,9 @@ namespace EVF.Evaluation.Bll
             var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
             var templateInfo = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault();
             var result = this.GetHeaderInformation(data);
-            result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value));
+            result.UserLists.AddRange(this.GetEvaluators(data.Id, templateInfo.CriteriaId.Value, data.WeightingKey));
             result.Summarys.AddRange(this.GetSummaryPoint(result.UserLists, data.EvaPercentageId.Value, data.WeightingKey));
-            result.Total = this.GetTotalScore(result.Summarys, data.WeightingKey);
+            result.Total = this.GetTotalScore(result.UserLists, data.WeightingKey, data.EvaPercentageId.Value);
             if (double.IsNaN(result.Total))
             {
                 result.Total = 0;
@@ -211,7 +211,7 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="evaluationId">The evaluation identity.</param>
         /// <returns></returns>
-        private IEnumerable<UserEvaluationViewModel> GetEvaluators(int evaluationId, int criteriaId)
+        private IEnumerable<UserEvaluationViewModel> GetEvaluators(int evaluationId, int criteriaId, string weigtingKey)
         {
             var result = new List<UserEvaluationViewModel>();
             var data = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == evaluationId);
@@ -224,6 +224,8 @@ namespace EVF.Evaluation.Bll
                 if (evaluator.IsAction)
                 {
                     evaluator.EvaluationLogs.AddRange(this.GetEvaluationLogs(evaluator.AdUser, evaluationId, criteriaId));
+                    evaluator.TotalScore = this.GetTotalScoreByUser(evaluator.EvaluationLogs.OrderByDescending(x => x.ActionDate).FirstOrDefault().EvaluationLogs
+                                                                    , weigtingKey);
                 }
                 result.Add(evaluator);
             }
@@ -394,7 +396,7 @@ namespace EVF.Evaluation.Bll
                     var userPoint = userResult.FirstOrDefault(x => x.KpiGroupId == item.KpiGroupId && x.KpiId == item.KpiId);
                     if (userPoint != null)
                     {
-                        uPoint = UtilityService.AverageScore(userPoint.Score, userCount);
+                        uPoint = UtilityService.AverageScore(userPoint.Score, userCount - 1);
                     }
                     result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey, userCount));
                 }
@@ -407,19 +409,48 @@ namespace EVF.Evaluation.Bll
         /// </summary>
         /// <param name="summaryEvaluations">The summary information.</param>
         /// <returns></returns>
-        private double GetTotalScore(IEnumerable<SummaryEvaluationDetailViewModel> summaryEvaluations, string weigtingKey)
+        private double GetTotalScore(IEnumerable<UserEvaluationViewModel> evaluations, string weigtingKey, int percentageId)
         {
             double result = 0;
-            var groupSummary = summaryEvaluations.Where(x => !x.KpiId.HasValue || x.KpiId == 0);
-            double rawTotalScore = groupSummary.Sum(x => x.Score);
+            if (!string.Equals(weigtingKey, "A2", StringComparison.OrdinalIgnoreCase))
+            {
+                var evaCount = evaluations.Where(x => x.EvaluationLogs.Count > 0);
+                result = evaluations.Sum(x => x.TotalScore) / evaCount.Count();
+            }
+            else
+            {
+                var percentageConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.Id == percentageId).FirstOrDefault();
+                var purEva = evaluations.FirstOrDefault(x => x.UserType == ConstantValue.UserTypePurchasing);
+                var userEva = evaluations.Where(x => x.UserType == ConstantValue.UserTypeEvaluator);
+                double userAverageScore = UtilityService.AverageScore(userEva.Sum(x => x.TotalScore), userEva.Count());
+                result = UtilityService.CalculateScore(purEva.TotalScore, userAverageScore,
+                                                       percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weigtingKey);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get total score summary.
+        /// </summary>
+        /// <param name="summaryEvaluations">The summary information.</param>
+        /// <returns></returns>
+        private double GetTotalScoreByUser(IEnumerable<UserEvaluationLogItemViewModel> userEvaluationDetailViewModel, string weigtingKey)
+        {
+            double result = 0;
+            var groupSummary = userEvaluationDetailViewModel.Where(x => !x.KpiId.HasValue || x.KpiId == 0);
+            double rawTotalScore = groupSummary.Sum(x => x.Score.Value);
             if (!string.Equals(weigtingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
                 result = rawTotalScore;
             }
             else
             {
-                int countKpiGroup = groupSummary.Count();
-                result = rawTotalScore / Convert.ToDouble(countKpiGroup);
+                double totalCal = 0;
+                foreach (var item in groupSummary)
+                {
+                    totalCal = totalCal + (item.Score.Value * item.MaxScore);
+                }
+                result = totalCal / 100;
             }
             return result;
         }
@@ -450,11 +481,6 @@ namespace EVF.Evaluation.Bll
             double totalScore = 0;
             if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
-                int divide = 1;
-                if (userCount != 0 && string.IsNullOrEmpty(fromUser))
-                {
-                    divide += 1;
-                }
                 totalScore = Math.Round((item.Score + score) / userCount);
             }
             else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey);

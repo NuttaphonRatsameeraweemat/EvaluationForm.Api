@@ -45,6 +45,7 @@ namespace EVF.Evaluation.Bll.Models
         public string ReasonReject { get; set; }
         public string FullName { get; set; }
         public string OrgName { get; set; }
+        public double TotalScore { get; set; }
         public List<UserEvaluationDetailViewModel> EvaluationLogs { get; set; }
     }
 
