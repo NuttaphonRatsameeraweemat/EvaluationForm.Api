@@ -33,6 +33,11 @@ namespace EVF.Helper
         private static readonly ILogger loggerError = LogManager.GetLogger("ErrorProfile");
 
         /// <summary>
+        /// The NLog logger debug object.
+        /// </summary>
+        private static readonly ILogger loggerDebug = LogManager.GetLogger("DebugProfile");
+
+        /// <summary>
         /// The NLog logger connection object.
         /// </summary>
         private static readonly ILogger loggerConnection = LogManager.GetLogger("ConnectionProfile");
@@ -57,7 +62,7 @@ namespace EVF.Helper
         /// <param name="message">The message.</param>
         public void LogDebug(string message)
         {
-            loggerInfo.Debug(message);
+            loggerDebug.Debug(message);
         }
 
         /// <summary>
