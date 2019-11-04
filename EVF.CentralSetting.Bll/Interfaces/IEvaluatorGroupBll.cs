@@ -18,7 +18,7 @@ namespace EVF.CentralSetting.Bll.Interfaces
         /// </summary>
         /// <param name="periodItems">The identity period item.</param>
         /// <returns></returns>
-        IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(int periodItems);
+        IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(string purchaseOrg);
         /// <summary>
         /// Get Detail of EvaluatorGroup.
         /// </summary>

@@ -26,5 +26,6 @@ namespace EVF.Data.Pocos
         public bool? IsUse { get; set; }
         [StringLength(4)]
         public string CreateByPurchaseOrg { get; set; }
+        public string ForPurchaseOrg { get; set; }
     }
 }

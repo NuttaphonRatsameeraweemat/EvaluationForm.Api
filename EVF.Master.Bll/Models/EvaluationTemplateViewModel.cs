@@ -22,6 +22,8 @@ namespace EVF.Master.Bll.Models
         public int? GradeId { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseSelectedLevelPoint)]
         public int? LevelPointId { get; set; }
+        [Required(ErrorMessage = MessageValue.PleaseSelectedPurchaseOrg)]
+        public string[] PurchaseOrgs { get; set; }
         public bool IsUse { get; set; }
     }
 

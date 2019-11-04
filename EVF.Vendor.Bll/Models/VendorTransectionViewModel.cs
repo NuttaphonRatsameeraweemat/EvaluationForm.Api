@@ -28,6 +28,13 @@ namespace EVF.Vendor.Bll.Models
         public string MaterialGrp { get; set; }
         public string UnitCode { get; set; }
         public double? QuantityReceived { get; set; }
+        public string QuantityReceivedText
+        {
+            get
+            {
+                return QuantityReceived.HasValue ? QuantityReceived.Value.ToString("n0") : "0";
+            }
+        }
         public double? TotalRecieved { get; set; }
         public string CompanyCode { get; set; }
         public string DocNumber { get; set; }

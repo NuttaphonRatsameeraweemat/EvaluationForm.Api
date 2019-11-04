@@ -385,7 +385,7 @@ namespace EVF.Evaluation.Bll
                     result.Add(this.InitialModel(new SummaryEvaluationDetailViewModel { KpiGroupId = item.KpiGroupId, KpiId = item.KpiId, Sequence = item.Sequence },
                                                  UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
                                                                                      percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey),
-                                                 percentageConfig, weightingKey, userCount, "fromUser"));
+                                                 percentageConfig, weightingKey, userCount));
                 }
             }
             else
@@ -422,9 +422,16 @@ namespace EVF.Evaluation.Bll
                 var percentageConfig = _unitOfWork.GetRepository<EvaluationPercentageConfig>().GetCache(x => x.Id == percentageId).FirstOrDefault();
                 var purEva = evaluations.FirstOrDefault(x => x.UserType == ConstantValue.UserTypePurchasing);
                 var userEva = evaluations.Where(x => x.UserType == ConstantValue.UserTypeEvaluator);
-                double userAverageScore = UtilityService.AverageScore(userEva.Sum(x => x.TotalScore), userEva.Count());
+                double userAverageScore = 0;
+                int[] percentage = new int[] { percentageConfig.PurchasePercentage, percentageConfig.UserPercentage };
+                if (userEva.Count() == 0)
+                {
+                    percentage[0] = 100; //purchase percentage calculate 100 percen when no user evaluation
+                    percentage[1] = 0; //user percentage
+                }
+                else userAverageScore = UtilityService.AverageScore(userEva.Sum(x => x.TotalScore), userEva.Count());
                 result = UtilityService.CalculateScore(purEva.TotalScore, userAverageScore,
-                                                       percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weigtingKey);
+                                                       percentage[1], percentage[0], weigtingKey);
             }
             return result;
         }
@@ -476,14 +483,23 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
                                                               EvaluationPercentageConfig percentageConfig, string weightingKey, int userCount,
-                                                              string fromUser = "")
+                                                              IEnumerable<SummaryEvaluationDetailViewModel> userResult = null)
         {
             double totalScore = 0;
             if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
                 totalScore = Math.Round((item.Score + score) / userCount);
             }
-            else totalScore = UtilityService.CalculateScore(item.Score, score, percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey);
+            else
+            {
+                int[] percentage = new int[] { percentageConfig.PurchasePercentage, percentageConfig.UserPercentage };
+                if (userResult == null)
+                {
+                    percentage[0] = 100; //purchase percentage calculate 100 percen when no user evaluation
+                    percentage[1] = 0; //user percentage
+                }
+                totalScore = UtilityService.CalculateScore(item.Score, score, percentage[1], percentage[0], weightingKey);
+            }
             return new SummaryEvaluationDetailViewModel
             {
                 KpiGroupId = item.KpiGroupId,
@@ -511,6 +527,7 @@ namespace EVF.Evaluation.Bll
                 IsAction = item.IsAction.Value,
                 UserType = item.UserType,
                 FullName = string.Format(ConstantValue.EmpTemplate, emp?.FirstnameTh, emp?.LastnameTh),
+                ReasonReject = item.ReasonReject,
                 OrgName = org?.OrgName
             };
         }

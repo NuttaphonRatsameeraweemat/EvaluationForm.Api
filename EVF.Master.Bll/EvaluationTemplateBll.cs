@@ -79,7 +79,9 @@ namespace EVF.Master.Bll
         public IEnumerable<EvaluationTemplateViewModel> GetList()
         {
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg),
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => (_token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) ||
+                                                                                 _token.PurchasingOrg.Contains(x.ForPurchaseOrg) ||
+                                                                                 _token.EmpNo == x.CreateBy),
                                                                             x => x.OrderBy(y => y.EvaluationTemplateName)));
         }
 
@@ -88,11 +90,11 @@ namespace EVF.Master.Bll
         /// </summary>
         /// <param name="weightingKey">The weighting key.</param>
         /// <returns></returns>
-        public IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey)
+        public IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey, string purchaseOrg)
         {
             var levelPointIds = this.GetLevelPointIds(weightingKey);
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) &&
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.ForPurchaseOrg.Contains(purchaseOrg) &&
                                                                                  levelPointIds.Contains(x.LevelPointId.Value),
                                                                             x => x.OrderBy(y => y.EvaluationTemplateName)));
         }
@@ -133,6 +135,10 @@ namespace EVF.Master.Bll
                 evaluationTemplate.CreateBy = _token.EmpNo;
                 evaluationTemplate.CreateDate = DateTime.Now;
                 evaluationTemplate.CreateByPurchaseOrg = _token.PurchasingOrg[0];
+                if (model.PurchaseOrgs != null)
+                {
+                    evaluationTemplate.ForPurchaseOrg = string.Join(",", model.PurchaseOrgs);
+                }
                 _unitOfWork.GetRepository<EvaluationTemplate>().Add(evaluationTemplate);
                 _unitOfWork.Complete();
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,

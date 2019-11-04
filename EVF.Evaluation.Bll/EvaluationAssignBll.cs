@@ -118,7 +118,7 @@ namespace EVF.Evaluation.Bll
             result.Add(this.InitialEvaluationAssign(evaluationId, empList.FirstOrDefault(x => x.Aduser == purchasingAdUser), ConstantValue.UserTypePurchasing));
             foreach (var item in userList)
             {
-                if (!result.Any(x=>x.AdUser == item))
+                if (!result.Any(x => x.AdUser == item))
                 {
                     var temp = empList.FirstOrDefault(x => x.Aduser == item);
                     result.Add(this.InitialEvaluationAssign(evaluationId, temp, ConstantValue.UserTypeEvaluator));
@@ -139,16 +139,16 @@ namespace EVF.Evaluation.Bll
 
             if (model.Id != 0)
             {
-                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().GetById(model.Id);
-                if (evaAssign != null && evaAssign.AdUser == model.ToAdUser)
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == model.EvaluationId && x.Id != model.Id);
+                if (evaAssign.Any(x => x.AdUser == model.ToAdUser))
                 {
                     result = UtilityService.InitialResultError(MessageValue.DuplicateEvaluationAssign, (int)System.Net.HttpStatusCode.BadRequest);
                 }
             }
             else
             {
-                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x=> x.EvaluationId == model.EvaluationId);
-                if (evaAssign.Any(x=>x.AdUser == model.ToAdUser))
+                var evaAssign = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == model.EvaluationId);
+                if (evaAssign.Any(x => x.AdUser == model.ToAdUser))
                 {
                     result = UtilityService.InitialResultError(MessageValue.DuplicateEvaluationAssign, (int)System.Net.HttpStatusCode.BadRequest);
                 }

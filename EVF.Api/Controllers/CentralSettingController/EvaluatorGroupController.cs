@@ -44,9 +44,9 @@ namespace EVF.Api.Controllers.CentralSettingController
 
         [HttpGet]
         [Route("GetEvaluatorGroups")]
-        public IActionResult GetEvaluatorGroups(int periodItemid)
+        public IActionResult GetEvaluatorGroups(string purchaseOrg)
         {
-            return Ok(_evaluatorGroup.GetEvaluatorGroups(periodItemid));
+            return Ok(_evaluatorGroup.GetEvaluatorGroups(purchaseOrg));
         }
 
         [HttpGet]

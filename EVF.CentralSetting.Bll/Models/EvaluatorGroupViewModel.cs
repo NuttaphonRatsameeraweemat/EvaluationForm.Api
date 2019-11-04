@@ -14,11 +14,6 @@ namespace EVF.CentralSetting.Bll.Models
         public int Id { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseFillEvaluatorGroupName)]
         public string EvaluatorGroupName { get; set; }
-        [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
-        public int? PeriodId { get; set; }
-        [Required(ErrorMessage = MessageValue.PleaseSelectedPeriod)]
-        public int? PeriodItemId { get; set; }
-        public string PeriodItemName { get; set; }
         public string[] AdUserList { get; set; }
     }
 }

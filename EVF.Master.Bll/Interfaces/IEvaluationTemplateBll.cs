@@ -18,7 +18,7 @@ namespace EVF.Master.Bll.Interfaces
         /// </summary>
         /// <param name="weightingKey">The weighting key.</param>
         /// <returns></returns>
-        IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey);
+        IEnumerable<EvaluationTemplateViewModel> GetListByWeightingKey(string weightingKey, string purchaseOrg);
         /// <summary>
         /// Get Detail of Evaluation Template.
         /// </summary>

@@ -17,9 +17,7 @@ namespace EVF.Data.Pocos
         [StringLength(11)]
         public string LastModifyBy { get; set; }
         public DateTime? LastModifyDate { get; set; }
-        [Column("PeriodItemID")]
-        public int? PeriodItemId { get; set; }
-        [Column("PeriodID")]
-        public int? PeriodId { get; set; }
+        [StringLength(4)]
+        public string CreateByPurchaseOrg { get; set; }
     }
 }

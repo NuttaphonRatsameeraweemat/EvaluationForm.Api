@@ -59,13 +59,8 @@ namespace EVF.CentralSetting.Bll
         public IEnumerable<EvaluatorGroupViewModel> GetList()
         {
             var data = _mapper.Map<IEnumerable<EvaluatorGroup>, IEnumerable<EvaluatorGroupViewModel>>(
-                _unitOfWork.GetRepository<EvaluatorGroup>().GetCache());
-            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache();
-            foreach (var item in data)
-            {
-                var temp = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId);
-                item.PeriodItemName = temp?.PeriodName;
-            }
+                _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x=> _token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) ||
+                                                                         x.CreateBy == _token.EmpNo));
             return data;
         }
 
@@ -74,16 +69,10 @@ namespace EVF.CentralSetting.Bll
         /// </summary>
         /// <param name="periodItems">The identity period item.</param>
         /// <returns></returns>
-        public IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(int periodItems)
+        public IEnumerable<EvaluatorGroupViewModel> GetEvaluatorGroups(string purchaseOrg)
         {
             var data = _mapper.Map<IEnumerable<EvaluatorGroup>, IEnumerable<EvaluatorGroupViewModel>>(
-                _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x=>x.PeriodItemId == periodItems));
-            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache();
-            foreach (var item in data)
-            {
-                var temp = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId);
-                item.PeriodItemName = temp?.PeriodName;
-            }
+                _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x=> x.CreateByPurchaseOrg == purchaseOrg));
             return data;
         }
 
@@ -112,6 +101,7 @@ namespace EVF.CentralSetting.Bll
                 var evaluatorGroup = _mapper.Map<EvaluatorGroupViewModel, EvaluatorGroup>(model);
                 evaluatorGroup.CreateBy = _token.EmpNo;
                 evaluatorGroup.CreateDate = DateTime.Now;
+                evaluatorGroup.CreateByPurchaseOrg = _token.PurchasingOrg[0];
                 _unitOfWork.GetRepository<EvaluatorGroup>().Add(evaluatorGroup);
                 _unitOfWork.Complete();
                 this.SaveItem(evaluatorGroup.Id, model.AdUserList);
@@ -151,8 +141,6 @@ namespace EVF.CentralSetting.Bll
             {
                 var data = _unitOfWork.GetRepository<EvaluatorGroup>().GetCache(x => x.Id == model.Id).FirstOrDefault();
                 data.EvaluatorGroupName = model.EvaluatorGroupName;
-                data.PeriodId = model.PeriodId;
-                data.PeriodItemId = model.PeriodItemId;
                 data.LastModifyBy = _token.EmpNo;
                 data.LastModifyDate = DateTime.Now;
                 _unitOfWork.GetRepository<EvaluatorGroup>().Update(data);
