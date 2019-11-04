@@ -78,11 +78,18 @@ namespace EVF.Master.Bll
         /// <returns></returns>
         public IEnumerable<EvaluationTemplateViewModel> GetList()
         {
-            return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => (_token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) ||
-                                                                                 _token.PurchasingOrg.Contains(x.ForPurchaseOrg) ||
-                                                                                 _token.EmpNo == x.CreateBy),
-                                                                            x => x.OrderBy(y => y.EvaluationTemplateName)));
+            var result = new List<EvaluationTemplateViewModel>();
+            var data = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => (_token.PurchasingOrg.Contains(x.CreateByPurchaseOrg) ||
+                                                                                      _token.EmpNo == x.CreateBy),
+                                                                            x => x.OrderBy(y => y.EvaluationTemplateName));
+            foreach (var item in data)
+            {
+                var temp = _mapper.Map<EvaluationTemplate, EvaluationTemplateViewModel>(item);
+                var purSpilt = item.ForPurchaseOrg != null ? item.ForPurchaseOrg.Split(',') : new string[] { };
+                temp.PurchaseOrgs = purSpilt;
+                result.Add(temp);
+            }
+            return result;
         }
 
         /// <summary>
@@ -166,6 +173,10 @@ namespace EVF.Master.Bll
                 evaluationTemplate.LevelPointId = model.LevelPointId;
                 evaluationTemplate.LastModifyBy = _token.EmpNo;
                 evaluationTemplate.LastModifyDate = DateTime.Now;
+                if (model.PurchaseOrgs != null)
+                {
+                    evaluationTemplate.ForPurchaseOrg = string.Join(",", model.PurchaseOrgs);
+                }
                 _unitOfWork.GetRepository<EvaluationTemplate>().Update(evaluationTemplate);
                 this.UpdateFlagUsing(evaluationTemplate.CriteriaId.Value, evaluationTemplate.GradeId.Value,
                                      evaluationTemplate.LevelPointId.Value, evaluationTemplate.Id, true);
