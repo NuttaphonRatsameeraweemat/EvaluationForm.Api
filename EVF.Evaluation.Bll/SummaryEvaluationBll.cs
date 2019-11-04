@@ -385,7 +385,7 @@ namespace EVF.Evaluation.Bll
                     result.Add(this.InitialModel(new SummaryEvaluationDetailViewModel { KpiGroupId = item.KpiGroupId, KpiId = item.KpiId, Sequence = item.Sequence },
                                                  UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
                                                                                      percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey),
-                                                 percentageConfig, weightingKey, userCount));
+                                                 percentageConfig, weightingKey, userCount, userResult));
                 }
             }
             else
@@ -398,7 +398,7 @@ namespace EVF.Evaluation.Bll
                     {
                         uPoint = UtilityService.AverageScore(userPoint.Score, userCount - 1);
                     }
-                    result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey, userCount));
+                    result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey, userCount, userResult));
                 }
             }
             return result;
