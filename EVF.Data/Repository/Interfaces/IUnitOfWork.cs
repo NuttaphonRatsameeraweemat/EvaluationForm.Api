@@ -8,6 +8,6 @@ namespace EVF.Data.Repository.Interfaces
     {
         IRepository<TPocoEntity> GetRepository<TPocoEntity>() where TPocoEntity : class;
         int Complete(TransactionScope scope = null);
-        Task<int> CompleteAsync();
+        Task<int> CompleteAsync(TransactionScope scope = null);
     }
 }

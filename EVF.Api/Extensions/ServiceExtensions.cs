@@ -182,6 +182,7 @@ namespace EVF.Api.Extensions
         public static void ConfigureUtilityBll(this IServiceCollection services)
         {
             services.AddScoped<ICacheBll, CacheBll>();
+            services.AddScoped<IEvaluationJobBll, EvaluationJobBll>();
         }
 
         /// <summary>

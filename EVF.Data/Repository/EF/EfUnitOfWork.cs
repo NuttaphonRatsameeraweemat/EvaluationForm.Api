@@ -101,13 +101,21 @@ namespace EVF.Data.Repository.EF
         /// </summary>
         /// <returns>The number of objects written to the underlying database.</returns>
         /// <exception cref="System.ObjectDisposedException">When object has been disposed.</exception>
-        public async Task<int> CompleteAsync()
+        public async Task<int> CompleteAsync(TransactionScope scope = null)
         {
             if (_disposed)
             {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
-            return await _context.SaveChangesAsync();
+
+            int dbContextSave = await _context.SaveChangesAsync();
+
+            if (scope != null)
+            {
+                scope.Complete();
+            }
+
+            return dbContextSave;
         }
 
         /// <summary>
