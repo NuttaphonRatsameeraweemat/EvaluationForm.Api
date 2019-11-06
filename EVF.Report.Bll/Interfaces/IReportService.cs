@@ -7,6 +7,11 @@ namespace EVF.Report.Bll.Interfaces
 {
     public interface IReportService
     {
-        ResponseFileModel Try();
+        /// <summary>
+        /// Call service export vendor evaluation pdf report.
+        /// </summary>
+        /// <param name="model">The request information model for export report.</param>
+        /// <returns></returns>
+        ResponseFileModel CallVendorEvaluationReport(VendorEvaluationRequestModel model);
     }
 }

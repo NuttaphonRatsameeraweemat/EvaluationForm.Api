@@ -60,16 +60,16 @@ namespace EVF.Api.Controllers.ReportController
         [Route("PreviewFile")]
         public IActionResult PreviewFile()
         {
-            var result = _report.Try();
+            var result = _vendorEvaluationReport.EvaluationExportReport(6);
             Response.Headers.Add("Content-Disposition", "inline; filename=" + result.FileName);
             return File(result.FileContent, "application/pdf");
         }
 
         [HttpGet]
-        [Route("DownloadFile")]
-        public IActionResult DownloadFile()
+        [Route("DownloadFile/{id}")]
+        public IActionResult DownloadFile(int id)
         {
-            var result = _report.Try();
+            var result = _vendorEvaluationReport.EvaluationExportReport(id);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);
             return File(result.FileContent, "application/octet-stream");
         }

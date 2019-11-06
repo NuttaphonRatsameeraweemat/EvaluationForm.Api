@@ -71,6 +71,8 @@ namespace EVF.Helper.Components
         //ElasticSearch Index and type.
         public const string VendorTransactionType = "vendortransaction_type";
         public const string VendorTransactionIndex = "vendortransaction_index";
+        //Report Template Process Code.
+        public const string VendorEvaluationReportProcess = "VendorEvaluationReport";
         //Activity Workflow
         public const string ActivityRequest = "SendRequest";
         public const string ActivityApprove = "Approve";

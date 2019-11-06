@@ -42,6 +42,7 @@ namespace EVF.Data
         public virtual DbSet<GradeItem> GradeItem { get; set; }
         public virtual DbSet<HolidayCalendar> HolidayCalendar { get; set; }
         public virtual DbSet<Hrcompany> Hrcompany { get; set; }
+        public virtual DbSet<HrcompanyAddress> HrcompanyAddress { get; set; }
         public virtual DbSet<Hremployee> Hremployee { get; set; }
         public virtual DbSet<Hrorg> Hrorg { get; set; }
         public virtual DbSet<HrorgRelation> HrorgRelation { get; set; }
@@ -56,6 +57,7 @@ namespace EVF.Data
         public virtual DbSet<PurGroupWeightingKey> PurGroupWeightingKey { get; set; }
         public virtual DbSet<PurchaseOrg> PurchaseOrg { get; set; }
         public virtual DbSet<PurchaseOrgItem> PurchaseOrgItem { get; set; }
+        public virtual DbSet<ReportTemplate> ReportTemplate { get; set; }
         public virtual DbSet<SapFields> SapFields { get; set; }
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<ValueHelp> ValueHelp { get; set; }
@@ -104,9 +106,17 @@ namespace EVF.Data
             modelBuilder.Entity<Hrcompany>(entity =>
             {
                 entity.HasKey(e => e.ComCode)
-                    .HasName("HRCompany_pkey");
+                    .HasName("PK__HRCompan__5BCA59DDA6CD6C99");
 
                 entity.Property(e => e.ComCode).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<HrcompanyAddress>(entity =>
+            {
+                entity.HasKey(e => e.SapComCode)
+                    .HasName("PK__HRCompan__5D8EACD0D25611AA");
+
+                entity.Property(e => e.SapComCode).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<Hremployee>(entity =>
@@ -159,6 +169,14 @@ namespace EVF.Data
                     .HasName("PK__Purchase__A58DDCA0F9A98ACA");
             });
 
+            modelBuilder.Entity<ReportTemplate>(entity =>
+            {
+                entity.HasKey(e => e.ProcessCode)
+                    .HasName("PK__ReportTe__721D77A43314AA1F");
+
+                entity.Property(e => e.ProcessCode).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<ValueHelp>(entity =>
             {
                 entity.HasKey(e => new { e.ValueType, e.ValueKey })
@@ -184,6 +202,8 @@ namespace EVF.Data
                 entity.Property(e => e.DocNumber).IsUnicode(false);
 
                 entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.ElasticStatus).IsUnicode(false);
 
                 entity.Property(e => e.Free).IsUnicode(false);
 

@@ -385,7 +385,7 @@ namespace EVF.Evaluation.Bll
                     result.Add(this.InitialModel(new SummaryEvaluationDetailViewModel { KpiGroupId = item.KpiGroupId, KpiId = item.KpiId, Sequence = item.Sequence },
                                                  UtilityService.CalculateScore(0, UtilityService.AverageScore(item.Score, userCount),
                                                                                      percentageConfig.UserPercentage, percentageConfig.PurchasePercentage, weightingKey),
-                                                 percentageConfig, weightingKey, userCount, userResult));
+                                                 percentageConfig, weightingKey, userCount, userResult, "fromUser"));
                 }
             }
             else
@@ -396,7 +396,11 @@ namespace EVF.Evaluation.Bll
                     var userPoint = userResult.FirstOrDefault(x => x.KpiGroupId == item.KpiGroupId && x.KpiId == item.KpiId);
                     if (userPoint != null)
                     {
-                        uPoint = UtilityService.AverageScore(userPoint.Score, userCount - 1);
+                        if (string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
+                        {
+                            uPoint = UtilityService.AverageScore(userPoint.Score, userCount - 1);
+                        }
+                        else uPoint = userPoint.Score;
                     }
                     result.Add(this.InitialModel(item, uPoint, percentageConfig, weightingKey, userCount, userResult));
                 }
@@ -483,12 +487,13 @@ namespace EVF.Evaluation.Bll
         /// <returns></returns>
         private SummaryEvaluationDetailViewModel InitialModel(SummaryEvaluationDetailViewModel item, double score,
                                                               EvaluationPercentageConfig percentageConfig, string weightingKey, int userCount,
-                                                              IEnumerable<SummaryEvaluationDetailViewModel> userResult = null)
+                                                              IEnumerable<SummaryEvaluationDetailViewModel> userResult = null,
+                                                              string fromUser = "")
         {
             double totalScore = 0;
             if (!string.Equals(weightingKey, "A2", StringComparison.OrdinalIgnoreCase))
             {
-                totalScore = Math.Round((item.Score + score) / userCount);
+                totalScore = Math.Round(UtilityService.AverageScore((item.Score + score), userCount));
             }
             else
             {

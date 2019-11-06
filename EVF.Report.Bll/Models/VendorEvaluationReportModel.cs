@@ -14,6 +14,8 @@ namespace EVF.Report.Bll.Models
 
         public string CompanyNameTh { get; set; }
         public string CompanyNameEn { get; set; }
+        public string CompanyAddressTh { get; set; }
+        public string CompanyAddressEn { get; set; }
         public string DocNo { get; set; }
         public string PrintDate { get; set; }
         public string PeriodName { get; set; }

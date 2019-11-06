@@ -18,5 +18,11 @@ namespace EVF.Report.Bll.Interfaces
         /// <param name="periodItemId">The period item identity target.</param>
         /// <returns></returns>
         IEnumerable<EvaluationReportViewModel> GetList(int periodItemId);
+        /// <summary>
+        /// Export vendor evaluation report
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        ResponseFileModel EvaluationExportReport(int id);
     }
 }

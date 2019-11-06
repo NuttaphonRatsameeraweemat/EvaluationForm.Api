@@ -17,7 +17,7 @@ namespace EVF.Master.Bll.Models
         [Range(0, 100, ErrorMessage = MessageValue.GradePointOverRange)]
         public int? EndPoint { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseFillGradeNameTh)]
-        [MaxLength(100, ErrorMessage = MessageValue.GradeNameOverLength)]
+        [MaxLength(250, ErrorMessage = MessageValue.GradeNameOverLength)]
         public string GradeNameTh { get; set; }
         [Required(ErrorMessage = MessageValue.PleaseFillGradeNameEn)]
         [MaxLength(100, ErrorMessage = MessageValue.GradeNameOverLength)]
