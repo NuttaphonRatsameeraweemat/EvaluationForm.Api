@@ -53,7 +53,7 @@ namespace EVF.Report.Bll
 
         public void ExportSummaryReport(EvaluationSummaryReportRequestModel model)
         {
-
+            this.GetData(model);
         }
 
         private void GetData(EvaluationSummaryReportRequestModel model)
@@ -69,6 +69,11 @@ namespace EVF.Report.Bll
 
         }
 
+        /// <summary>
+        /// Build dynamic where clause with criteria value.
+        /// </summary>
+        /// <param name="model">The criteria value.</param>
+        /// <returns></returns>
         private Expression<Func<Data.Pocos.Evaluation, bool>> BuildDynamicWhereClause(EvaluationSummaryReportRequestModel model)
         {
             // simple method to dynamically plugin a where clause

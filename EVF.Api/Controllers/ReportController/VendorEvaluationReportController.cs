@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EVF.Report.Bll.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,7 @@ namespace EVF.Api.Controllers.ReportController
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class VendorEvaluationReportController : ControllerBase
     {
 
@@ -55,16 +57,7 @@ namespace EVF.Api.Controllers.ReportController
         {
             return Ok(_vendorEvaluationReport.GetList(periodItemId));
         }
-
-        [HttpGet]
-        [Route("PreviewFile")]
-        public IActionResult PreviewFile()
-        {
-            var result = _vendorEvaluationReport.EvaluationExportReport(6);
-            Response.Headers.Add("Content-Disposition", "inline; filename=" + result.FileName);
-            return File(result.FileContent, "application/pdf");
-        }
-
+        
         [HttpGet]
         [Route("DownloadFile/{id}")]
         public IActionResult DownloadFile(int id)

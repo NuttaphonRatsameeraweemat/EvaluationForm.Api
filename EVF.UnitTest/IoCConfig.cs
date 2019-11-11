@@ -25,6 +25,8 @@ using EVF.Workflow.Bll.Interfaces;
 using EVF.Workflow.Bll;
 using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll;
+using EVF.Report.Bll.Interfaces;
+using EVF.Report.Bll;
 
 namespace EVF.UnitTest
 {
@@ -56,6 +58,7 @@ namespace EVF.UnitTest
             this.ConfigureAuthorizationBll(services);
             this.ConfigureHrBll(services);
             this.ConfigureCentralSettingBll(services);
+            this.ConfigureReportBll(services);
             this.ConfigureComponent(services);
             this.ConfigureHttpContextAccessor(services);
             this.ConfigureLoggerService(services);
@@ -186,6 +189,17 @@ namespace EVF.UnitTest
             services.AddScoped<IVendorBll, VendorBll>();
             services.AddScoped<IVendorFilterBll, VendorFilterBll>();
             services.AddScoped<IVendorTransectionBll, VendorTransectionBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Inbox Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureReportBll(IServiceCollection services)
+        {
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IVendorEvaluationReportBll, VendorEvaluationReportBll>();
+            services.AddScoped<IEvaluationSummaryReportBll, EvaluationSummaryReportBll>();
         }
 
         /// <summary>

@@ -156,7 +156,9 @@ namespace EVF.Report.Bll
 
             var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
             var company = _unitOfWork.GetRepository<HrcompanyAddress>().GetCache(x => x.SapComCode == data.ComCode).FirstOrDefault();
-            var gradePoint = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.StartPoint <= data.TotalScore && x.EndPoint >= data.TotalScore).FirstOrDefault();
+            var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.EvaluationTemplateId).FirstOrDefault();
+            var gradePoint = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == evaluationTemplate.GradeId &&
+                                                                                   x.StartPoint <= data.TotalScore && x.EndPoint >= data.TotalScore).FirstOrDefault();
             //Get summary kpi and kpi group score.
             var scoreSummary = _summaryEvaluation.GetDetail(id);
             //Get report template.
@@ -178,7 +180,7 @@ namespace EVF.Report.Bll
                 CompanyNameEn = company.NameEn,
                 CompanyAddressTh = this.GetCompanyAddress(company, "TH"),
                 CompanyAddressEn = this.GetCompanyAddress(company, "EN"),
-                KpiGroups = this.GetKpiGroupCollection(data.EvaluationTemplateId.Value, data.WeightingKey, scoreSummary).ToList(),
+                KpiGroups = this.GetKpiGroupCollection(evaluationTemplate, data.WeightingKey, scoreSummary).ToList(),
                 ApproveBy = approveInfo[0],
                 PositionName = approveInfo[1]
             };
@@ -249,7 +251,7 @@ namespace EVF.Report.Bll
             List<string> result = new List<string>();
             var processInstance = _unitOfWork.GetRepository<WorkflowProcessInstance>().Get(x => x.DataId == id &&
                                                                                                 x.ProcessCode == ConstantValue.EvaluationProcessCode)
-                                                                                      .FirstOrDefault();
+                                                                                      .OrderByDescending(x => x.ProcessInstanceId).FirstOrDefault();
 
             var workflowFinalStep = _unitOfWork.GetRepository<WorkflowActivityLog>().Get(x => x.ProcessInstanceId == processInstance.ProcessInstanceId &&
                                                                                         x.Step > 1)
@@ -278,11 +280,10 @@ namespace EVF.Report.Bll
         /// <param name="weigthingKey">The weigthing key for maximun max score.</param>
         /// <param name="summary">The summary detail evaluation.</param>
         /// <returns></returns>
-        private IEnumerable<VendorEvaluationRequestItemModel> GetKpiGroupCollection(int templateId, string weigthingKey,
+        private IEnumerable<VendorEvaluationRequestItemModel> GetKpiGroupCollection(EvaluationTemplate templateInfo, string weigthingKey,
                                                                                     SummaryEvaluationViewModel summary)
         {
 
-            var templateInfo = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == templateId).FirstOrDefault();
             var criteriaInfo = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == templateInfo.CriteriaId).FirstOrDefault();
             var criteriaGroups = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteriaInfo.Id);
             var kpiGroups = _unitOfWork.GetRepository<KpiGroup>().GetCache();
