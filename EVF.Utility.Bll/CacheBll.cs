@@ -45,6 +45,7 @@ namespace EVF.Utility.Bll
             this.ReCacheMaster();
             this.ReCacheCentralSetting();
             this.ReCacheAuthorization();
+            this.RecacheUtility();
             //End recache.
             var endTime = DateTime.Now;
             var diffTime = endTime - startTime;
@@ -60,6 +61,7 @@ namespace EVF.Utility.Bll
         {
             _unitOfWork.GetRepository<Hremployee>().ReCache();
             _unitOfWork.GetRepository<Hrcompany>().ReCache();
+            _unitOfWork.GetRepository<HrcompanyAddress>().ReCache();
             _unitOfWork.GetRepository<Hrorg>().ReCache();
             _unitOfWork.GetRepository<HrorgRelation>().ReCache();
             _unitOfWork.GetRepository<Hrposition>().ReCache();
@@ -121,6 +123,15 @@ namespace EVF.Utility.Bll
             _unitOfWork.GetRepository<AppCompositeRoleItem>().ReCache();
             _unitOfWork.GetRepository<AppMenu>().ReCache();
             _unitOfWork.GetRepository<UserRoles>().ReCache();
+        }
+
+        /// <summary>
+        /// Re all cache table utlity.
+        /// </summary>
+        private void RecacheUtility()
+        {
+            _unitOfWork.GetRepository<EmailTemplate>().ReCache();
+            _unitOfWork.GetRepository<ReportTemplate>().ReCache();
         }
 
         #endregion
