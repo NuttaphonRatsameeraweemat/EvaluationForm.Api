@@ -27,6 +27,8 @@ using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll;
+using EVF.Utility.Bll.Interfaces;
+using EVF.Utility.Bll;
 
 namespace EVF.UnitTest
 {
@@ -59,6 +61,7 @@ namespace EVF.UnitTest
             this.ConfigureHrBll(services);
             this.ConfigureCentralSettingBll(services);
             this.ConfigureReportBll(services);
+            this.ConfigureUtilityBll(services);
             this.ConfigureComponent(services);
             this.ConfigureHttpContextAccessor(services);
             this.ConfigureLoggerService(services);
@@ -168,6 +171,16 @@ namespace EVF.UnitTest
             services.AddScoped<IEvaluationLogBll, EvaluationLogBll>();
             services.AddScoped<ISummaryEvaluationBll, SummaryEvaluationBll>();
             services.AddScoped<IEvaluationSapResultBll, EvaluationSapResultBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Inbox Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureUtilityBll(IServiceCollection services)
+        {
+            services.AddScoped<ICacheBll, CacheBll>();
+            services.AddScoped<IEvaluationJobBll, EvaluationJobBll>();
         }
 
         /// <summary>
