@@ -56,10 +56,10 @@ namespace EVF.Inbox.Bll
             {
                 case ConstantValue.EvaluationProcessCode:
                     result = _summaryEvaluation.SubmitAction(this.InitialWorkflowViewModel(model, action));
-                    System.Threading.Tasks.Task.Run(() =>
+                    if (string.Equals(action, ConstantValue.WorkflowActionApprove))
                     {
                         _evaluationSapResult.Save(model.DataId);
-                    });
+                    }
                     break;
             }
             return result;

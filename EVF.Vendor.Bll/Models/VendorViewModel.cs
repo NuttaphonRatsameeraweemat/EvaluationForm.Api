@@ -37,4 +37,10 @@ namespace EVF.Vendor.Bll.Models
         public string MobileNo { get; set; }
     }
 
+    public class VendorSearchModel
+    {
+        public string VendorNo { get; set; }
+        public string VendorName { get; set; }
+    }
+
 }

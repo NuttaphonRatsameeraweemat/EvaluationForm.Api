@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -9,6 +10,7 @@ using EVF.Vendor.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Transactions;
 
@@ -64,6 +66,40 @@ namespace EVF.Vendor.Bll
         }
 
         /// <summary>
+        /// Get Vendor list.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<VendorViewModel> GetListServerSide(TableServerSideModel<VendorSearchModel> model, out int totalCount)
+        {
+            var data = this.FilterSearch(_unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(), model.SearchProperty);
+            totalCount = data.Count();
+            var result = _mapper.Map<IEnumerable<Data.Pocos.Vendor>, IEnumerable<VendorViewModel>>(data.Skip(model.Skip).Take(model.Take));
+            return result;
+        }
+
+        /// <summary>
+        /// Filter vendor data by criteria search value.
+        /// </summary>
+        /// <param name="data">The vendor collection data.</param>
+        /// <param name="search">The criteria value search.</param>
+        /// <returns></returns>
+        private IEnumerable<Data.Pocos.Vendor> FilterSearch(IEnumerable<Data.Pocos.Vendor> data, VendorSearchModel search)
+        {
+            if (search != null)
+            {
+                if (!string.IsNullOrEmpty(search.VendorNo))
+                {
+                    data = data.Where(s => s.VendorNo.Contains(search.VendorNo));
+                }
+                if (!string.IsNullOrEmpty(search.VendorName))
+                {
+                    data = data.Where(s => s.VendorName.Contains(search.VendorName));
+                }
+            }
+            return data;
+        }
+
+        /// <summary>
         /// Get Detail of Vendor.
         /// </summary>
         /// <param name="vendorNo">The identity Vendor.</param>
@@ -113,7 +149,7 @@ namespace EVF.Vendor.Bll
             var labels = new List<string>();
             var periods = _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderBy(y => y.Year)).Take(5);
             var periodIds = periods.Select(x => x.Id).ToArray();
-            var periodItems = _unitOfWork.GetRepository<PeriodItem>().GetCache(x=> periodIds.Contains(x.PeriodId.Value));
+            var periodItems = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => periodIds.Contains(x.PeriodId.Value));
             var evaluations = _unitOfWork.GetRepository<Evaluation>().Get(x => x.VendorNo == vendorNo && x.Status == ConstantValue.WorkflowStatusApproved);
             foreach (var item in periodItems)
             {

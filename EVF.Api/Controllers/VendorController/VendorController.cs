@@ -1,4 +1,5 @@
-﻿using EVF.Vendor.Bll.Interfaces;
+﻿using EVF.Helper.Models;
+using EVF.Vendor.Bll.Interfaces;
 using EVF.Vendor.Bll.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,18 @@ namespace EVF.Api.Controllers.VendorController
         public IActionResult GetList()
         {
             return Ok(_vendor.GetList());
+        }
+
+        [HttpGet]
+        [Route("GetListServerSide")]
+        public IActionResult GetListServerSide([FromQuery]TableServerSideModel<VendorSearchModel> model)
+        {
+            var result = _vendor.GetListServerSide(model, out int totalCount);
+            return Ok(new
+            {
+                Data = result,
+                Total = totalCount
+            });
         }
 
         [HttpGet]

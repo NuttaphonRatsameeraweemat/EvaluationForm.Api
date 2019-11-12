@@ -14,6 +14,11 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<VendorViewModel> GetList();
         /// <summary>
+        /// Get Vendor list.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<VendorViewModel> GetListServerSide(TableServerSideModel<VendorSearchModel> model, out int totalCount);
+        /// <summary>
         /// Get Detail of Vendor.
         /// </summary>
         /// <param name="vendorNo">The identity Vendor.</param>
