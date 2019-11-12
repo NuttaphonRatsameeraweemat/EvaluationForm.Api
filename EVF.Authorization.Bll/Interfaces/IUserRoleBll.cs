@@ -14,6 +14,12 @@ namespace EVF.Authorization.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<UserRoleViewModel> GetList();
         /// <summary>
+        /// Get user list server side.
+        /// </summary>
+        /// <param name="model">The table server side model.</param>
+        /// <returns></returns>
+        IEnumerable<UserRoleViewModel> GetListServerSide(TableServerSideModel<UserRoleSearchModel> model, out int totalCount);
+        /// <summary>
         /// Get user detail and roles.
         /// </summary>
         /// <param name="adUser">The identity user.</param>

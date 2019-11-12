@@ -2,6 +2,7 @@
 using EVF.Authorization.Bll.Models;
 using EVF.Helper;
 using EVF.Helper.Components;
+using EVF.Helper.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,18 @@ namespace EVF.Api.Controllers
         public IActionResult GetList()
         {
             return Ok(_userRole.GetList());
+        }
+
+        [HttpGet]
+        [Route("GetListServerSide")]
+        public IActionResult GetListServerSide([FromQuery]TableServerSideModel<UserRoleSearchModel> model)
+        {
+            var data = _userRole.GetListServerSide(model, out int totalCount);
+            return Ok(new
+            {
+                Data = data,
+                total = totalCount
+            });
         }
 
         [HttpGet]

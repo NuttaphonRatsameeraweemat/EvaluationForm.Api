@@ -133,9 +133,57 @@ namespace EVF.Authorization.Bll
         /// <returns></returns>
         public IEnumerable<UserRoleViewModel> GetList()
         {
-            var result = new List<UserRoleViewModel>();
-            result = _mapper.Map<IEnumerable<Hremployee>, IEnumerable<UserRoleViewModel>>(
-                _unitOfWork.GetRepository<Hremployee>().GetCache()).ToList();
+            var result = this.InitialUserRole(_mapper.Map<IEnumerable<Hremployee>, IEnumerable<UserRoleViewModel>>(
+                _unitOfWork.GetRepository<Hremployee>().GetCache()));
+            return result;
+        }
+
+        /// <summary>
+        /// Get user list server side.
+        /// </summary>
+        /// <param name="model">The table server side model.</param>
+        /// <returns></returns>
+        public IEnumerable<UserRoleViewModel> GetListServerSide(TableServerSideModel<UserRoleSearchModel> model, out int totalCount)
+        {
+            var result = this.FilterSearch(_mapper.Map<IEnumerable<Hremployee>, IEnumerable<UserRoleViewModel>>(
+                _unitOfWork.GetRepository<Hremployee>().GetCache()), model.SearchProperty);
+            totalCount = result.Count();
+            return this.InitialUserRole(result);
+        }
+
+        /// <summary>
+        /// Filter search user role criteria value.
+        /// </summary>
+        /// <param name="model">The user role collection data.</param>
+        /// <param name="search">The criteria search value.</param>
+        /// <returns></returns>
+        private IEnumerable<UserRoleViewModel> FilterSearch(IEnumerable<UserRoleViewModel> model, UserRoleSearchModel search)
+        {
+            if (search != null)
+            {
+                if (!string.IsNullOrEmpty(search.EmpNo))
+                {
+                    model = model.Where(x => x.EmpNo.Contains(search.EmpNo));
+                }
+                if (!string.IsNullOrEmpty(search.FirstNameTh))
+                {
+                    model = model.Where(x => x.FirstnameTH != null && x.FirstnameTH.Contains(search.FirstNameTh));
+                }
+                if (!string.IsNullOrEmpty(search.LastNameTh))
+                {
+                    model = model.Where(x => x.LastnameTH != null && x.LastnameTH.Contains(search.LastNameTh));
+                }
+            }
+            return model;
+        }
+
+        /// <summary>
+        /// Initial User role model for informatino display.
+        /// </summary>
+        /// <param name="result">The user role collection data.</param>
+        /// <returns></returns>
+        private IEnumerable<UserRoleViewModel> InitialUserRole(IEnumerable<UserRoleViewModel> result)
+        {
             var roles = _unitOfWork.GetRepository<UserRoles>().GetCache();
             var orgList = _unitOfWork.GetRepository<Hrorg>().GetCache();
             foreach (var item in result)

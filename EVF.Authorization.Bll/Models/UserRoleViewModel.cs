@@ -34,4 +34,11 @@ namespace EVF.Authorization.Bll.Models
         public string AdUser { get; set; }
     }
 
+    public class UserRoleSearchModel
+    {
+        public string EmpNo { get; set; }
+        public string FirstNameTh { get; set; }
+        public string LastNameTh { get; set; }
+    }
+
 }
