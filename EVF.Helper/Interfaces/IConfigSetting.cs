@@ -39,6 +39,14 @@ namespace EVF.Helper.Interfaces
         /// </summary>
         string SmtpPassword { get; }
         /// <summary>
+        /// Get SMTP Sender Email.
+        /// </summary>
+        string SmtpSender { get; }
+        /// <summary>
+        /// Get SMTP Sender Name.
+        /// </summary>
+        string SmtpSenderName { get; }
+        /// <summary>
         /// Get Json Web Token Config Issuer value.
         /// </summary>
         string JwtIssuer { get; }

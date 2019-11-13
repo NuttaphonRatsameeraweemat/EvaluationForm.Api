@@ -6,5 +6,7 @@ namespace EVF.Email.Bll.Interfaces
 {
     public interface ISummaryEmailTaskBll
     {
+        void ExecuteEmailTaskWaiting();
+        void ProcessSummaryTask();
     }
 }

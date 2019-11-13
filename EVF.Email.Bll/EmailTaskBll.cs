@@ -59,6 +59,21 @@ namespace EVF.Email.Bll
         }
 
         /// <summary>
+        /// Update email task status.
+        /// </summary>
+        /// <param name="ids">The email task identitys.</param>
+        /// <param name="status">The status change.</param>
+        public void UpdateEmailTaskStatus(int[] ids, string status)
+        {
+            using (var scope = new TransactionScope())
+            {
+                var emailTask = _unitOfWork.GetRepository<EmailTask>().Get(x => ids.Contains(x.Id));
+                emailTask.Select(c => { c.Status = status; return c; }).ToList();
+                _unitOfWork.Complete(scope);
+            }
+        }
+
+        /// <summary>
         /// Save email task.
         /// </summary>
         /// <param name="model">The email task information.</param>

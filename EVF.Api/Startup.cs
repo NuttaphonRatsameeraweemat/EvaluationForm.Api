@@ -34,6 +34,7 @@ namespace EVF.Api
             services.ConfigureInboxBll();
             services.ConfigureUtilityBll();
             services.ConfigureReportBll();
+            services.ConfigureEmailBll();
             //Add Configure Extension.
             services.ConfigureHttpContextAccessor();
             services.ConfigureLoggerService();

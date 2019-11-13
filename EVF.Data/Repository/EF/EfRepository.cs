@@ -85,7 +85,7 @@ namespace EVF.Data.Repository.EF
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             params string[] includeProperties)
         {
-            return GetQueryable(filter, orderBy, includeProperties).FromCache(typeof(TEntity).Name).ToList();
+            return GetQueryableCache(filter, orderBy, includeProperties).ToList();
         }
 
         /// <summary>
@@ -141,6 +141,37 @@ namespace EVF.Data.Repository.EF
             params string[] includeProperties)
         {
             IQueryable<TEntity> result = _dbSet;
+
+            // For filter.
+            if (filter != null)
+            {
+                result = result.Where(filter);
+            }
+
+            // For include properties.
+            result = includeProperties.Aggregate(
+                result,
+                (current, includeProperty) => current.Include(includeProperty)
+            );
+
+            // Returns with checking ordering.
+            return (orderBy != null) ? orderBy(result) : result;
+        }
+
+        /// <summary>
+        /// Gets the query that allow outside to execute a query by them self, IQuery will not get data from database
+        /// it will waiting when called methods that will the collection or object then will connect to database and get the data.
+        /// </summary>
+        /// <param name="filter">The filter data.</param>
+        /// <param name="orderBy">The ordering data.</param>
+        /// <param name="includeProperties">The collection of property names of related poco entity for including data.</param>
+        /// <returns> <see cref="System.Linq.IQueryable"/> </returns>
+        public IQueryable<TEntity> GetQueryableCache(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            params string[] includeProperties)
+        {
+            IQueryable<TEntity> result = _dbSet.FromCache(typeof(TEntity).Name).AsQueryable();
 
             // For filter.
             if (filter != null)

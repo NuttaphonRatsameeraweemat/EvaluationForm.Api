@@ -73,6 +73,14 @@ namespace EVF.Helper
         /// </summary>
         public string SmtpPassword => this.GetAppSetting("SMTP:Password");
         /// <summary>
+        /// Get SMTP Sender Email.
+        /// </summary>
+        public string SmtpSender => this.GetAppSetting("SMTP:EmailSender");
+        /// <summary>
+        /// Get SMTP Sender Name.
+        /// </summary>
+        public string SmtpSenderName => this.GetAppSetting("SMTP:EmailSenderName");
+        /// <summary>
         /// Get Json Web Token Config Issuer value.
         /// </summary>
         public string JwtIssuer => this.GetAppSetting("Jwt:Issuer");

@@ -29,6 +29,8 @@ using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll;
 using EVF.Utility.Bll.Interfaces;
 using EVF.Utility.Bll;
+using EVF.Email.Bll.Interfaces;
+using EVF.Email.Bll;
 
 namespace EVF.UnitTest
 {
@@ -68,6 +70,8 @@ namespace EVF.UnitTest
             this.ConfigureEvaluationBll(services);
             this.ConfigureWorkflowBll(services);
             this.ConfigureVendorBll(services);
+            this.ConfigureEmailBll(services);
+            this.ConfigureEmailService(services);
 
             ServiceProvider = services.BuildServiceProvider();
         }
@@ -216,6 +220,16 @@ namespace EVF.UnitTest
         }
 
         /// <summary>
+        /// Dependency Injection Email Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureEmailBll(IServiceCollection services)
+        {
+            services.AddScoped<IEmailTaskBll, EmailTaskBll>();
+            services.AddScoped<ISummaryEmailTaskBll, SummaryEmailTaskBll>();
+        }
+
+        /// <summary>
         /// Register service components class.
         /// </summary>
         /// <param name="services">The service collection.</param>
@@ -245,6 +259,15 @@ namespace EVF.UnitTest
         private void ConfigureLoggerService(IServiceCollection services)
         {
             services.AddSingleton<ILoggerManager, LoggerManager>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Email Service. 
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public void ConfigureEmailService(IServiceCollection services)
+        {
+            services.AddSingleton<IEmailService, EmailService>();
         }
 
         /// <summary>

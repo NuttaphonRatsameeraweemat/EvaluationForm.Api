@@ -86,6 +86,26 @@ namespace EVF.Helper.Components
         public const string K2SharingCreate = "CREATE";
         public const string K2SharingEdit = "EDIT";
         public const string K2SharingDelete = "DELETE";
+        //Receiver Email Type
+        public const string ReceiverTypeTo = "To";
+        public const string ReceiverTypeCC = "CC";
+        //Email Template Type
+        public const string EmailTypeSummaryTask = "SummaryTask";
+        public const string EmailTypeEvaluationApproveNotice = "EvaluationApproveNotice";
+        public const string EmailTypeEvaluationNotice = "EvaluationNotice";
+        public const string EmailTypeSummaryTaskEvaWaiting = "SummaryTaskEvaWaiting";
+        public const string EmailTypeSummaryTaskReject = "SummaryTaskReject";
+        public const string EmailTypeVendorFilterNotice = "VendorFilterNotice";
+        //Email Task By
+        public const string EmailTaskByBackground = "Background"; 
+        //Email Task Code
+        public const string EmailSummaryTaskCode = "S01";
+        public const string EmailSummaryTaskEvaWaitingCode = "S02";
+        public const string EmailSummaryTaskRejectCode = "S03";
+        //Email Task Status
+        public const string EmailTaskStatusWaiting = "Wait";
+        public const string EmailTaskStatusSending = "Send";
+        public const string EmailTaskStatusError = "Error";
         //Workflow Action
         public const string WorkflowActionSendRequest = "SendRequest";
         public const string WorkflowActionApprove = "Approve";

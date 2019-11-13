@@ -71,32 +71,35 @@ namespace EVF.Vendor.Bll
         /// <returns></returns>
         public IEnumerable<VendorViewModel> GetListServerSide(TableServerSideModel<VendorSearchModel> model, out int totalCount)
         {
-            var data = this.FilterSearch(_unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(), model.SearchProperty);
+            var data = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(this.BuildDynamicWhereClause(model.SearchProperty));
             totalCount = data.Count();
             var result = _mapper.Map<IEnumerable<Data.Pocos.Vendor>, IEnumerable<VendorViewModel>>(data.Skip(model.Skip).Take(model.Take));
             return result;
         }
-
+        
         /// <summary>
-        /// Filter vendor data by criteria search value.
+        /// Build dynamic where clause with criteria value.
         /// </summary>
-        /// <param name="data">The vendor collection data.</param>
-        /// <param name="search">The criteria value search.</param>
+        /// <param name="model">The criteria value.</param>
         /// <returns></returns>
-        private IEnumerable<Data.Pocos.Vendor> FilterSearch(IEnumerable<Data.Pocos.Vendor> data, VendorSearchModel search)
+        private Expression<Func<Data.Pocos.Vendor, bool>> BuildDynamicWhereClause(VendorSearchModel model)
         {
-            if (search != null)
+            // simple method to dynamically plugin a where clause
+            var predicate = PredicateBuilder.True<Data.Pocos.Vendor>(); // true -where(true) return all
+
+            if (model != null)
             {
-                if (!string.IsNullOrEmpty(search.VendorNo))
+                if (!string.IsNullOrEmpty(model.VendorNo))
                 {
-                    data = data.Where(s => s.VendorNo.Contains(search.VendorNo));
+                    predicate = predicate.And(s => s.VendorNo.Contains(model.VendorNo));
                 }
-                if (!string.IsNullOrEmpty(search.VendorName))
+                if (!string.IsNullOrEmpty(model.VendorName))
                 {
-                    data = data.Where(s => s.VendorName.Contains(search.VendorName));
+                    predicate = predicate.And(s => s.VendorName.Contains(model.VendorName));
                 }
             }
-            return data;
+
+            return predicate;
         }
 
         /// <summary>

@@ -66,6 +66,13 @@ namespace EVF.Helper
             var user = _config.SmtpUser;
             var password = _config.SmtpPassword;
 
+            if (string.IsNullOrEmpty(email.Sender))
+            {
+                email.Sender = _config.SmtpSender;
+                email.SenderName = _config.SmtpSenderName;
+            }
+            else email.SenderName = _config.SmtpSenderName;
+
             SmtpClient client = new SmtpClient(smtpHost, int.Parse(smtpPort))
             {
                 EnableSsl = Convert.ToBoolean(enableSSL),
@@ -78,7 +85,7 @@ namespace EVF.Helper
             //Create an email.
             MailMessage mailItem = new MailMessage
             {
-                From = new MailAddress(email.Sender) // must use organization email
+                From = new MailAddress(email.Sender, email.SenderName) // must use organization email
             };
             mailItem.To.Add(email.Receiver);
             mailItem.Subject = email.Subject;

@@ -277,6 +277,57 @@ namespace EVF.Helper
             return result;
         }
 
+        /// <summary>
+        /// Generate html table header.
+        /// </summary>
+        /// <param name="header">The topic header table.</param>
+        /// <param name="subHeaders">The sub topic header table.</param>
+        /// <returns></returns>
+        public static string GenerateHeaderHtmlTable(string header, string[] subHeaders)
+        {
+            string result = $"<tr><th colspan='{subHeaders.Length}' style='padding:8px; width:1200px'>{header}</th></tr> <tr>";
+            foreach (var item in subHeaders)
+            {
+                result += $"<th style='padding:8px;'>{item}</th>";
+            }
+            result += "</tr>";
+            return result;
+        }
+
+        /// <summary>
+        /// Generate html table body.
+        /// </summary>
+        /// <param name="subHeaders">The data for generate body table.</param>
+        /// <returns></returns>
+        public static string GenerateBodyHtmlTable(string[] bodyData)
+        {
+            string result = "<tr>";
+            foreach (var item in bodyData)
+            {
+                result += $"<td style='padding:8px;'>" + item + "</td>";
+            }
+            result += "</tr>";
+            return result;
+        }
+
+        /// <summary>
+        /// Generate html table.
+        /// </summary>
+        /// <param name="header">The header html table.</param>
+        /// <param name="body">The body html table.</param>
+        /// <returns></returns>
+        public static string GenerateTable(string header, string body)
+        {
+            return "<table>" +
+                "<thead style='background-color: #d2d2d2;'>" +
+                header +
+                "</thead>" +
+                "<tbody>" +
+                body +
+                "</tbody>" +
+                "</table>";
+        }
+
     }
 
     public static class PredicateBuilder

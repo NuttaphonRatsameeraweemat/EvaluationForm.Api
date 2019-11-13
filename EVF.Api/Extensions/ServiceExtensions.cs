@@ -47,6 +47,8 @@ using EVF.Utility.Bll;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll;
 using System.Linq;
+using EVF.Email.Bll.Interfaces;
+using EVF.Email.Bll;
 
 namespace EVF.Api.Extensions
 {
@@ -186,13 +188,23 @@ namespace EVF.Api.Extensions
         }
 
         /// <summary>
-        /// Dependency Injection Inbox Business Logic Layer.
+        /// Dependency Injection Report Business Logic Layer.
         /// </summary>
         /// <param name="services">The service collection.</param>
         public static void ConfigureReportBll(this IServiceCollection services)
         {
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IVendorEvaluationReportBll, VendorEvaluationReportBll>();
+        }
+
+        /// <summary>
+        /// Dependency Injection Email Business Logic Layer.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        public static void ConfigureEmailBll(this IServiceCollection services)
+        {
+            services.AddScoped<IEmailTaskBll, EmailTaskBll>();
+            services.AddScoped<ISummaryEmailTaskBll, SummaryEmailTaskBll>();
         }
 
         /// <summary>
