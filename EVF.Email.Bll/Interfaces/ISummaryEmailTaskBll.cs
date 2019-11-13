@@ -6,7 +6,13 @@ namespace EVF.Email.Bll.Interfaces
 {
     public interface ISummaryEmailTaskBll
     {
-        void ExecuteEmailTaskWaiting();
+        /// <summary>
+        /// Execute email status waiting.
+        /// </summary>
+        void ExecuteEmailTaskWaiting(string status);
+        /// <summary>
+        /// Process summary task email.
+        /// </summary>
         void ProcessSummaryTask();
     }
 }

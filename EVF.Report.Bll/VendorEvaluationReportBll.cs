@@ -10,6 +10,7 @@ using EVF.Report.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -141,9 +142,70 @@ namespace EVF.Report.Bll
         /// <returns></returns>
         public ResponseFileModel EvaluationExportReport(int id)
         {
-            var reportData = this.GenerateDataReport(id);
-            var response = _reportService.CallVendorEvaluationReport(reportData);
+            var response = new ResponseFileModel();
+            string path = this.GetReportDirectory("VendorEvaluationReport", id.ToString());
+            if (this.ExistReport(path))
+            {
+                response = this.GetFile(path);
+            }
+            else
+            {
+                var reportData = this.GenerateDataReport(id);
+                response = _reportService.CallVendorEvaluationReport(reportData);
+                this.GenerateFile(path, response);
+            }
             return response;
+        }
+
+        /// <summary>
+        /// Validate exits report or not.
+        /// </summary>
+        /// <param name="path">The directory report path.</param>
+        /// <returns></returns>
+        private bool ExistReport(string path)
+        {
+            return Directory.Exists(path);
+        }
+
+        /// <summary>
+        /// Get report directory path.
+        /// </summary>
+        /// <param name="processCode">The process code folder.</param>
+        /// <param name="id">The identity folder.</param>
+        /// <returns></returns>
+        private string GetReportDirectory(string processCode, string id)
+        {
+            return Path.Combine(Directory.GetCurrentDirectory(), "Reports", processCode, id.ToString());
+        }
+
+        /// <summary>
+        /// Get report file.
+        /// </summary>
+        /// <param name="path">The report file path.</param>
+        /// <returns></returns>
+        private ResponseFileModel GetFile(string path)
+        {
+            var result = new ResponseFileModel();
+            string[] allfiles = Directory.GetFiles(path);
+            foreach (var item in allfiles)
+            {
+                var fileByte = File.ReadAllBytes(item);
+                result.FileName = Path.GetFileName(item);
+                result.FileContent = fileByte;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Generate file report when print or send email.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="model"></param>
+        private void GenerateFile(string path, ResponseFileModel model)
+        {
+            Directory.CreateDirectory(path);
+            string savePath = Path.Combine(path, model.FileName);
+            File.WriteAllBytes(savePath, model.FileContent);
         }
 
         /// <summary>
@@ -168,7 +230,7 @@ namespace EVF.Report.Bll
             var culture = new CultureInfo("th-TH");
             var result = new VendorEvaluationRequestModel
             {
-                DocNo = $"{company.SearchTermEn} - {data.DocNo} / {DateTime.Now.Date.ToString("yyyy", culture)}",
+                DocNo = $"{company.SearchTermEn} - {data.DocNo} - {DateTime.Now.Date.ToString("yyyy", culture)}",
                 TotalScore = data.TotalScore ?? 0,
                 VendorName = this.GetVendorName(data.VendorNo),
                 PrintDate = DateTime.Now.Date.ToString("dd MMMM yyyy", culture),

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EVF.Helper.Components;
 using EVF.Utility.Bll.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +12,7 @@ namespace EVF.Api.Controllers.UtilityController
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize(Roles = "EVF", AuthenticationSchemes = ConstantValue.BasicAuthentication)]
+    [Authorize(Roles = "EVF", AuthenticationSchemes = ConstantValue.BasicAuthentication)]
     public class EvaluationJobController : ControllerBase
     {
 

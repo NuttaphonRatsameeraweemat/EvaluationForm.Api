@@ -63,23 +63,11 @@ namespace EVF.Email.Bll
         /// <summary>
         /// Execute email status waiting.
         /// </summary>
-        public void ExecuteEmailTaskWaiting()
+        public void ExecuteEmailTaskWaiting(string status)
         {
             List<int> emailSuccess = new List<int>();
             List<int> emailFailed = new List<int>();
-            this.SendingEmailTask(this.GetEmailTaskList(ConstantValue.EmailTaskStatusWaiting), emailSuccess, emailFailed);
-            _emailTask.UpdateEmailTaskStatus(emailSuccess.ToArray(), ConstantValue.EmailTaskStatusSending);
-            _emailTask.UpdateEmailTaskStatus(emailFailed.ToArray(), ConstantValue.EmailTaskStatusError);
-        }
-
-        /// <summary>
-        /// Execute email status error.
-        /// </summary>
-        public void ExecuteEmailTaskError()
-        {
-            List<int> emailSuccess = new List<int>();
-            List<int> emailFailed = new List<int>();
-            this.SendingEmailTask(this.GetEmailTaskList(ConstantValue.EmailTaskStatusError), emailSuccess, emailFailed);
+            this.SendingEmailTask(this.GetEmailTaskList(status), emailSuccess, emailFailed);
             _emailTask.UpdateEmailTaskStatus(emailSuccess.ToArray(), ConstantValue.EmailTaskStatusSending);
             _emailTask.UpdateEmailTaskStatus(emailFailed.ToArray(), ConstantValue.EmailTaskStatusError);
         }

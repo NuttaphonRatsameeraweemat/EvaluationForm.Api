@@ -1,4 +1,5 @@
 ﻿using EVF.Email.Bll.Interfaces;
+using EVF.Helper.Components;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace EVF.UnitTest.EmailTest
         {
             try
             {
-                _summaryEmailTask.ExecuteEmailTaskWaiting();
+                _summaryEmailTask.ExecuteEmailTaskWaiting(ConstantValue.EmailTaskStatusWaiting);
             }
             catch (Exception ex)
             {
@@ -52,10 +53,7 @@ namespace EVF.UnitTest.EmailTest
         {
             try
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    _summaryEmailTask.ProcessSummaryTask();
-                }
+                _summaryEmailTask.ProcessSummaryTask();
             }
             catch (Exception ex)
             {
