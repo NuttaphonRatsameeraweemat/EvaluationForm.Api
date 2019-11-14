@@ -44,6 +44,7 @@ namespace EVF.Report.Bll
         {
             _config = config;
             _client = new HttpClient();
+            this.SetAuthentication();
         }
 
         #endregion
@@ -59,6 +60,15 @@ namespace EVF.Report.Bll
         {
             Uri url = new Uri(_config.ReportUrl + ControllersName);
             return new Uri(url + "");
+        }
+
+        /// <summary>
+        /// Set http header authentication basic schema.
+        /// </summary>
+        private void SetAuthentication()
+        {
+            var Authentication = Encoding.UTF8.GetBytes($"{_config.BasicAuthUsers}:{_config.BasicAuthPasswords}");
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Authentication));
         }
 
         /// <summary>

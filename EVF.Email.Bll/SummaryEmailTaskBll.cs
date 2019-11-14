@@ -115,7 +115,7 @@ namespace EVF.Email.Bll
 
         public void ProcessSummaryTaskReject()
         {
-
+            var model = _unitOfWork.GetRepository<Evaluation>().Get(x => x.Status == ConstantValue.WorkflowStatusReject);
         }
 
         public void ProcessSummaryTaskEvaWaiting()

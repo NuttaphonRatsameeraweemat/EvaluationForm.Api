@@ -71,6 +71,7 @@ namespace EVF.Helper
             _token = token;
             _client = new HttpClient();
             _k2ProfileModel = this.InitialK2Profile();
+            this.SetAuthentication();
         }
 
         #endregion
@@ -88,6 +89,15 @@ namespace EVF.Helper
                 UserName = _token.AdUser,
                 Password = _token.Encrypt
             };
+        }
+
+        /// <summary>
+        /// Set http header authentication basic schema.
+        /// </summary>
+        private void SetAuthentication()
+        {
+            var Authentication = System.Text.Encoding.UTF8.GetBytes($"{_config.BasicAuthUsers}:{_config.BasicAuthPasswords}");
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(Authentication));
         }
 
         /// <summary>

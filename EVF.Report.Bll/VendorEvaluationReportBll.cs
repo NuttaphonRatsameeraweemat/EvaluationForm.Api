@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Email.Bll.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
+using EVF.Helper.Models;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll.Models;
 using System;
@@ -13,6 +16,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Transactions;
 
 namespace EVF.Report.Bll
 {
@@ -34,6 +38,14 @@ namespace EVF.Report.Bll
         /// </summary>
         private readonly IReportService _reportService;
         /// <summary>
+        /// The email task provides email task functionality.
+        /// </summary>
+        private readonly IEmailTaskBll _emailTask;
+        /// <summary>
+        /// The email service provides email service functionality.
+        /// </summary>
+        private readonly IEmailService _emailService;
+        /// <summary>
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
@@ -50,13 +62,19 @@ namespace EVF.Report.Bll
         /// Initializes a new instance of the <see cref="VendorEvaluationReportBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
+        /// <param name="summaryEvaluation">The summary evaluation manager provides summary evaluation functionality.</param>
+        /// <param name="reportService">The summary evaluation manager provides summary evaluation functionality.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public VendorEvaluationReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IReportService reportService, IManageToken token)
+        /// <param name="emailService">The email service provides email service functionality.</param>
+        public VendorEvaluationReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation,
+                                         IReportService reportService, IManageToken token, IEmailService emailService, IEmailTaskBll emailTask)
         {
             _unitOfWork = unitOfWork;
             _token = token;
             _summaryEvaluation = summaryEvaluation;
             _reportService = reportService;
+            _emailService = emailService;
+            _emailTask = emailTask;
         }
 
         #endregion
@@ -114,7 +132,10 @@ namespace EVF.Report.Bll
                     PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == item.PurchasingOrg)?.PurchaseName,
                     WeightingKey = valueHelp.FirstOrDefault(x => x.ValueKey == item.WeightingKey)?.ValueText,
                     TotalScore = item.TotalScore.Value,
-                    GradeName = this.GetGradeName(item.TotalScore.Value, gradeList, templateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId))
+                    GradeName = this.GetGradeName(item.TotalScore.Value, gradeList, templateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId)),
+                    IsPrintReport = item.IsPrintReport ?? false,
+                    IsSendEmail = item.IsSendEmail ?? false,
+                    SendEmailDate = item.SendEmailDate.HasValue ? UtilityService.DateTimeToString(item.SendEmailDate.Value, ConstantValue.DateTimeFormat) : string.Empty
                 });
             }
 
@@ -153,8 +174,62 @@ namespace EVF.Report.Bll
                 var reportData = this.GenerateDataReport(id);
                 response = _reportService.CallVendorEvaluationReport(reportData);
                 this.GenerateFile(path, response);
+                this.UpdateStatusPrintFlag(id);
             }
             return response;
+        }
+
+        /// <summary>
+        /// Send email evaluation report to vendor. 
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        public ResultViewModel SendVendorEvaluaitonReportEmail(int id)
+        {
+            var result = new ResultViewModel();
+            string path = this.GetReportDirectory("VendorEvaluationReport", id.ToString());
+            if (!this.ExistReport(path))
+            {
+                this.EvaluationExportReport(id);
+            }
+            string[] allfiles = Directory.GetFiles(path);
+            this.SendEmailToVendor(id, allfiles[0]);
+            this.UpdateStatusSendEmailFlag(id);
+            return result;
+        }
+
+        /// <summary>
+        /// Update print report flag to true.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        private void UpdateStatusPrintFlag(int id)
+        {
+            using (var scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+                if (!(data.IsPrintReport.HasValue && data.IsPrintReport.Value))
+                {
+                    data.IsPrintReport = true;
+                    _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);
+                    _unitOfWork.Complete(scope);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update send email flag to true.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        private void UpdateStatusSendEmailFlag(int id)
+        {
+            using (var scope = new TransactionScope())
+            {
+                var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+                data.IsSendEmail = true;
+                data.SendEmailDate = DateTime.Now;
+                _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);
+                _unitOfWork.Complete(scope);
+            }
         }
 
         /// <summary>
@@ -165,6 +240,50 @@ namespace EVF.Report.Bll
         private bool ExistReport(string path)
         {
             return Directory.Exists(path);
+        }
+
+        private void SendEmailToVendor(int id, string file)
+        {
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeVendorEvaluationReportNotice).FirstOrDefault();
+            string[] periodInfo = this.GetPeriodName(data.PeriodItemId.Value);
+
+            string subject = emailTemplate.Subject;
+            string content = emailTemplate.Content;
+
+            subject = subject.Replace("%PERIOD%", periodInfo[0]);
+            subject = subject.Replace("%PERIODITEM%", periodInfo[1]);
+
+            _emailService.SendEmail(new EmailModel
+            {
+                AttachmentPathFile = file,
+                Body = content,
+                Receiver = vendor.Email,
+                Subject = subject,
+            });
+
+            _emailTask.Save(new Email.Bll.Models.EmailTaskViewModel
+            {
+                DocNo = data.DocNo,
+                Content = $"{content} Attachment file name : {Path.GetFileName(file)}",
+                Subject = subject,
+                TaskCode = ConstantValue.EmailVendorEvaluationReportNoticeCode,
+                Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
+                {
+                    new Email.Bll.Models.EmailTaskReceiveViewModel{ Email = vendor.Email, FullName = vendor.VendorName, ReceiverType = ConstantValue.ReceiverTypeTo }
+                },
+                TaskBy = _token.AdUser,
+                TaskDate = DateTime.Now,
+                Status = ConstantValue.EmailTaskStatusSending
+            });
+        }
+
+        private string[] GetPeriodName(int periodItemId)
+        {
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId).FirstOrDefault();
+            var period = _unitOfWork.GetRepository<Period>().GetCache(x => x.Id == periodItem.PeriodId).FirstOrDefault();
+            return new string[] { period.Year.ToString(), periodItem.PeriodName };
         }
 
         /// <summary>

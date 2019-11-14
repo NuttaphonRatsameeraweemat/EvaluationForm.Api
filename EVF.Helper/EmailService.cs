@@ -66,6 +66,7 @@ namespace EVF.Helper
             var user = _config.SmtpUser;
             var password = _config.SmtpPassword;
 
+            //Initial sender and sender name.
             if (string.IsNullOrEmpty(email.Sender))
             {
                 email.Sender = _config.SmtpSender;
@@ -78,10 +79,12 @@ namespace EVF.Helper
                 EnableSsl = Convert.ToBoolean(enableSSL),
                 UseDefaultCredentials = false
             };
+            //validate require credential.
             if (requireCredential == "true")
             {
                 client.Credentials = new NetworkCredential(user, password);
             }
+
             //Create an email.
             MailMessage mailItem = new MailMessage
             {
@@ -91,6 +94,13 @@ namespace EVF.Helper
             mailItem.Subject = email.Subject;
             mailItem.IsBodyHtml = true;
             mailItem.Body = email.Body;
+
+            if (!string.IsNullOrEmpty(email.AttachmentPathFile))
+            {
+                var attachment = new Attachment(email.AttachmentPathFile);
+                mailItem.Attachments.Add(attachment);
+            }
+
             try
             {
                 //Send an email 

@@ -13,5 +13,8 @@ namespace EVF.Report.Bll.Models
         public string WeightingKey { get; set; }
         public int TotalScore { get; set; }
         public string GradeName { get; set; }
+        public bool IsSendEmail { get; set; }
+        public bool IsPrintReport { get; set; }
+        public string SendEmailDate { get; set; }
     }
 }

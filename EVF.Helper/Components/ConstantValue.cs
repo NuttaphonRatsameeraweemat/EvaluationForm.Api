@@ -96,12 +96,14 @@ namespace EVF.Helper.Components
         public const string EmailTypeSummaryTaskEvaWaiting = "SummaryTaskEvaWaiting";
         public const string EmailTypeSummaryTaskReject = "SummaryTaskReject";
         public const string EmailTypeVendorFilterNotice = "VendorFilterNotice";
+        public const string EmailTypeVendorEvaluationReportNotice = "VendorEvaluationReportNotice";
         //Email Task By
         public const string EmailTaskByBackground = "Background"; 
         //Email Task Code
         public const string EmailSummaryTaskCode = "S01";
         public const string EmailSummaryTaskEvaWaitingCode = "S02";
         public const string EmailSummaryTaskRejectCode = "S03";
+        public const string EmailVendorEvaluationReportNoticeCode = "N01";
         //Email Task Status
         public const string EmailTaskStatusWaiting = "Wait";
         public const string EmailTaskStatusSending = "Send";

@@ -52,7 +52,7 @@ namespace EVF.Api.Controllers.ReportController
         }
 
         [HttpGet]
-        [Route("GetListByPeriod")]
+        [Route("GetListByPeriod/{periodItemId}")]
         public IActionResult GetListByPeriod(int periodItemId)
         {
             return Ok(_vendorEvaluationReport.GetList(periodItemId));

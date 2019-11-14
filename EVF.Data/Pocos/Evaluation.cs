@@ -36,5 +36,8 @@ namespace EVF.Data.Pocos
         public string Remark { get; set; }
         [StringLength(20)]
         public string SendToEvaluationSapResultStatus { get; set; }
+        public bool? IsSendEmail { get; set; }
+        public bool? IsPrintReport { get; set; }
+        public DateTime? SendEmailDate { get; set; }
     }
 }

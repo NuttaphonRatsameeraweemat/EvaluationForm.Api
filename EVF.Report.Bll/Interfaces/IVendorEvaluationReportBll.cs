@@ -1,4 +1,5 @@
-﻿using EVF.Report.Bll.Models;
+﻿using EVF.Helper.Models;
+using EVF.Report.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,5 +25,11 @@ namespace EVF.Report.Bll.Interfaces
         /// <param name="id">The evaluation identity.</param>
         /// <returns></returns>
         ResponseFileModel EvaluationExportReport(int id);
+        /// <summary>
+        /// Send email evaluation report to vendor. 
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        ResultViewModel SendVendorEvaluaitonReportEmail(int id);
     }
 }
