@@ -48,6 +48,6 @@ namespace EVF.Vendor.Bll.Interfaces
         /// </summary>
         /// <param name="vendorNo">The vendor identity.</param>
         /// <returns></returns>
-        VendorLineChart GetLineChart(string vendorNo);
+        IEnumerable<VendorLineChartData> GetLineChart(string vendorNo);
     }
 }

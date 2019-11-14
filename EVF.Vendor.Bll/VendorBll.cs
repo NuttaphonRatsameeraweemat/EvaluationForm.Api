@@ -145,9 +145,8 @@ namespace EVF.Vendor.Bll
         /// </summary>
         /// <param name="vendorNo">The vendor identity.</param>
         /// <returns></returns>
-        public VendorLineChart GetLineChart(string vendorNo)
+        public IEnumerable<VendorLineChartData> GetLineChart(string vendorNo)
         {
-            var result = new VendorLineChart();
             var statData = new List<VendorLineChartData>();
             var labels = new List<string>();
             var periods = _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderBy(y => y.Year)).Take(5);
@@ -164,9 +163,7 @@ namespace EVF.Vendor.Bll
                 }
                 else statData.Add(new VendorLineChartData { PeriodName = item.PeriodName, TotalScore = 0 });
             }
-            result.DataStats.AddRange(statData);
-            result.AllPeriods = labels.ToArray();
-            return result;
+            return statData;
         }
 
         /// <summary>

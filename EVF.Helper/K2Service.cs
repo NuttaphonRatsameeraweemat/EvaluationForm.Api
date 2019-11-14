@@ -71,7 +71,6 @@ namespace EVF.Helper
             _token = token;
             _client = new HttpClient();
             _k2ProfileModel = this.InitialK2Profile();
-            this.SetAuthentication();
         }
 
         #endregion
