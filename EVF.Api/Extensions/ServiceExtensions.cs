@@ -265,7 +265,7 @@ namespace EVF.Api.Extensions
                 {
                     return new BadRequestObjectResult(
                         UtilityService.InitialResultError(MessageValue.HttpBadRequestMessage, (int)HttpStatusCode.BadRequest,
-                                        actionContext.ModelState.Keys, 
+                                        actionContext.ModelState.Keys,
                                         actionContext.ModelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage)));
                 };
             });
@@ -365,13 +365,21 @@ namespace EVF.Api.Extensions
         {
             app.UseStatusCodePages(async context =>
             {
-                if (context.HttpContext.Response.StatusCode == 403)
+                if (context.HttpContext.Response.StatusCode == 403 ||
+                   (context.HttpContext.Response.StatusCode == 401 && !context.HttpContext.Response.Headers.Any(x => x.Key == "Token-Expired")))
                 {
+                    string message = MessageValue.Unauthorized;
+                    switch (context.HttpContext.Response.StatusCode)
+                    {
+                        case 403:
+                            message = MessageValue.UserRoleIsEmpty;
+                            break;
+                    }
                     var model = new ResultViewModel
                     {
                         IsError = true,
                         StatusCode = context.HttpContext.Response.StatusCode,
-                        Message = $"{MessageValue.UserRoleIsEmpty}"
+                        Message = $"{message}"
                     };
                     string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
                     {
@@ -433,27 +441,7 @@ namespace EVF.Api.Extensions
                              await context.Response.WriteAsync(json);
                          });
                          return System.Threading.Tasks.Task.CompletedTask;
-                     },
-                     OnChallenge = context =>
-                     {
-                         context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
-                         var model = new ResultViewModel
-                         {
-                             IsError = true,
-                             StatusCode = context.Response.StatusCode,
-                             Message = $"{MessageValue.Unauthorized}"
-                         };
-                         string json = JsonConvert.SerializeObject(model, new JsonSerializerSettings
-                         {
-                             ContractResolver = new CamelCasePropertyNamesContractResolver()
-                         });
-                         context.Response.OnStarting(async () =>
-                         {
-                             context.Response.ContentType = ConstantValue.ContentTypeJson;
-                             await context.Response.WriteAsync(json);
-                         });
-                         return System.Threading.Tasks.Task.CompletedTask;
-                     },
+                     }
                  };
              })
              .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(ConstantValue.BasicAuthentication, null);
