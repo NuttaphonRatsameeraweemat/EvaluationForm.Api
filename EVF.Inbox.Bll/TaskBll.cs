@@ -65,13 +65,13 @@ namespace EVF.Inbox.Bll
         /// Get Task pending list from k2.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TaskViewModel> GetTaskList(string fromUser)
+        public TaskViewModel GetTaskList(string fromUser)
         {
-            var result = new List<TaskViewModel>();
+            var result = new TaskViewModel();
             var taskList = _k2Service.GetWorkList(fromUser);
             foreach (var item in taskList)
             {
-                result.Add(new TaskViewModel
+                result.TaskList.Add(new TaskListModel
                 {
                     SerialNumber = item.SerialNumber,
                     ProcessCode = UtilityService.GetValueDictionaryToString(item.DataFields, ConstantValue.DataFieldsKeyProcessCode),
@@ -88,36 +88,98 @@ namespace EVF.Inbox.Bll
         /// Get display information task.
         /// </summary>
         /// <param name="result">The task result.</param>
-        private void GetInformationTask(IEnumerable<TaskViewModel> result)
+        private void GetInformationTask(TaskViewModel result)
         {
-            var evaIds = result.Where(x => x.ProcessCode == ConstantValue.EvaluationProcessCode).Select(x => x.DataId).ToArray();
-            var evaInfoList = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaIds.Contains(x.Id));
-            var templateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
-            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
-            var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
-            var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
-            var processCode = _unitOfWork.GetRepository<WorkflowProcess>().GetCache();
-            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache();
-
-            foreach (var item in result)
+            if (result.TaskList.Count > 0)
             {
-                switch (item.ProcessCode)
+                var evaIds = result.TaskList.Where(x => x.ProcessCode == ConstantValue.EvaluationProcessCode).Select(x => x.DataId).ToArray();
+                var evaInfoList = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(x => evaIds.Contains(x.Id));
+                var templateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
+                var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
+                var purOrgList = _unitOfWork.GetRepository<PurchaseOrg>().GetCache();
+                var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
+                var processCode = _unitOfWork.GetRepository<WorkflowProcess>().GetCache();
+                var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache();
+
+                foreach (var item in result.TaskList)
                 {
-                    case ConstantValue.EvaluationProcessCode:
-                        var temp = evaInfoList.FirstOrDefault(x => x.Id == item.DataId);
-                        var template = templateList.FirstOrDefault(x => x.Id == temp.EvaluationTemplateId);
-                        item.DocNo = temp.DocNo;
-                        item.TotalScore = temp.TotalScore.Value;
-                        item.VendorName = vendorList.FirstOrDefault(x => x.VendorNo == temp.VendorNo)?.VendorName;
-                        item.PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == temp.PurchasingOrg)?.PurchaseName;
-                        item.GradeName = this.GetGrade(template.GradeId.Value, temp.TotalScore.Value);
-                        item.ProcessName = processCode.FirstOrDefault(x => x.ProcessCode == item.ProcessCode)?.ProcessName;
-                        item.GradeId = template.GradeId.Value;
-                        item.EvaluationTemplateId = template.Id;
-                        item.WeightingKeyName = valueHelpList.FirstOrDefault(x => x.ValueKey == temp.WeightingKey)?.ValueText;
-                        break;
+                    var temp = evaInfoList.FirstOrDefault(x => x.Id == item.DataId);
+                    var template = templateList.FirstOrDefault(x => x.Id == temp.EvaluationTemplateId);
+                    string[] gradeInfo = this.GetGrade(template.GradeId.Value, temp.TotalScore.Value);
+                    item.DocNo = temp.DocNo;
+                    item.TotalScore = temp.TotalScore.Value;
+                    item.VendorName = vendorList.FirstOrDefault(x => x.VendorNo == temp.VendorNo)?.VendorName;
+                    item.PurchaseOrgName = purOrgList.FirstOrDefault(x => x.PurchaseOrg1 == temp.PurchasingOrg)?.PurchaseName;
+                    item.GradeName = gradeInfo[1];
+                    item.GradeNameEn = gradeInfo[2];
+                    item.ProcessName = processCode.FirstOrDefault(x => x.ProcessCode == item.ProcessCode)?.ProcessName;
+                    item.GradeId = template.GradeId.Value;
+                    item.GradeItemId = Convert.ToInt32(gradeInfo[0]);
+                    item.EvaluationTemplateId = template.Id;
+                    item.WeightingKeyName = valueHelpList.FirstOrDefault(x => x.ValueKey == temp.WeightingKey)?.ValueText;
                 }
+
+                var gradeGroup = result.TaskList.Select(x => x.GradeId).Distinct();
+
+                var gradeList = _unitOfWork.GetRepository<GradeItem>().GetCache(x => gradeGroup.Contains(x.GradeId.Value),
+                                                                                x => x.OrderByDescending(y => y.StartPoint));
+
+                foreach (var item in gradeList)
+                {
+                    var grade = result.TaskList.FirstOrDefault(x => x.GradeItemId == item.Id);
+                    if (grade != null)
+                    {
+                        result.TaskOverView.Add(new TaskOverViewModel
+                        {
+                            GradeTh = grade.GradeName,
+                            GradeEn = grade.GradeNameEn,
+                            GradeItemId = item.Id,
+                            Count = result.TaskList.Where(x => x.GradeItemId == item.Id).Count(),
+                            Color = this.GetColorCondition(item.Id, item.GradeId.Value, gradeList)
+                        });
+                    }
+                }
+
             }
+        }
+
+        private string GetColorCondition(int gradeItemId, int gradeId, IEnumerable<GradeItem> gradeItems)
+        {
+            string result = string.Empty;
+            int color = 0;
+            var gradeList = gradeItems.Where(x => x.GradeId == gradeId).OrderByDescending(x => x.StartPoint);
+            int countGrade = gradeList.Count();
+            foreach (var item in gradeList)
+            {
+                if (item.Id == gradeItemId)
+                {
+                    result = this.GetColor(color, countGrade - 1);
+                    break;
+                }
+                color++;
+            }
+            return result;
+        }
+
+        private string GetColor(int colorNumber, int maxLength)
+        {
+            string result = string.Empty;
+            if (colorNumber == 0)
+            {
+                //Execellent color
+                result = "#2ECC71";
+            }
+            else if (colorNumber == maxLength)
+            {
+                //Bad color
+                result = "#E74C3C";
+            }
+            else
+            {
+                //Nomal color
+                result = "#FFFF00";
+            }
+            return result;
         }
 
         /// <summary>
@@ -126,11 +188,11 @@ namespace EVF.Inbox.Bll
         /// <param name="gradeId">The grade identity.</param>
         /// <param name="totalScore">The total score evaluation.</param>
         /// <returns></returns>
-        private string GetGrade(int gradeId, int totalScore)
+        private string[] GetGrade(int gradeId, int totalScore)
         {
             var gradeInfo = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
             var gradePoint = gradeInfo.FirstOrDefault(x => x.StartPoint <= totalScore && x.EndPoint >= totalScore);
-            return gradePoint.GradeNameTh;
+            return new string[] { gradePoint.Id.ToString(), gradePoint.GradeNameTh, gradePoint.GradeNameEn };
         }
 
         #endregion

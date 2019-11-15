@@ -11,6 +11,6 @@ namespace EVF.Inbox.Bll.Interfaces
         /// Get Task pending list from k2.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<TaskViewModel> GetTaskList(string fromUser);
+        TaskViewModel GetTaskList(string fromUser);
     }
 }

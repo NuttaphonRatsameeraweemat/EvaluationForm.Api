@@ -76,7 +76,7 @@ namespace EVF.Vendor.Bll
             var result = _mapper.Map<IEnumerable<Data.Pocos.Vendor>, IEnumerable<VendorViewModel>>(data.Skip(model.Skip).Take(model.Take));
             return result;
         }
-        
+
         /// <summary>
         /// Build dynamic where clause with criteria value.
         /// </summary>
@@ -182,6 +182,7 @@ namespace EVF.Vendor.Bll
                                                                            x.Status == ConstantValue.WorkflowStatusApproved);
             var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
             var gradeItemList = _unitOfWork.GetRepository<GradeItem>().GetCache();
+            var valueHelp = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
 
             foreach (var item in history)
             {
@@ -190,7 +191,7 @@ namespace EVF.Vendor.Bll
                 {
                     PeriodName = periodItem.FirstOrDefault(x => x.Id == item.PeriodItemId)?.PeriodName,
                     WeightingKey = item.WeightingKey,
-                    WeightingKeyName = string.Empty,
+                    WeightingKeyName = valueHelp.FirstOrDefault(x => x.ValueKey == item.WeightingKey)?.ValueText,
                     TotalScore = item.TotalScore.Value,
                     GradeName = this.GetGradeName(gradeItemList.Where(x => x.GradeId == template.GradeId), item.TotalScore.Value)
                 });

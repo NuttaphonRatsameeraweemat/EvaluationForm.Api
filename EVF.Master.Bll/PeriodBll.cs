@@ -69,6 +69,16 @@ namespace EVF.Master.Bll
         /// Get Period list.
         /// </summary>
         /// <returns></returns>
+        public IEnumerable<PeriodViewModel> GetListAll()
+        {
+            return _mapper.Map<IEnumerable<Period>, IEnumerable<PeriodViewModel>>(
+                       _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderByDescending(y => y.Year).ThenBy(y => y.Name)));
+        }
+
+        /// <summary>
+        /// Get Period list.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<PeriodResponseViewModel> GetListInformation()
         {
             var result = new List<PeriodResponseViewModel>();

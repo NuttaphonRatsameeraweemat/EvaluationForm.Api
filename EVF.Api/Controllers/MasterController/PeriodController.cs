@@ -44,6 +44,13 @@ namespace EVF.Api.Controllers.MasterController
         }
 
         [HttpGet]
+        [Route("GetListAll")]
+        public IActionResult GetListAll()
+        {
+            return Ok(_period.GetListAll());
+        }
+
+        [HttpGet]
         [Route("GetListInformation")]
         public IActionResult GetListInformation()
         {
