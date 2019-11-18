@@ -25,7 +25,7 @@ namespace EVF.Api.Controllers.ReportController
         /// The cache manager provides cache functionality.
         /// </summary>
         private readonly IVendorEvaluationReportBll _vendorEvaluationReport;
-        
+
         #endregion
 
         #region [Constructors]
@@ -57,7 +57,7 @@ namespace EVF.Api.Controllers.ReportController
         {
             return Ok(_vendorEvaluationReport.GetList(periodItemId));
         }
-        
+
         [HttpGet]
         [Route("DownloadFile/{id}")]
         public IActionResult DownloadFile(int id)
@@ -65,6 +65,13 @@ namespace EVF.Api.Controllers.ReportController
             var result = _vendorEvaluationReport.EvaluationExportReport(id);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);
             return File(result.FileContent, "application/octet-stream");
+        }
+
+        [HttpPost]
+        [Route("SendEmail/{id}")]
+        public IActionResult SendEmail(int id)
+        {
+            return Ok(_vendorEvaluationReport.SendVendorEvaluaitonReportEmail(id));
         }
 
         #endregion

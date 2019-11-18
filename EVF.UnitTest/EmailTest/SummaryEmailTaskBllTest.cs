@@ -61,6 +61,32 @@ namespace EVF.UnitTest.EmailTest
             }
         }
 
+        [Fact]
+        public void ProcessSummaryTaskEvaWaiting()
+        {
+            try
+            {
+                _summaryEmailTask.ProcessSummaryTaskEvaWaiting();
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.Message);
+            }
+        }
+
+        [Fact]
+        public void ProcessSummaryTaskReject()
+        {
+            try
+            {
+                _summaryEmailTask.ProcessSummaryTaskReject();
+            }
+            catch (Exception ex)
+            {
+                Assert.True(false, ex.Message);
+            }
+        }
+
         #endregion
 
     }

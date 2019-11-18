@@ -247,6 +247,7 @@ namespace EVF.Report.Bll
             var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
             var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
             var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeVendorEvaluationReportNotice).FirstOrDefault();
+            var company = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == data.ComCode).FirstOrDefault();
             string[] periodInfo = this.GetPeriodName(data.PeriodItemId.Value);
 
             string subject = emailTemplate.Subject;
@@ -254,6 +255,9 @@ namespace EVF.Report.Bll
 
             subject = subject.Replace("%PERIOD%", periodInfo[0]);
             subject = subject.Replace("%PERIODITEM%", periodInfo[1]);
+
+            content = content.Replace("%VENDOR%", vendor?.VendorName);
+            content = content.Replace("%COMNAME%", company?.LongText);
 
             _emailService.SendEmail(new EmailModel
             {
@@ -363,7 +367,8 @@ namespace EVF.Report.Bll
                 CompanyAddressEn = this.GetCompanyAddress(company, "EN"),
                 KpiGroups = this.GetKpiGroupCollection(evaluationTemplate, data.WeightingKey, scoreSummary).ToList(),
                 ApproveBy = approveInfo[0],
-                PositionName = approveInfo[1]
+                PositionName = approveInfo[1],
+                GradeNameEn = gradePoint.GradeNameEn
             };
 
             return result;
@@ -526,11 +531,6 @@ namespace EVF.Report.Bll
             }
 
             return result;
-        }
-
-        public void EvaluationSendEmail(int id)
-        {
-
         }
 
         #endregion

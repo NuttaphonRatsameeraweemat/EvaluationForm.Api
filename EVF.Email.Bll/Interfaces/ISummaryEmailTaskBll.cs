@@ -14,5 +14,13 @@ namespace EVF.Email.Bll.Interfaces
         /// Process summary task email.
         /// </summary>
         void ProcessSummaryTask();
+        /// <summary>
+        /// Process summary evaluation task waiting.
+        /// </summary>
+        void ProcessSummaryTaskEvaWaiting();
+        /// <summary>
+        /// Process summary task evaluation reject.
+        /// </summary>
+        void ProcessSummaryTaskReject();
     }
 }

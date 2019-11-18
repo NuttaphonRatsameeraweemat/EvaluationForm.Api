@@ -27,6 +27,7 @@ namespace EVF.Report.Bll.Models
         public string PositionName { get; set; }
         public string ContentHeader { get; set; }
         public string ContentFooter { get; set; }
+        public string GradeNameEn { get; set; }
         public List<VendorEvaluationRequestItemModel> KpiGroups { get; set; }
     }
 

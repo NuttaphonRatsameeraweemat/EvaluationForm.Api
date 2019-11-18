@@ -113,14 +113,312 @@ namespace EVF.Email.Bll
             this.SaveToEmailTask(model);
         }
 
+        /// <summary>
+        /// Process summary task evaluation reject.
+        /// </summary>
         public void ProcessSummaryTaskReject()
         {
-            var model = _unitOfWork.GetRepository<Evaluation>().Get(x => x.Status == ConstantValue.WorkflowStatusReject);
+            var result = this.GetEvaluationRejectTask();
+            this.SaveEvaRejectToEmailTask(result);
         }
 
+        /// <summary>
+        /// Process summary evaluation task waiting.
+        /// </summary>
         public void ProcessSummaryTaskEvaWaiting()
         {
+            var result = this.GetEvaluationWaitingTask();
+            this.SaveEvaWaitingToEmailTask(result);
+        }
 
+        /// <summary>
+        /// Get evaluation reject task.
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<string, List<SummaryEvaRejectModel>> GetEvaluationRejectTask()
+        {
+            var result = new Dictionary<string, List<SummaryEvaRejectModel>>();
+            var model = _unitOfWork.GetRepository<Evaluation>().Get(x => x.Status == ConstantValue.WorkflowStatusReject);
+            string[] vendors = model.Select(x => x.VendorNo).ToArray();
+            var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache(x => vendors.Contains(x.VendorNo));
+            var periodItemList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
+            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
+            var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
+            var evaTemplateList = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache();
+
+            foreach (var item in model)
+            {
+                var evaTemplate = evaTemplateList.FirstOrDefault(x => x.Id == item.EvaluationTemplateId.Value);
+                var vendorInfo = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo);
+                var periodItemInfo = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                var company = comList.FirstOrDefault(x => x.SapcomCode == item.ComCode);
+                var valueHelp = valueHelpList.FirstOrDefault(x => x.ValueKey == item.WeightingKey);
+
+                if (result.Any(x => x.Key == item.CreateBy))
+                {
+                    result[item.CreateBy].Add(
+                        this.InitialRejectTask(item.DocNo, company.LongText, vendorInfo.VendorName, valueHelp.ValueText, item.TotalScore.Value,
+                                               this.GetGrade(evaTemplate.GradeId.Value, item.TotalScore.Value), periodItemInfo.PeriodName));
+                }
+                else
+                {
+                    result.Add(item.CreateBy, new List<SummaryEvaRejectModel>
+                        {
+                            this.InitialRejectTask(item.DocNo,company.LongText,vendorInfo.VendorName,valueHelp.ValueText,item.TotalScore.Value,
+                                                   this.GetGrade(evaTemplate.GradeId.Value, item.TotalScore.Value),periodItemInfo.PeriodName)
+                        });
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Inital Summary evaluation reject email task model.
+        /// </summary>
+        /// <param name="docNo">The docuemnt evaluation number.</param>
+        /// <param name="companyName">The company name.</param>
+        /// <param name="vendorName">The vendor name.</param>
+        /// <param name="weightingKey">The weighting name.</param>
+        /// <param name="startEvaDate">The evaluation start date.</param>
+        /// <param name="endEvaDate">The evaluation end date.</param>
+        /// <returns></returns>
+        private SummaryEvaRejectModel InitialRejectTask(string docNo, string companyName, string vendorName, string weightingKey,
+                                                        int totalScore, string gradeName, string periodItemName)
+        {
+            return new SummaryEvaRejectModel
+            {
+                DocNo = docNo,
+                CompanyName = companyName,
+                VendorName = vendorName,
+                WeightingKeyName = weightingKey,
+                TotalScore = totalScore,
+                GradeName = gradeName,
+                PeriodItemName = periodItemName
+            };
+        }
+
+        /// <summary>
+        /// Save evaluation reject task to email task.
+        /// </summary>
+        /// <param name="model">The evaluation reject task collection.</param>
+        private void SaveEvaRejectToEmailTask(Dictionary<string, List<SummaryEvaRejectModel>> model)
+        {
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeSummaryTaskReject).FirstOrDefault();
+            foreach (var item in model)
+            {
+                string rows = this.GenerateContentData(item.Value);
+                var emailTask = this.InitialSummaryEvaReject(item.Key, rows, emailTemplate);
+                //Save email task status waiting.
+                _emailTask.Save(emailTask);
+            }
+
+        }
+
+        /// <summary>
+        /// Generate content summary evaluation task.
+        /// </summary>
+        /// <param name="model">The content value.</param>
+        /// <returns></returns>
+        private string GenerateContentData(List<SummaryEvaRejectModel> model)
+        {
+            string rows = string.Empty;
+            foreach (var item in model)
+            {
+                rows += UtilityService.GenerateBodyHtmlTable(new string[]
+                {
+                    item.DocNo,
+                    item.VendorName,
+                    item.CompanyName,
+                    item.WeightingKeyName,
+                    item.PeriodItemName,
+                    item.TotalScore.ToString(),
+                    item.GradeName
+                });
+            }
+            return rows;
+        }
+
+        /// <summary>
+        /// Initial email task model summary evaluation waiting task email.
+        /// </summary>
+        /// <param name="ownerTask">The owner task sending.</param>
+        /// <param name="bodyContent">The body content data.</param>
+        /// <param name="emailTemplate">The email template summary evaluation waiting task.</param>
+        /// <returns></returns>
+        private EmailTaskViewModel InitialSummaryEvaReject(string ownerTask, string bodyContent, EmailTemplate emailTemplate)
+        {
+            string headerTable = UtilityService.GenerateHeaderHtmlTable("ใบประเมินผู้ขาย", new string[] {
+                                                                                           "เลขที่ใบประเมิน",
+                                                                                           "ผู้ขาย",
+                                                                                           "ผู้ซื้อ",
+                                                                                           "ประเภทผู้ขาย",
+                                                                                           "ชื่อรอบการประเมิน",
+                                                                                           "สรุปผลคะแนน",
+                                                                                           "สรุปผลเกรด"
+                                                                                       });
+
+            var empInfo = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.EmpNo == ownerTask).FirstOrDefault();
+            string table = UtilityService.GenerateTable(headerTable, bodyContent);
+            string content = emailTemplate.Content;
+            content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
+            content = content.Replace("%TABLE%", table);
+            return new EmailTaskViewModel
+            {
+                Content = content,
+                DocNo = "-",
+                TaskCode = ConstantValue.EmailSummaryTaskRejectCode,
+                TaskBy = ConstantValue.EmailTaskByBackground,
+                Subject = emailTemplate.Subject,
+                TaskDate = DateTime.Now,
+                Status = ConstantValue.EmailTaskStatusWaiting,
+                Receivers = this.GetReceiversByEmpNo(ownerTask)
+            };
+        }
+
+        /// <summary>
+        /// Get evaluation waiting task.
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<string, List<SummaryEvaWaitingModel>> GetEvaluationWaitingTask()
+        {
+            var result = new Dictionary<string, List<SummaryEvaWaitingModel>>();
+            var model = _unitOfWork.GetRepository<Evaluation>().Get(x => x.Status == ConstantValue.EvaWaiting);
+            string[] vendors = model.Select(x => x.VendorNo).ToArray();
+            var vendorList = _unitOfWork.GetRepository<Vendor>().GetCache(x => vendors.Contains(x.VendorNo));
+            var periodItemList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
+            var valueHelpList = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey);
+            var comList = _unitOfWork.GetRepository<Hrcompany>().GetCache();
+
+            foreach (var item in model)
+            {
+                var evaAssignList = _unitOfWork.GetRepository<EvaluationAssign>().Get(x => x.EvaluationId == item.Id && !x.IsAction.Value);
+                foreach (var subItem in evaAssignList)
+                {
+                    var vendorInfo = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo);
+                    var periodItemInfo = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId);
+                    var company = comList.FirstOrDefault(x => x.SapcomCode == item.ComCode);
+                    var valueHelp = valueHelpList.FirstOrDefault(x => x.ValueKey == item.WeightingKey);
+
+                    if (result.Any(x => x.Key == subItem.AdUser))
+                    {
+                        result[subItem.AdUser].Add(
+                            this.InitialWaitingTask(item.DocNo, company.LongText, vendorInfo.VendorName, valueHelp.ValueText,
+                                                    UtilityService.DateTimeToString(periodItemInfo.StartEvaDate.Value, ConstantValue.DateTimeFormat),
+                                                    UtilityService.DateTimeToString(periodItemInfo.EndEvaDate.Value, ConstantValue.DateTimeFormat)));
+                    }
+                    else
+                    {
+                        result.Add(subItem.AdUser, new List<SummaryEvaWaitingModel>
+                        {
+                            this.InitialWaitingTask(item.DocNo,company.LongText,vendorInfo.VendorName,valueHelp.ValueText,
+                                                    UtilityService.DateTimeToString(periodItemInfo.StartEvaDate.Value,ConstantValue.DateTimeFormat),
+                                                    UtilityService.DateTimeToString(periodItemInfo.EndEvaDate.Value,ConstantValue.DateTimeFormat))
+                        });
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Inital Summary evaluation waiting email task model.
+        /// </summary>
+        /// <param name="docNo">The docuemnt evaluation number.</param>
+        /// <param name="companyName">The company name.</param>
+        /// <param name="vendorName">The vendor name.</param>
+        /// <param name="weightingKey">The weighting name.</param>
+        /// <param name="startEvaDate">The evaluation start date.</param>
+        /// <param name="endEvaDate">The evaluation end date.</param>
+        /// <returns></returns>
+        private SummaryEvaWaitingModel InitialWaitingTask(string docNo, string companyName, string vendorName, string weightingKey,
+                                                          string startEvaDate, string endEvaDate)
+        {
+            return new SummaryEvaWaitingModel
+            {
+                DocNo = docNo,
+                CompanyName = companyName,
+                VendorName = vendorName,
+                WeightingKeyName = weightingKey,
+                StartEvaDate = startEvaDate,
+                EndEvaDate = endEvaDate
+            };
+        }
+
+
+        /// <summary>
+        /// Save evaluation waiting task to email task.
+        /// </summary>
+        /// <param name="model">The summary evaluation waiting task collection.</param>
+        private void SaveEvaWaitingToEmailTask(Dictionary<string, List<SummaryEvaWaitingModel>> model)
+        {
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeSummaryTaskEvaWaiting).FirstOrDefault();
+            foreach (var item in model)
+            {
+                string rows = this.GenerateContentData(item.Value);
+                var emailTask = this.InitialSummaryEvaWaiting(item.Key, rows, emailTemplate);
+                //Save email task status waiting.
+                _emailTask.Save(emailTask);
+            }
+
+        }
+
+        /// <summary>
+        /// Generate content summary evaluation task.
+        /// </summary>
+        /// <param name="model">The content value.</param>
+        /// <returns></returns>
+        private string GenerateContentData(List<SummaryEvaWaitingModel> model)
+        {
+            string rows = string.Empty;
+            foreach (var item in model)
+            {
+                rows += UtilityService.GenerateBodyHtmlTable(new string[]
+                {
+                    item.DocNo,
+                    item.VendorName,
+                    item.CompanyName,
+                    item.WeightingKeyName,
+                    item.StartEvaDate,
+                    item.EndEvaDate
+                });
+            }
+            return rows;
+        }
+
+        /// <summary>
+        /// Initial email task model summary evaluation waiting task email.
+        /// </summary>
+        /// <param name="ownerTask">The owner task sending.</param>
+        /// <param name="bodyContent">The body content data.</param>
+        /// <param name="emailTemplate">The email template summary evaluation waiting task.</param>
+        /// <returns></returns>
+        private EmailTaskViewModel InitialSummaryEvaWaiting(string ownerTask, string bodyContent, EmailTemplate emailTemplate)
+        {
+            string headerTable = UtilityService.GenerateHeaderHtmlTable("ใบประเมินผู้ขาย", new string[] {
+                                                                                           "เลขที่ใบประเมิน",
+                                                                                           "ผู้ขาย",
+                                                                                           "ผู้ซื้อ",
+                                                                                           "ประเภทผู้ขาย",
+                                                                                           "วันที่เริ่มต้นการประเมิน",
+                                                                                           "วันที่สิ้นสุดการประเมิน"
+                                                                                       });
+
+            var empInfo = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == ownerTask).FirstOrDefault();
+            string table = UtilityService.GenerateTable(headerTable, bodyContent);
+            string content = emailTemplate.Content;
+            content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
+            content = content.Replace("%TABLE%", table);
+            return new EmailTaskViewModel
+            {
+                Content = content,
+                DocNo = "-",
+                TaskCode = ConstantValue.EmailSummaryTaskEvaWaitingCode,
+                TaskBy = ConstantValue.EmailTaskByBackground,
+                Subject = emailTemplate.Subject,
+                TaskDate = DateTime.Now,
+                Status = ConstantValue.EmailTaskStatusWaiting,
+                Receivers = this.GetReceivers(ownerTask)
+            };
         }
 
         /// <summary>
@@ -221,9 +519,10 @@ namespace EVF.Email.Bll
                                                                                            "สรุปผลคะแนน",
                                                                                            "สรุปผลเกรด"
                                                                                        });
-
+            var empInfo = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == ownerTask).FirstOrDefault();
             string table = UtilityService.GenerateTable(headerTable, bodyContent);
             string content = emailTemplate.Content;
+            content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
             content = content.Replace("%TABLE%", table);
             return new EmailTaskViewModel
             {
@@ -260,6 +559,24 @@ namespace EVF.Email.Bll
         {
             var result = new List<EmailTaskReceiveViewModel>();
             var empInfo = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == adUser).FirstOrDefault();
+            result.Add(new EmailTaskReceiveViewModel
+            {
+                Email = empInfo.Email,
+                FullName = string.Format(ConstantValue.EmpTemplate, empInfo?.FirstnameTh, empInfo?.LastnameTh),
+                ReceiverType = ConstantValue.ReceiverTypeTo
+            });
+            return result;
+        }
+
+        /// <summary>
+        /// Get receivers information.
+        /// </summary>
+        /// <param name="adUser">The employee identity.</param>
+        /// <returns></returns>
+        private List<EmailTaskReceiveViewModel> GetReceiversByEmpNo(string empNo)
+        {
+            var result = new List<EmailTaskReceiveViewModel>();
+            var empInfo = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.EmpNo == empNo).FirstOrDefault();
             result.Add(new EmailTaskReceiveViewModel
             {
                 Email = empInfo.Email,
