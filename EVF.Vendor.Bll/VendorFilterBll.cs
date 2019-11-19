@@ -1,6 +1,7 @@
-﻿using AutoMapper;
-using EVF.Data.Pocos;
+﻿using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Email.Bll.Interfaces;
+using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Helper.Models;
@@ -9,7 +10,6 @@ using EVF.Vendor.Bll.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Transactions;
 
 namespace EVF.Vendor.Bll
@@ -24,10 +24,6 @@ namespace EVF.Vendor.Bll
         /// </summary>
         private readonly IUnitOfWork _unitOfWork;
         /// <summary>
-        /// The auto mapper.
-        /// </summary>
-        private readonly IMapper _mapper;
-        /// <summary>
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
@@ -35,6 +31,18 @@ namespace EVF.Vendor.Bll
         /// The vendor transection manager provides vendor transection functionality.
         /// </summary>
         private readonly IVendorTransectionBll _vendorTransection;
+        /// <summary>
+        /// The email task provides email task functionality.
+        /// </summary>
+        private readonly IEmailTaskBll _emailTask;
+        /// <summary>
+        /// The email service provides email service functionality.
+        /// </summary>
+        private readonly IEmailService _emailService;
+        /// <summary>
+        /// The Logger.
+        /// </summary>
+        private readonly ILoggerManager _logger;
 
         #endregion
 
@@ -44,14 +52,16 @@ namespace EVF.Vendor.Bll
         /// Initializes a new instance of the <see cref="VendorFilterBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
-        /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public VendorFilterBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IVendorTransectionBll vendorTransection)
+        public VendorFilterBll(IUnitOfWork unitOfWork, ILoggerManager logger, IManageToken token, IVendorTransectionBll vendorTransection,
+                               IEmailTaskBll emailTask, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _token = token;
             _vendorTransection = vendorTransection;
+            _emailTask = emailTask;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         #endregion
@@ -143,7 +153,7 @@ namespace EVF.Vendor.Bll
                     VendorNo = item.VendorNo,
                     VendorName = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo)?.VendorName,
                     WeightingKey = item.WeightingKey,
-                    WeightingKeyName = weightingKeyList.FirstOrDefault(x=>x.ValueKey == item.WeightingKey)?.ValueText
+                    WeightingKeyName = weightingKeyList.FirstOrDefault(x => x.ValueKey == item.WeightingKey)?.ValueText
                 });
             }
             return result;
@@ -197,26 +207,6 @@ namespace EVF.Vendor.Bll
         }
 
         /// <summary>
-        /// Create VendorFilter.
-        /// </summary>
-        /// <param name="model">The Vendor information value.</param>
-        /// <returns></returns>
-        public ResultViewModel Save(VendorFilterRequestViewModel model)
-        {
-            var result = new ResultViewModel();
-            using (TransactionScope scope = new TransactionScope())
-            {
-                var data = _mapper.Map<VendorFilterRequestViewModel, VendorFilter>(model);
-                data.IsSending = false;
-                data.CreateBy = _token.EmpNo;
-                data.CreateDate = DateTime.Now;
-                _unitOfWork.GetRepository<VendorFilter>().Add(data);
-                _unitOfWork.Complete(scope);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Create VendorFilter collection.
         /// </summary>
         /// <param name="model">The vendor filter collection value.</param>
@@ -246,6 +236,7 @@ namespace EVF.Vendor.Bll
                 _unitOfWork.GetRepository<VendorFilter>().AddRange(vendorFilters);
                 _unitOfWork.Complete(scope);
             }
+            this.SendEmail(model);
             return result;
         }
 
@@ -372,6 +363,113 @@ namespace EVF.Vendor.Bll
                     break;
             }
             return transectionList;
+        }
+
+        /// <summary>
+        /// Send email to user vendor filter information.
+        /// </summary>
+        /// <param name="model">The vendor filter collection.</param>
+        private void SendEmail(VendorFilterCollectionRequestViewModel model)
+        {
+            var vendorList = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache();
+            var assignList = model.VendorFilterItems.Select(x => x.AssignTo).Distinct();
+
+            var empList = _unitOfWork.GetRepository<Hremployee>().GetCache(x => assignList.Contains(x.Aduser));
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == model.PeriodItemId).FirstOrDefault();
+            var companyInfo = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == model.CompanyCode).FirstOrDefault();
+            string weightingKey = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey &&
+                                                                                    x.ValueKey == model.WeightingKey).FirstOrDefault()?.ValueText;
+            var purchaseInfo = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == model.PurchasingOrg).FirstOrDefault();
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeVendorFilterNotice).FirstOrDefault();
+
+            foreach (var item in assignList)
+            {
+                var vendorFilters = model.VendorFilterItems.Where(x => x.AssignTo == item);
+                var empInfo = empList.FirstOrDefault(x => x.Aduser == item);
+                string rows = this.GenerateContentData(vendorList, vendorFilters);
+
+                string subject = emailTemplate.Subject;
+                string content = emailTemplate.Content;
+
+                subject = subject.Replace("%PERIODNAME%", periodItem.PeriodName);
+
+                content = content.Replace("%EMPNAME%", string.Format(ConstantValue.EmpTemplate, empInfo?.FirstnameTh, empInfo?.LastnameTh));
+                content = content.Replace("%PERIODITEMNAME%", periodItem.PeriodName);
+                content = content.Replace("%COMNAME%", companyInfo?.LongText);
+                content = content.Replace("%PURCHASENAME%", purchaseInfo?.PurchaseName);
+                content = content.Replace("%WEIGHTINGKEY%", weightingKey);
+                content = content.Replace("%TABLE%", this.GenerateTable(rows));
+
+                string status = ConstantValue.EmailTaskStatusSending;
+                try
+                {
+                    _emailService.SendEmail(new EmailModel
+                    {
+                        Body = content,
+                        Receiver = empInfo.Email,
+                        Subject = subject,
+                    });
+                }
+                catch (Exception ex)
+                {
+                    status = ConstantValue.EmailTaskStatusError;
+                    _logger.LogError(ex, "Vendor filter is sending email error :");
+                }
+
+                _emailTask.Save(new Email.Bll.Models.EmailTaskViewModel
+                {
+                    DocNo = "-",
+                    Content = $"{content}",
+                    Subject = subject,
+                    TaskCode = ConstantValue.EmailVendorFilterNoticeCode,
+                    Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
+                {
+                    new Email.Bll.Models.EmailTaskReceiveViewModel
+                    {
+                        Email = empInfo.Email,
+                        FullName = string.Format(ConstantValue.EmpTemplate,empInfo?.FirstnameTh,empInfo?.LastnameTh),
+                        ReceiverType = ConstantValue.ReceiverTypeTo
+                    }
+                },
+                    TaskBy = _token.AdUser,
+                    TaskDate = DateTime.Now,
+                    Status = status
+                });
+
+            }
+        }
+
+        /// <summary>
+        /// Generate table display data.
+        /// </summary>
+        /// <param name="bodyContent">The body content for generate table.</param>
+        /// <returns></returns>
+        private string GenerateTable(string bodyContent)
+        {
+            string headers = UtilityService.GenerateHeaderHtmlTable("ข้อมูลผู้ขาย", new string[] { "รหัสผู้ขาย", "ชื่อผู้ขาย" });
+            return UtilityService.GenerateTable(headers, bodyContent);
+        }
+
+        /// <summary>
+        /// Generate content data rows table.
+        /// </summary>
+        /// <param name="vendorList">The vendor information collection.</param>
+        /// <param name="vendorFilters">The vendor filter collection.</param>
+        /// <returns></returns>
+        private string GenerateContentData(IEnumerable<Data.Pocos.Vendor> vendorList,
+                                           IEnumerable<VendorFilterItemRequestViewModel> vendorFilters)
+        {
+            string rows = string.Empty;
+            foreach (var item in vendorFilters)
+            {
+                var vendorInfo = vendorList.FirstOrDefault(x => x.VendorNo == item.VendorNo);
+                rows += UtilityService.GenerateBodyHtmlTable(new string[]
+                {
+                    item.VendorNo,
+                    vendorInfo?.VendorName,
+                });
+            }
+            return rows;
         }
 
         #endregion

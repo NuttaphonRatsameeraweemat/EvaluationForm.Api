@@ -1,9 +1,6 @@
-﻿using EVF.Data.Pocos;
-using EVF.Helper.Models;
+﻿using EVF.Helper.Models;
 using EVF.Vendor.Bll.Models;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EVF.Vendor.Bll.Interfaces
 {
@@ -31,12 +28,6 @@ namespace EVF.Vendor.Bll.Interfaces
         /// <param name="vendorNo">The identity Vendor.</param>
         /// <returns></returns>
         VendorFilterViewModel GetDetail(int id);
-        /// <summary>
-        /// Create VendorFilter.
-        /// </summary>
-        /// <param name="model">The Vendor information value.</param>
-        /// <returns></returns>
-        ResultViewModel Save(VendorFilterRequestViewModel model);
         /// <summary>
         /// Create VendorFilter collection.
         /// </summary>

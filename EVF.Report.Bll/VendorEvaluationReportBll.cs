@@ -242,6 +242,11 @@ namespace EVF.Report.Bll
             return Directory.Exists(path);
         }
 
+        /// <summary>
+        /// Send email vendor evaluation report.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <param name="file">The directory report file.</param>
         private void SendEmailToVendor(int id, string file)
         {
             var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
@@ -283,6 +288,11 @@ namespace EVF.Report.Bll
             });
         }
 
+        /// <summary>
+        /// Get Period information for generate content.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <returns></returns>
         private string[] GetPeriodName(int periodItemId)
         {
             var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId).FirstOrDefault();
