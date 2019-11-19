@@ -294,9 +294,9 @@ namespace EVF.Master.Bll
         /// </summary>
         /// <param name="model">The master data setup template.</param>
         /// <returns></returns>
-        public EvaluationTemplateDisplayViewModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model)
+        public EvaluationTemplatePreviewResponseModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model)
         {
-            var result = new EvaluationTemplateDisplayViewModel
+            var result = new EvaluationTemplatePreviewResponseModel
             {
                 Name = string.Empty,
                 Criteria = _criteria.GetDetail(model.CriteriaId.Value),
@@ -304,6 +304,7 @@ namespace EVF.Master.Bll
                 Grade = _grade.GetDetail(model.GradeId.Value)
             };
             result.MaxTotalScore = this.GetMaxTotalScore(result.LevelPoint.WeightingKey, result.LevelPoint.LevelPointItems.Count, result.Criteria);
+            result.EvaluationLogs = this.GetModelEvaluation(model.CriteriaId.Value).ToList();
             return result;
         }
 
@@ -322,6 +323,48 @@ namespace EVF.Master.Bll
                 foreach (var item in criteria.CriteriaGroups)
                 {
                     result = result + (item.MaxScore * levelPoint);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Inital model for post method save.
+        /// </summary>
+        /// <param name="evaluationTemplateId">The evaluation template identity.</param>
+        /// <returns></returns>
+        private IEnumerable<EvaluationLogItemViewModel> GetModelEvaluation(int criteriaId)
+        {
+            var result = new List<EvaluationLogItemViewModel>();
+            var criteria = _unitOfWork.GetRepository<Criteria>().GetCache(x => x.Id == criteriaId).FirstOrDefault();
+            var criteriaGroups = _unitOfWork.GetRepository<CriteriaGroup>().GetCache(x => x.CriteriaId == criteria.Id);
+            foreach (var item in criteriaGroups)
+            {
+                result.Add(new EvaluationLogItemViewModel
+                {
+                    Id = 0,
+                    KpiGroupId = item.KpiGroupId,
+                    KpiId = 0,
+                    LevelPoint = 0,
+                    Score = 0,
+                    RawScore = 0,
+                    Reason = string.Empty,
+                    MaxScore = item.MaxScore.Value
+                });
+                var criteriaItems = _unitOfWork.GetRepository<CriteriaItem>().GetCache(x => x.CriteriaGroupId == item.Id);
+                foreach (var subItem in criteriaItems)
+                {
+                    result.Add(new EvaluationLogItemViewModel
+                    {
+                        Id = 0,
+                        KpiGroupId = item.KpiGroupId,
+                        KpiId = subItem.KpiId,
+                        LevelPoint = 0,
+                        Score = 0,
+                        RawScore = 0,
+                        Reason = string.Empty,
+                        MaxScore = subItem.MaxScore.Value
+                    });
                 }
             }
             return result;

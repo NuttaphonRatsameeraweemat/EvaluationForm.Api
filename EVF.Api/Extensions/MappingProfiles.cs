@@ -137,8 +137,8 @@ namespace EVF.Api.Extensions
         /// </summary>
         private void MappingEvaluationModel()
         {
-            CreateMap<EvaluationLogItem, EvaluationLogItemViewModel>();
-            CreateMap<EvaluationLogItemViewModel, EvaluationLogItem>();
+            CreateMap<EvaluationLogItem, Evaluation.Bll.Models.EvaluationLogItemViewModel>();
+            CreateMap<Evaluation.Bll.Models.EvaluationLogItemViewModel, EvaluationLogItem>();
             CreateMap<EvaluationRequestViewModel, Data.Pocos.Evaluation>();
             CreateMap<Data.Pocos.Evaluation, EvaluationRequestViewModel>();
         }

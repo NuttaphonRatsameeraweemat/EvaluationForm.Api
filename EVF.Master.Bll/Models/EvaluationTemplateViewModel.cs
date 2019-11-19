@@ -46,4 +46,19 @@ namespace EVF.Master.Bll.Models
         public int? GradeId { get; set; }
     }
 
+    public class EvaluationTemplatePreviewResponseModel
+    {
+        public EvaluationTemplatePreviewResponseModel()
+        {
+            EvaluationLogs = new List<EvaluationLogItemViewModel>();
+        }
+
+        public string Name { get; set; }
+        public int MaxTotalScore { get; set; }
+        public CriteriaViewModel Criteria { get; set; }
+        public LevelPointViewModel LevelPoint { get; set; }
+        public GradeViewModel Grade { get; set; }
+        public List<EvaluationLogItemViewModel> EvaluationLogs { get; set; }
+    }
+
 }

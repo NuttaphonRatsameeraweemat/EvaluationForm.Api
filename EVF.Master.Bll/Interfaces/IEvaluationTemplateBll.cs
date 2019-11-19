@@ -60,7 +60,7 @@ namespace EVF.Master.Bll.Interfaces
         /// </summary>
         /// <param name="model">The master data setup template.</param>
         /// <returns></returns>
-        EvaluationTemplateDisplayViewModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model);
+        EvaluationTemplatePreviewResponseModel PreviewTemplate(EvaluationTemplatePreviewRequestModel model);
         /// <summary>
         /// Validate grade is using in evaluation template or not.
         /// </summary>
