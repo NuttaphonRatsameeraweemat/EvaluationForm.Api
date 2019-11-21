@@ -20,7 +20,7 @@ using System.Text;
 
 namespace EVF.Report.Bll
 {
-    public class EvaluationSummaryReportBll : IEvaluationSummaryReportBll
+    public class ValidateEvaluationReportBll : IEvaluationSummaryReportBll
     {
 
         #region [Fields]
@@ -43,11 +43,11 @@ namespace EVF.Report.Bll
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EvaluationSummaryReportBll" /> class.
+        /// Initializes a new instance of the <see cref="ValidateEvaluationReportBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public EvaluationSummaryReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
+        public ValidateEvaluationReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
         {
             _unitOfWork = unitOfWork;
             _summaryEvaluation = summaryEvaluation;
