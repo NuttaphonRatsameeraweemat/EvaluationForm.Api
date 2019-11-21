@@ -198,8 +198,11 @@ namespace EVF.Evaluation.Bll
         {
             var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
             var purOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == data.PurchasingOrg).FirstOrDefault();
+            var company = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == data.ComCode).FirstOrDefault();
             return new SummaryEvaluationViewModel
             {
+                Id = data.Id,
+                CompanyName = company?.LongText,
                 VendorName = vendor?.VendorName,
                 PurchasingOrgName = purOrg?.PurchaseName,
                 WeightingKey = data.WeightingKey,

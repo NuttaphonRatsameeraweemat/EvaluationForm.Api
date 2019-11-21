@@ -80,5 +80,14 @@ namespace EVF.Data.Pocos
         public string MarkWeightingKey { get; set; }
         [StringLength(1)]
         public string ElasticStatus { get; set; }
+        [Column("TOTAL_AMT_PO")]
+        [StringLength(20)]
+        public string TotalAmtPo { get; set; }
+        [Column("ENDATE")]
+        [StringLength(10)]
+        public string Endate { get; set; }
+        [Column("ENTIME")]
+        [StringLength(10)]
+        public string Entime { get; set; }
     }
 }

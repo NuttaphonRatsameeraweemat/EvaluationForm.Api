@@ -68,9 +68,10 @@ namespace EVF.Data.Repository.EF
         public IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            int skip = 0, int take = 0,
             params string[] includeProperties)
         {
-            return GetQueryable(filter, orderBy, includeProperties).ToList();
+            return GetQueryable(filter, orderBy, skip, take, includeProperties).ToList();
         }
 
         /// <summary>
@@ -138,6 +139,7 @@ namespace EVF.Data.Repository.EF
         public IQueryable<TEntity> GetQueryable(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            int skip = 0, int take = 0,
             params string[] includeProperties)
         {
             IQueryable<TEntity> result = _dbSet;
@@ -146,6 +148,16 @@ namespace EVF.Data.Repository.EF
             if (filter != null)
             {
                 result = result.Where(filter);
+            }
+
+            if (skip != 0)
+            {
+                result = result.Skip(skip);
+            }
+
+            if (take != 0)
+            {
+                result = result.Take(take);
             }
 
             // For include properties.

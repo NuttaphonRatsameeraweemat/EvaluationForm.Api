@@ -205,6 +205,10 @@ namespace EVF.Data
 
                 entity.Property(e => e.ElasticStatus).IsUnicode(false);
 
+                entity.Property(e => e.Endate).IsUnicode(false);
+
+                entity.Property(e => e.Entime).IsUnicode(false);
+
                 entity.Property(e => e.Free).IsUnicode(false);
 
                 entity.Property(e => e.Intercomp).IsUnicode(false);
@@ -228,6 +232,8 @@ namespace EVF.Data
                 entity.Property(e => e.PurorgName).IsUnicode(false);
 
                 entity.Property(e => e.ShortText).IsUnicode(false);
+
+                entity.Property(e => e.TotalAmtPo).IsUnicode(false);
 
                 entity.Property(e => e.UnitCode).IsUnicode(false);
 

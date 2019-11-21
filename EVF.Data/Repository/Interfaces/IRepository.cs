@@ -10,9 +10,10 @@ namespace EVF.Data.Repository.Interfaces
         TEntity GetById(int id);
 
         IEnumerable<TEntity> Get(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params string[] includeProperties);
+          Expression<Func<TEntity, bool>> filter = null,
+          Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+          int skip = 0, int take = 0,
+          params string[] includeProperties);
 
         IEnumerable<TEntity> GetCache(
             Expression<Func<TEntity, bool>> filter = null,
@@ -20,9 +21,10 @@ namespace EVF.Data.Repository.Interfaces
             params string[] includeProperties);
 
         IQueryable<TEntity> GetQueryable(
-            Expression<Func<TEntity, bool>> filter = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-            params string[] includeProperties);
+           Expression<Func<TEntity, bool>> filter = null,
+           Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+           int skip = 0, int take = 0,
+           params string[] includeProperties);
 
         int GetCount(Expression<Func<TEntity, bool>> filter = null);
 

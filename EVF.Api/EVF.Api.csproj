@@ -30,4 +30,9 @@
     <ProjectReference Include="..\EVF.Workflow.Bll\EVF.Workflow.Bll.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Reports\EvaluationSummaryReport\" />
+    <Folder Include="Reports\VendorEvaluationReport\" />
+  </ItemGroup>
+
 </Project>

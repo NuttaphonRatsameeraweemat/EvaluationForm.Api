@@ -26,7 +26,7 @@ namespace EVF.Tranfer.Service.Data
             {
                 entity.HasKey(e => new { e.Gjahr, e.Belnr, e.Buzei, e.Para })
                     .HasName("PK__VendorTr__3214EC27F65E5B23");
-                
+
                 entity.Property(e => e.Belnr).IsUnicode(false);
 
                 entity.Property(e => e.Condition).IsUnicode(false);
@@ -36,6 +36,10 @@ namespace EVF.Tranfer.Service.Data
                 entity.Property(e => e.DocNumber).IsUnicode(false);
 
                 entity.Property(e => e.DocType).IsUnicode(false);
+
+                entity.Property(e => e.Endate).IsUnicode(false);
+
+                entity.Property(e => e.Entime).IsUnicode(false);
 
                 entity.Property(e => e.Free).IsUnicode(false);
 
@@ -58,6 +62,8 @@ namespace EVF.Tranfer.Service.Data
                 entity.Property(e => e.PurorgName).IsUnicode(false);
 
                 entity.Property(e => e.ShortText).IsUnicode(false);
+
+                entity.Property(e => e.TotalAmtPo).IsUnicode(false);
 
                 entity.Property(e => e.UnitCode).IsUnicode(false);
 

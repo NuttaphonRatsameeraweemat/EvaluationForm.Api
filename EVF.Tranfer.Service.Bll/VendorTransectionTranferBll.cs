@@ -70,23 +70,66 @@ namespace EVF.Tranfer.Service.Bll
         public ResultViewModel TranferVendorTransection()
         {
             var result = new ResultViewModel();
-            var vendorTransaction = _evfUnitOfWork.GetRepository<VendorTransaction>().Get().Select(x => x.DataUpdateDate).Distinct();
-            var vendorTransactionsMaster = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get(x => !vendorTransaction.Contains(x.DataUpdateDate)).ToList();
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 30, 0)))
+            List<string> vendorTransactionEndate = new List<string>();
+            List<string> vendorTransactionEntime = new List<string>();
+
+            this.GetVendorTransactionEnDateAndTime(vendorTransactionEndate, vendorTransactionEntime);
+
+            int vendorTransactionsMasterCount = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().GetCount(x =>
+                                                                            !vendorTransactionEndate.Contains(x.Endate) &&
+                                                                            !vendorTransactionEntime.Contains(x.Entime));
+
+            int takeNumber = 1000;
+            int bulkNumber = (vendorTransactionsMasterCount / takeNumber) + 1;
+
+            for (int i = 0; i < bulkNumber; i++)
             {
-                var transactionUpdate = this.UpdateTransaction(vendorTransactionsMaster);
-                var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransactionsMaster);
-                data.Select(c => { c.ElasticStatus = ConstantValue.ElasticStatusWaiting; return c; }).ToList();
-                _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
-                _evfUnitOfWork.GetRepository<VendorTransaction>().UpdateRange(transactionUpdate);
-                _evfUnitOfWork.Complete(scope);
-                System.Threading.Tasks.Task.Run(() =>
+                int skip = i * takeNumber;
+                var vendorTransactionsMaster = _brbUnitOfWork.GetRepository<SPE_TRANSAC_PO_QA>().Get(x =>
+                                                                        !vendorTransactionEndate.Contains(x.Endate) &&
+                                                                        !vendorTransactionEntime.Contains(x.Entime), skip: skip, take: takeNumber).ToList();
+
+                using (var scope = new TransactionScope(TransactionScopeOption.Required, new System.TimeSpan(0, 30, 0)))
                 {
-                    this.LogTranferData(data);
-                    this.LogTranferData(transactionUpdate);
-                });
+                    var transactionUpdate = this.UpdateTransaction(vendorTransactionsMaster);
+                    var data = _mapper.Map<IEnumerable<SPE_TRANSAC_PO_QA>, IEnumerable<VendorTransaction>>(vendorTransactionsMaster);
+                    data.Select(c => { c.ElasticStatus = ConstantValue.ElasticStatusWaiting; return c; }).ToList();
+                    _evfUnitOfWork.GetRepository<VendorTransaction>().AddRange(data);
+                    _evfUnitOfWork.GetRepository<VendorTransaction>().UpdateRange(transactionUpdate);
+                    _evfUnitOfWork.Complete(scope);
+                    System.Threading.Tasks.Task.Run(() =>
+                    {
+                        this.LogTranferData(data);
+                        this.LogTranferData(transactionUpdate);
+                    });
+                }
             }
+
             return result;
+        }
+
+        private void GetVendorTransactionEnDateAndTime(List<string> vendorTransactionEndate, List<string> vendorTransactionEntime)
+        {
+            int vendorTransactionsCount = _evfUnitOfWork.GetRepository<VendorTransaction>().GetCount();
+
+            int takeTransactionNumber = 1000;
+            int bulkNumberTransaction = (vendorTransactionsCount / takeTransactionNumber) + 1;
+
+            for (int i = 0; i < bulkNumberTransaction; i++)
+            {
+                int skip = i * takeTransactionNumber;
+                var temp = _evfUnitOfWork.GetRepository<VendorTransaction>().Get(skip: skip, take: takeTransactionNumber);
+
+                var enDate = temp.Select(x => x.Endate);
+                var enTime = temp.Select(x => x.Entime);
+
+                vendorTransactionEndate.AddRange(enDate);
+                vendorTransactionEntime.AddRange(enTime);
+            }
+
+            vendorTransactionEndate = vendorTransactionEndate.Select(x => x).Distinct().ToList();
+            vendorTransactionEntime = vendorTransactionEntime.Select(x => x).Distinct().ToList();
+
         }
 
         /// <summary>

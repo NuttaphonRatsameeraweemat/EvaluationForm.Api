@@ -12,6 +12,8 @@ namespace EVF.Evaluation.Bll.Models
             UserLists = new List<UserEvaluationViewModel>();
         }
 
+        public int Id { get; set; }
+        public string CompanyName { get; set; }
         public string VendorName { get; set; }
         public string WeightingKey { get; set; }
         public string PurchasingOrgName { get; set; }

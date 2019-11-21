@@ -75,5 +75,14 @@ namespace EVF.Tranfer.Service.Data.Pocos
         public string PurchDoc { get; set; }
         [Column("DataUpdate_Date", TypeName = "datetime")]
         public DateTime? DataUpdateDate { get; set; }
+        [Column("TOTAL_AMT_PO")]
+        [StringLength(20)]
+        public string TotalAmtPo { get; set; }
+        [Column("ENDATE")]
+        [StringLength(10)]
+        public string Endate { get; set; }
+        [Column("ENTIME")]
+        [StringLength(10)]
+        public string Entime { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace EVF.UnitTest.ReportTest
         [InlineData("1600", 12, 22, "1600", "A3")]
         [InlineData("1600", 12, 22, "1600", "A4")]
         [InlineData("1600", 12, 22, "1600", "A5")]
-        public void GetList(string comCode, int? periodId, int? periodItemId, string purchaseOrg, string weightingKey)
+        public void ExportSummaryReport(string comCode, int? periodId, int? periodItemId, string purchaseOrg, string weightingKey)
         {
             try
             {

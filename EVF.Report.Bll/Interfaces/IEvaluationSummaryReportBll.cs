@@ -7,6 +7,10 @@ namespace EVF.Report.Bll.Interfaces
 {
     public interface IEvaluationSummaryReportBll
     {
-        void ExportSummaryReport(EvaluationSummaryReportRequestModel model);
+        /// <summary>
+        /// Export summary evaluation excel report.
+        /// </summary>
+        /// <param name="model">The filter criteria value.</param>
+        ResponseFileModel ExportSummaryReport(EvaluationSummaryReportRequestModel model);
     }
 }

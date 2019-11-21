@@ -312,8 +312,13 @@ namespace EVF.Vendor.Bll
                                          .Select(x => x.Vendor).Distinct().ToArray();
             foreach (var item in vendors)
             {
-                var summary = transectionList.Where(x => x.Vendor == item).Sum(x => x.QuantityReceived);
+                var vendorTransaction = transectionList.Where(x => x.Vendor == item);
+                var summary = vendorTransaction.Sum(x => x.QuantityReceived);
+                if (summary.Value == 0)
+                {
+                    //logic when summary equal zero
 
+                }
                 result.Add(new VendorFilterResponseViewModel
                 {
                     VendorNo = item,
