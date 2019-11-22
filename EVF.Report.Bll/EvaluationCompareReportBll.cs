@@ -5,8 +5,6 @@ using EVF.Evaluation.Bll.Models;
 using EVF.Helper;
 using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
-using EVF.Master.Bll.Interfaces;
-using EVF.Master.Bll.Models;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll.Models;
 using NPOI.SS.UserModel;
@@ -21,7 +19,7 @@ using System.Text;
 
 namespace EVF.Report.Bll
 {
-    public class VendorEvaluationStatusReportBll : IVendorEvaluationStatusReportBll
+    public class EvaluationCompareReportBll : IEvaluationCompareReportBll
     {
 
         #region [Fields]
@@ -35,10 +33,6 @@ namespace EVF.Report.Bll
         /// </summary>
         private readonly ISummaryEvaluationBll _summaryEvaluation;
         /// <summary>
-        /// The evaluationTemplate manager provides evaluationTemplate functionality.
-        /// </summary>
-        private readonly IEvaluationTemplateBll _evaluationTemplateBll;
-        /// <summary>
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
@@ -48,17 +42,15 @@ namespace EVF.Report.Bll
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="VendorEvaluationStatusReportBll" /> class.
+        /// Initializes a new instance of the <see cref="EvaluationCompareReportBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public VendorEvaluationStatusReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token,
-                                               IEvaluationTemplateBll evaluationTemplateBll)
+        public EvaluationCompareReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
         {
             _unitOfWork = unitOfWork;
             _summaryEvaluation = summaryEvaluation;
             _token = token;
-            _evaluationTemplateBll = evaluationTemplateBll;
         }
 
         #endregion
@@ -69,7 +61,7 @@ namespace EVF.Report.Bll
         /// Export vendor evaluation status excel report.
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
-        public ResponseFileModel ExportVendorEvaluationStatusReport(EvaluationSummaryReportRequestModel model)
+        public ResponseFileModel ExportEvaluationCompareReport(EvaluationSummaryReportRequestModel model)
         {
             var dataList = this.GetDataCollection(model);
             var summaryList = this.GetSummarys(dataList);
@@ -114,7 +106,7 @@ namespace EVF.Report.Bll
                                  EvaluationSummaryReportRequestModel model)
         {
             var result = new ResponseFileModel();
-            string sheetName = "รายงานสถานะการประเมินผู้ขาย";
+            string sheetName = "รายงานเปรียบเทียบการประเมิน";
 
             using (var memoryStream = new MemoryStream())
             {
@@ -127,35 +119,35 @@ namespace EVF.Report.Bll
                 sheet1.AddMergedRegion(new CellRangeAddress(3, 3, 0, 3));
 
                 var periodItemList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
-                var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
                 int rowIndex = 2;
 
                 this.GenerateTopicReport(workbook, sheet1, ref rowIndex, model);
+                this.GenerateHeaderTable(workbook, sheet1, ref rowIndex);
 
-                foreach (var item in evaluationList)
-                {
-                    var summary = summaryList.FirstOrDefault(x => x.Id == item.Id);
-                    var periodItem = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId.Value);
-                    this.GenerateHeaderTable(workbook, sheet1, ref rowIndex);
+                //foreach (var item in evaluationList)
+                //{
+                //    var summary = summaryList.FirstOrDefault(x => x.Id == item.Id);
+                //    var periodItem = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId.Value);
+                    
 
-                    //Merge header table.
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 0, 0));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 1, 1));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 2, 3));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 4, 4));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 5, 5));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 6, 6));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 7, 7));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 8, 8));
+                //    //Merge header table.
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 0, 0));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 1, 1));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 2, 3));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 4, 4));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 5, 5));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 6, 6));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 7, 7));
+                //    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 8, 8));
 
-                    this.GenerateContentTable(workbook, sheet1, summary, item, ref rowIndex, periodItem, empList);
-                    rowIndex++;
-                }
+                //    this.GenerateContentTable(workbook, sheet1, summary, item, ref rowIndex, periodItem, empList);
+                //    rowIndex++;
+                //}
 
                 workbook.Write(memoryStream);
 
                 result.FileContent = memoryStream.ToArray();
-                result.FileName = $"EvaluationVendorStatus_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                result.FileName = $"EvaluationCompare_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
             }
             return result;
         }
@@ -171,7 +163,7 @@ namespace EVF.Report.Bll
                                          EvaluationSummaryReportRequestModel model)
         {
             IRow topicRow = sheet1.CreateRow(rowIndex);
-            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, $"รายงานสถานะการประเมินผู้ขาย - วันที่พิมพ์ {UtilityService.DateTimeToStringTH(DateTime.Now, "dd MMM yyyy")}");
+            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, $"รายงานเปรียบเทียบการประเมิน - วันที่พิมพ์ {UtilityService.DateTimeToStringTH(DateTime.Now, "dd MMM yyyy")}");
             rowIndex = rowIndex + 1;
             IRow criteriaRow = sheet1.CreateRow(3);
             criteriaRow.Height = 3000;
@@ -191,15 +183,12 @@ namespace EVF.Report.Bll
         {
             string[] mainHeaders = new string[]
             {
-                    "เลขที่ใบประเมิน",
-                    "บริษัท",
-                    "รอบการประเมิน",
-                    "รอบการประเมิน",
-                    "ชื่อรอบการประเมิน",
                     "รหัสผู้ขาย",
                     "ชื่อผู้ขาย",
+                    "ประเภทผู้ขาย",
                     "ชื่อประเภทผู้ขาย",
-                    "ชื่อกลุ่มจัดซื้อ",
+                    "บริษัท",
+                    "รหัสกลุ่มจัดซื้อ",
             };
             IRow headerRow = sheet1.CreateRow(rowIndex);
             headerRow.Height = 500;
@@ -214,6 +203,23 @@ namespace EVF.Report.Bll
             rowIndex++;
             IRow headerRow2 = sheet1.CreateRow(rowIndex);
             ExcelService.SetCellContentStyle(workbook, headerRow2, 0, cellHeaderIndex - 1);
+            
+
+            rowIndex++;
+            IRow headerRow3 = sheet1.CreateRow(rowIndex);
+            ExcelService.SetCellContentStyle(workbook, headerRow3, 0, cellHeaderIndex - 1);
+
+            this.MergeHeader(sheet1, rowIndex);
+        }
+
+        private void MergeHeader(ISheet sheet1, int rowIndex)
+        {
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 0, 0));
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 1, 1));
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 2, 2));
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 3, 3));
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 4, 4));
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 2, rowIndex, 5, 5));
         }
 
         /// <summary>
@@ -348,73 +354,10 @@ namespace EVF.Report.Bll
 
             rowIndex += 2;
 
-            var evaTemplate = _evaluationTemplateBll.LoadTemplate(evaluation.EvaluationTemplateId.Value);
-            this.GenerateScoreHeader(workbook, sheet1, ref rowIndex, summary);
-
-            foreach (var user in summary.UserLists)
-            {
-                var emp = empList.FirstOrDefault(x => x.Aduser == user.AdUser);
-                string evaluatorName = $"   คุณ{emp?.FirstnameTh} {emp?.LastnameTh}";
-
-                IRow userContent = sheet1.CreateRow(rowIndex);
-                ExcelService.CreateContentCell(workbook, sheet1, userContent, 1, evaluatorName, horizontalAlignment: HorizontalAlignment.Left);
-                ExcelService.SetCellContentStyle(workbook, userContent, 2, 2);
-                sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, 2));
-
-                var evaLogs = user.EvaluationLogs.FirstOrDefault();
-                this.GenerateCriteriaContent(workbook, sheet1, ref rowIndex, evaluation.WeightingKey, summary, evaTemplate, evaLogs);
-
-                rowIndex += 2;
-            }
+           
 
         }
-
-        /// <summary>
-        /// Generate evaluation template and user score evaluation.
-        /// </summary>
-        /// <param name="workbook">The npoi workbook interface.</param>
-        /// <param name="sheet1">The npoi sheet interface.</param>
-        /// <param name="rowIndex">The row target index.</param>
-        /// <param name="weigthingKey">The weighting key condition max score.</param>
-        /// <param name="summary">The evaluation summary.</param>
-        /// <param name="evaTemplate">The evaluation template.</param>
-        /// <param name="evaLogs">The user evaluation log collection.</param>
-        private void GenerateCriteriaContent(IWorkbook workbook, ISheet sheet1, ref int rowIndex,
-                                         string weigthingKey,
-                                         SummaryEvaluationViewModel summary,
-                                         EvaluationTemplateDisplayViewModel evaTemplate,
-                                         UserEvaluationDetailViewModel evaLogs)
-        {
-            foreach (var item in evaTemplate.Criteria.CriteriaGroups)
-            {
-                rowIndex++;
-                string criteriaGroup = $" {item.Sequence}. {item.KpiGroupNameTh}";
-                string score = this.GetScore(evaLogs, item.KpiGroupId, 0);
-
-                IRow kpiGroupContent = sheet1.CreateRow(rowIndex);
-                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 2, criteriaGroup, horizontalAlignment: HorizontalAlignment.Left);
-                ExcelService.SetCellContentStyle(workbook, kpiGroupContent, 3, 3);
-                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 4, score);
-                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 5, this.GetMaxScore(weigthingKey, item.MaxScore));
-                sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 3));
-
-                foreach (var subItem in item.CriteriaItems)
-                {
-                    rowIndex++;
-                    string criteriaItem = $"    {item.Sequence}.{subItem.Sequence}. {subItem.KpiNameTh}";
-                    string subScore = this.GetScore(evaLogs, item.KpiGroupId, subItem.KpiId.Value);
-
-                    IRow kpiContent = sheet1.CreateRow(rowIndex);
-                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 2, criteriaItem, horizontalAlignment: HorizontalAlignment.Left);
-                    ExcelService.SetCellContentStyle(workbook, kpiContent, 3, 3);
-                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 4, score);
-                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 5, this.GetMaxScore(weigthingKey, subItem.MaxScore));
-                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 3));
-
-                }
-
-            }
-        }
+        
 
         /// <summary>
         /// Generate header table score.

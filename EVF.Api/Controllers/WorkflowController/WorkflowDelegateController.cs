@@ -50,11 +50,32 @@ namespace EVF.Api.Controllers.WorkflowController
             return Ok(_workflowDelegate.GetDetail(id));
         }
 
+        [HttpGet]
+        [Route("GetDelegateInbox")]
+        public IActionResult GetDelegateInbox()
+        {
+            IActionResult response;
+            var data = _workflowDelegate.GetDelegateInbox();
+            if (data != null)
+            {
+                response = Ok(data);
+            }
+            else response = Ok(new { });
+            return response;
+        }
+
         [HttpPost]
         [Route("Save")]
         public IActionResult Save([FromBody]WorkflowDelegateViewModel model)
         {
             return Ok(_workflowDelegate.SaveDelegate(model));
+        }
+
+        [HttpPost]
+        [Route("SaveDelegateFromInbox")]
+        public IActionResult SaveDelegateFromInbox([FromBody]WorkflowDelegateRequestModel model)
+        {
+            return Ok(_workflowDelegate.SaveDelegateFromInbox(model));
         }
 
         [HttpPost]
@@ -65,10 +86,24 @@ namespace EVF.Api.Controllers.WorkflowController
         }
 
         [HttpPost]
+        [Route("UpdateDelegateInbox")]
+        public IActionResult UpdateDelegateInbox([FromBody]WorkflowDelegateRequestModel model)
+        {
+            return Ok(_workflowDelegate.UpdateDelegateInbox(model));
+        }
+
+        [HttpPost]
         [Route("Delete")]
         public IActionResult Delete(int id)
         {
             return Ok(_workflowDelegate.RemoveDelegate(id));
+        }
+
+        [HttpPost]
+        [Route("RemoveDelegateInbox")]
+        public IActionResult RemoveDelegateInbox()
+        {
+            return Ok(_workflowDelegate.RemoveDelegateInbox());
         }
 
         #endregion

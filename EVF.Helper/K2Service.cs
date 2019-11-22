@@ -206,7 +206,7 @@ namespace EVF.Helper
         {
             var model = new K2Model.SetOutOfOfficeModel
             {
-                K2Connect = new K2ProfileModel { Management = true },
+                K2Connect = _k2ProfileModel,
                 WorkflowDelegate = new K2Model.WorkflowDelegateModel
                 {
                     FromUser = fromUser,
@@ -216,6 +216,7 @@ namespace EVF.Helper
                     EndDate = endDate
                 }
             };
+            model.K2Connect.Management = true;
             using (HttpResponseMessage response = _client.PostAsync(
                                                     this.CallCommonApi(string.Format("{0}/{1}", K2RouteWorkflow, K2RouteSetOutOfOffice)),
                                                     UtilityService.SerializeContent(model)).Result)
