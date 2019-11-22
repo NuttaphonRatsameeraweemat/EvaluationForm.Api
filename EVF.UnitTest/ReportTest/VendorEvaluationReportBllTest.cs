@@ -22,7 +22,7 @@ namespace EVF.UnitTest.ReportTest
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EvaluationSummaryReportBllTest" /> class.
+        /// Initializes a new instance of the <see cref="InvestigateEvaluationReportBllTest" /> class.
         /// </summary>
         /// <param name="io">The IoCConfig class provide installing all components needed to use.</param>
         public VendorEvaluationReportBllTest(IoCConfig io)

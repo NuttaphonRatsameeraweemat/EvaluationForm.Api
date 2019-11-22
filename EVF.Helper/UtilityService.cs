@@ -158,6 +158,16 @@ namespace EVF.Helper
             return value.ToString(format, System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Convert Datetime to string format report th.
+        /// </summary>
+        /// <param name="value">The datetime value.</param>
+        /// <returns></returns>
+        public static string DateTimeToStringTH(DateTime value, string format)
+        {
+            var culture = new System.Globalization.CultureInfo("TH-th");
+            return value.ToString(format, culture);
+        }
 
         /// <summary>
         /// Calculate average score.

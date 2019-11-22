@@ -21,7 +21,7 @@ namespace EVF.Api.Controllers.ReportController
         /// <summary>
         /// The cache manager provides cache functionality.
         /// </summary>
-        private readonly IEvaluationSummaryReportBll _evaluationSummaryReport;
+        private readonly IInvestigateEvaluationReportBll _evaluationSummaryReport;
 
         #endregion
 
@@ -31,7 +31,7 @@ namespace EVF.Api.Controllers.ReportController
         ///  Initializes a new instance of the <see cref="EvaluationSummaryReportController" /> class.
         /// </summary>
         /// <param name="evaluationSummaryReport"></param>
-        public EvaluationSummaryReportController(IEvaluationSummaryReportBll evaluationSummaryReport)
+        public EvaluationSummaryReportController(IInvestigateEvaluationReportBll evaluationSummaryReport)
         {
             _evaluationSummaryReport = evaluationSummaryReport;
         }

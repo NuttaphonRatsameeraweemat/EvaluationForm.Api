@@ -5,7 +5,7 @@ using System.Text;
 
 namespace EVF.Report.Bll.Interfaces
 {
-    public interface IEvaluationSummaryReportBll
+    public interface IInvestigateEvaluationReportBll
     {
         /// <summary>
         /// Export summary evaluation excel report.

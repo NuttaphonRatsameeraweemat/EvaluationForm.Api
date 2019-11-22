@@ -3,11 +3,9 @@ using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
 using EVF.Helper;
-using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll.Models;
-using NPOI.HSSF.Util;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using NPOI.XSSF.UserModel;
@@ -16,11 +14,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace EVF.Report.Bll
 {
-    public class InvestigateEvaluationReportBll : IInvestigateEvaluationReportBll
+    public class VendorEvaluationStatusReportBll : IVendorEvaluationStatusReportBll
     {
 
         #region [Fields]
@@ -43,11 +40,11 @@ namespace EVF.Report.Bll
         #region [Constructors]
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InvestigateEvaluationReportBll" /> class.
+        /// Initializes a new instance of the <see cref="VendorEvaluationStatusReportBll" /> class.
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public InvestigateEvaluationReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
+        public VendorEvaluationStatusReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
         {
             _unitOfWork = unitOfWork;
             _summaryEvaluation = summaryEvaluation;
@@ -66,7 +63,7 @@ namespace EVF.Report.Bll
         {
             var dataList = this.GetDataCollection(model);
             var summaryList = this.GetSummarys(dataList);
-            return this.ExportExcel(dataList, summaryList, model);
+            return this.ExportExcel(dataList, summaryList);
         }
 
         /// <summary>
@@ -101,10 +98,8 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="evaluationList">The evaluation collection.</param>
         /// <param name="summaryList">The summary evaluation collection.</param>
-        /// <param name="model">The filter criteria value.</param>
         private ResponseFileModel ExportExcel(IEnumerable<Data.Pocos.Evaluation> evaluationList,
-                                 IEnumerable<SummaryEvaluationViewModel> summaryList,
-                                 EvaluationSummaryReportRequestModel model)
+                                 IEnumerable<SummaryEvaluationViewModel> summaryList)
         {
             var result = new ResponseFileModel();
             int maxCountUser = summaryList.Select(x => x.UserLists.Count).Max();
@@ -117,8 +112,7 @@ namespace EVF.Report.Bll
 
                 ISheet sheet1 = workbook.CreateSheet(sheetName);
 
-                sheet1.AddMergedRegion(new CellRangeAddress(2, 2, 0, 7));
-                sheet1.AddMergedRegion(new CellRangeAddress(3, 3, 0, 3));
+                sheet1.AddMergedRegion(new CellRangeAddress(3, 3, 0, 7));
                 sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 0, 0));
                 sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 1, 1));
                 sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 2, 3));
@@ -129,8 +123,8 @@ namespace EVF.Report.Bll
                 sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 8, 8));
                 sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 9, 9));
 
-                int rowIndex = 2;
-                int cellHeaderIndex = this.GenerateHeaderTable(workbook, sheet1, ref rowIndex, maxCountUser, model);
+                int rowIndex = 3;
+                int cellHeaderIndex = this.GenerateHeaderTable(workbook, sheet1, ref rowIndex, maxCountUser);
                 this.GenerateContentTable(workbook, sheet1, summaryList, evaluationList, rowIndex, cellHeaderIndex);
 
                 workbook.Write(memoryStream);
@@ -148,19 +142,12 @@ namespace EVF.Report.Bll
         /// <param name="sheet1">The npoi sheet interface.</param>
         /// <param name="rowIndex">The row target index.</param>
         /// <param name="maxCountUser">The max count user for generate dynamic header column.</param>
-        /// <param name="model">The filter criteria value.</param>
         /// <returns></returns>
         private int GenerateHeaderTable(IWorkbook workbook, ISheet sheet1,
-                                         ref int rowIndex, int maxCountUser,
-                                         EvaluationSummaryReportRequestModel model)
+                                         ref int rowIndex, int maxCountUser)
         {
             IRow topicRow = sheet1.CreateRow(rowIndex);
-            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, $"รายงานตรวจสอบสถานะการประเมิน - วันที่พิมพ์ {UtilityService.DateTimeToStringTH(DateTime.Now, "dd MMM yyyy")}");
-            rowIndex = rowIndex + 1;
-            IRow criteriaRow = sheet1.CreateRow(rowIndex);
-            criteriaRow.Height = 3000;
-            ExcelService.CreateCriteriaCell(workbook, sheet1, criteriaRow, 0, $"{this.GenerateCriteria(model)}");
-            ExcelService.SetCellCriteriaStyle(workbook, criteriaRow, 1, 3);
+            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, "รายงานตรวจสอบสถานะการประเมิน");
             rowIndex = rowIndex + 2;
             string[] mainHeaders = new string[]
             {
@@ -226,99 +213,6 @@ namespace EVF.Report.Bll
                 status = "ไม่ประสงค์ประเมิน";
             }
             return status;
-        }
-
-        /// <summary>
-        /// Generate criteria selected information in report.
-        /// </summary>
-        /// <param name="model">The filter criteria value.</param>
-        /// <returns></returns>
-        private string GenerateCriteria(EvaluationSummaryReportRequestModel model)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine($"   Criteria ที่เลือก");
-            stringBuilder.AppendLine($"ปี : {this.GetYear(model.PeriodId)}");
-            stringBuilder.AppendLine($"รอบ : {this.GetPeriodItemName(model.PeriodItemId)}");
-            stringBuilder.AppendLine($"บริษัท : {this.GetCompanyName(model.ComCode)}");
-            stringBuilder.AppendLine($"กลุ่มจัดซื้อ : {this.GetPurchaseName(model.PurchaseOrg)}");
-            stringBuilder.AppendLine($"ประเภทผู้ขาย : {this.GetWeightingKey(model.WeightingKey)}");
-            return stringBuilder.ToString();
-        }
-
-        /// <summary>
-        /// Get year selected.
-        /// </summary>
-        /// <param name="periodId">The period identity.</param>
-        /// <returns></returns>
-        private string GetYear(int? periodId)
-        {
-            string result = "";
-            if (periodId.HasValue)
-            {
-                result = _unitOfWork.GetRepository<Period>().GetCache(x => x.Id == periodId.Value).FirstOrDefault().Year.ToString();
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Get period item name.
-        /// </summary>
-        /// <param name="periodItemId">The period item identity.</param>
-        /// <returns></returns>
-        private string GetPeriodItemName(int? periodItemId)
-        {
-            string result = "";
-            if (periodItemId.HasValue)
-            {
-                result = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId.Value).FirstOrDefault().PeriodName;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Get company name.
-        /// </summary>
-        /// <param name="comCode">The company code identity.</param>
-        /// <returns></returns>
-        private string GetCompanyName(string comCode)
-        {
-            string result = "";
-            if (!string.IsNullOrEmpty(comCode))
-            {
-                result = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == comCode).FirstOrDefault().LongText;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Get purchase org name.
-        /// </summary>
-        /// <param name="purchaseOrg">The purchase org code identity.</param>
-        /// <returns></returns>
-        private string GetPurchaseName(string purchaseOrg)
-        {
-            string result = "";
-            if (!string.IsNullOrEmpty(purchaseOrg))
-            {
-                result = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == purchaseOrg).FirstOrDefault().PurchaseName;
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Get weigthing key name.
-        /// </summary>
-        /// <param name="valueKey">The weighting key value key.</param>
-        /// <returns></returns>
-        private string GetWeightingKey(string valueKey)
-        {
-            string result = "";
-            if (!string.IsNullOrEmpty(valueKey))
-            {
-                result = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey &&
-                                                                              x.ValueKey == valueKey).FirstOrDefault().ValueText;
-            }
-            return result;
         }
 
         /// <summary>

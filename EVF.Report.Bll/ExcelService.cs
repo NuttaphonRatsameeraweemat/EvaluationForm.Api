@@ -68,6 +68,21 @@ namespace EVF.Report.Bll
         }
 
         /// <summary>
+        /// Create criteria cell and set criteria style format.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="sheet">The npoi sheet interface.</param>
+        /// <param name="row">The npoi row interface.</param>
+        /// <param name="cellIndex">The target cell index.</param>
+        /// <param name="value">The cell string value.</param>
+        public static void CreateCriteriaCell(IWorkbook workbook, ISheet sheet, IRow row, int cellIndex, string value)
+        {
+            var style = SetCriteriaCellStyle(workbook);
+            row.CreateCell(cellIndex).SetCellValue(value);
+            row.GetCell(cellIndex).CellStyle = style;
+        }
+
+        /// <summary>
         /// Set header style format.
         /// </summary>
         /// <param name="workbook">The npoi workbook interface.</param>
@@ -137,6 +152,30 @@ namespace EVF.Report.Bll
         }
 
         /// <summary>
+        /// Set criteria style format.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <returns></returns>
+        private static ICellStyle SetCriteriaCellStyle(IWorkbook workbook)
+        {
+            var font = workbook.CreateFont();
+            font.FontName = FontStyle;
+            font.FontHeight = 14;
+            font.IsBold = true;
+            var style = workbook.CreateCellStyle();
+            BorderStyle borderStyle = BorderStyle.Thin;
+            style.VerticalAlignment = VerticalAlignment.Center;
+            style.Alignment = HorizontalAlignment.Left;
+            style.WrapText = true;
+            style.BorderBottom = borderStyle;
+            style.BorderLeft = borderStyle;
+            style.BorderRight = borderStyle;
+            style.BorderTop = borderStyle;
+            style.SetFont(font);
+            return style;
+        }
+
+        /// <summary>
         /// Create cell and set cell header style single cell.
         /// </summary>
         /// <param name="workbook">The npoi workbook interface.</param>
@@ -176,6 +215,23 @@ namespace EVF.Report.Bll
         public static void SetCellContentStyle(IWorkbook workbook, IRow row, int cellStart, int cellEnd)
         {
             var style = SetContentCellStyle(workbook);
+            for (int i = cellStart; i <= cellEnd; i++)
+            {
+                row.CreateCell(i);
+                row.GetCell(i).CellStyle = style;
+            }
+        }
+
+        /// <summary>
+        /// Create cell and set cell criteria style.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="row">The npoi row interface.</param>
+        /// <param name="cellStart">The cell index start.</param>
+        /// <param name="cellEnd">The cell index end.</param>
+        public static void SetCellCriteriaStyle(IWorkbook workbook, IRow row, int cellStart, int cellEnd)
+        {
+            var style = SetCriteriaCellStyle(workbook);
             for (int i = cellStart; i <= cellEnd; i++)
             {
                 row.CreateCell(i);
