@@ -13,7 +13,7 @@ namespace EVF.Api.Controllers.ReportController
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class EvaluationSummaryReportController : ControllerBase
+    public class InvestigateEvaluationReportController : ControllerBase
     {
 
         #region [Fields]
@@ -28,10 +28,10 @@ namespace EVF.Api.Controllers.ReportController
         #region [Constructors]
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="EvaluationSummaryReportController" /> class.
+        ///  Initializes a new instance of the <see cref="InvestigateEvaluationReportController" /> class.
         /// </summary>
         /// <param name="evaluationSummaryReport"></param>
-        public EvaluationSummaryReportController(IInvestigateEvaluationReportBll evaluationSummaryReport)
+        public InvestigateEvaluationReportController(IInvestigateEvaluationReportBll evaluationSummaryReport)
         {
             _evaluationSummaryReport = evaluationSummaryReport;
         }
