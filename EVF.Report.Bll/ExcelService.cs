@@ -52,6 +52,25 @@ namespace EVF.Report.Bll
         }
 
         /// <summary>
+        /// Create cell value and set content style format.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="sheet">The npoi sheet interface.</param>
+        /// <param name="row">The npoi row interface.</param>
+        /// <param name="cellIndex">The target cell index.</param>
+        /// <param name="value">The cell string value.</param>
+        /// <param name="verticalAlignment">The vertical alignment property setting.</param>
+        /// <param name="horizontalAlignment">The horizontal alignment property setting.</param>
+        public static void CreateContentCellNoBorder(IWorkbook workbook, ISheet sheet, IRow row, int cellIndex, string value,
+                                             VerticalAlignment verticalAlignment = VerticalAlignment.Center,
+                                             HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center)
+        {
+            var style = SetContentCellStyle(workbook, verticalAlignment, horizontalAlignment, false);
+            row.CreateCell(cellIndex).SetCellValue(value);
+            row.GetCell(cellIndex).CellStyle = style;
+        }
+
+        /// <summary>
         /// Create topic cell and set topic style format.
         /// </summary>
         /// <param name="workbook">The npoi workbook interface.</param>
@@ -116,7 +135,8 @@ namespace EVF.Report.Bll
         /// <returns></returns>
         private static ICellStyle SetContentCellStyle(IWorkbook workbook,
                                                       VerticalAlignment verticalAlignment = VerticalAlignment.Center,
-                                                      HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center)
+                                                      HorizontalAlignment horizontalAlignment = HorizontalAlignment.Center,
+                                                      bool isBorder = true)
         {
             var font = workbook.CreateFont();
             font.FontName = FontStyle;
@@ -125,10 +145,13 @@ namespace EVF.Report.Bll
             var style = workbook.CreateCellStyle();
             style.VerticalAlignment = verticalAlignment;
             style.Alignment = horizontalAlignment;
-            style.BorderBottom = borderStyle;
-            style.BorderLeft = borderStyle;
-            style.BorderRight = borderStyle;
-            style.BorderTop = borderStyle;
+            if (isBorder)
+            {
+                style.BorderBottom = borderStyle;
+                style.BorderLeft = borderStyle;
+                style.BorderRight = borderStyle;
+                style.BorderTop = borderStyle;
+            }
             style.SetFont(font);
             return style;
         }

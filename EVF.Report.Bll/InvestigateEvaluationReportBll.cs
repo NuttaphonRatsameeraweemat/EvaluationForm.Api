@@ -136,7 +136,7 @@ namespace EVF.Report.Bll
                 workbook.Write(memoryStream);
 
                 result.FileContent = memoryStream.ToArray();
-                result.FileName = $"EvaluationSummary_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                result.FileName = $"InvestigateEvaluation_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
             }
             return result;
         }

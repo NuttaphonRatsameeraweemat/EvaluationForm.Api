@@ -13,6 +13,7 @@
     <ProjectReference Include="..\EVF.Email.Bll\EVF.Email.Bll.csproj" />
     <ProjectReference Include="..\EVF.Evaluation.Bll\EVF.Evaluation.Bll.csproj" />
     <ProjectReference Include="..\EVF.Helper\EVF.Helper.csproj" />
+    <ProjectReference Include="..\EVF.Master.Bll\EVF.Master.Bll.csproj" />
   </ItemGroup>
 
 </Project>

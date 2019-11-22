@@ -120,8 +120,8 @@ namespace EVF.Tranfer.Service.Bll
                 int skip = i * takeTransactionNumber;
                 var temp = _evfUnitOfWork.GetRepository<VendorTransaction>().Get(skip: skip, take: takeTransactionNumber);
 
-                var enDate = temp.Select(x => x.Endate);
-                var enTime = temp.Select(x => x.Entime);
+                var enDate = temp.Select(x => x.Endate).Distinct();
+                var enTime = temp.Select(x => x.Entime).Distinct();
 
                 vendorTransactionEndate.AddRange(enDate);
                 vendorTransactionEntime.AddRange(enTime);

@@ -217,6 +217,7 @@ namespace EVF.UnitTest
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IVendorEvaluationReportBll, VendorEvaluationReportBll>();
             services.AddScoped<IInvestigateEvaluationReportBll, InvestigateEvaluationReportBll>();
+            services.AddScoped<IVendorEvaluationStatusReportBll, VendorEvaluationStatusReportBll>();
         }
 
         /// <summary>

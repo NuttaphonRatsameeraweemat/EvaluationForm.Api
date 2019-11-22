@@ -3,7 +3,10 @@ using EVF.Data.Repository.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
 using EVF.Helper;
+using EVF.Helper.Components;
 using EVF.Helper.Interfaces;
+using EVF.Master.Bll.Interfaces;
+using EVF.Master.Bll.Models;
 using EVF.Report.Bll.Interfaces;
 using EVF.Report.Bll.Models;
 using NPOI.SS.UserModel;
@@ -14,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace EVF.Report.Bll
 {
@@ -31,6 +35,10 @@ namespace EVF.Report.Bll
         /// </summary>
         private readonly ISummaryEvaluationBll _summaryEvaluation;
         /// <summary>
+        /// The evaluationTemplate manager provides evaluationTemplate functionality.
+        /// </summary>
+        private readonly IEvaluationTemplateBll _evaluationTemplateBll;
+        /// <summary>
         /// The ClaimsIdentity in token management.
         /// </summary>
         private readonly IManageToken _token;
@@ -44,11 +52,13 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public VendorEvaluationStatusReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token)
+        public VendorEvaluationStatusReportBll(IUnitOfWork unitOfWork, ISummaryEvaluationBll summaryEvaluation, IManageToken token,
+                                               IEvaluationTemplateBll evaluationTemplateBll)
         {
             _unitOfWork = unitOfWork;
             _summaryEvaluation = summaryEvaluation;
             _token = token;
+            _evaluationTemplateBll = evaluationTemplateBll;
         }
 
         #endregion
@@ -56,14 +66,14 @@ namespace EVF.Report.Bll
         #region [Methods]
 
         /// <summary>
-        /// Export summary evaluation excel report.
+        /// Export vendor evaluation status excel report.
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
-        public ResponseFileModel ExportSummaryReport(EvaluationSummaryReportRequestModel model)
+        public ResponseFileModel ExportVendorEvaluationStatusReport(EvaluationSummaryReportRequestModel model)
         {
             var dataList = this.GetDataCollection(model);
             var summaryList = this.GetSummarys(dataList);
-            return this.ExportExcel(dataList, summaryList);
+            return this.ExportExcel(dataList, summaryList, model);
         }
 
         /// <summary>
@@ -98,12 +108,14 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="evaluationList">The evaluation collection.</param>
         /// <param name="summaryList">The summary evaluation collection.</param>
+        /// <param name="model">The filter criteria value.</param>
         private ResponseFileModel ExportExcel(IEnumerable<Data.Pocos.Evaluation> evaluationList,
-                                 IEnumerable<SummaryEvaluationViewModel> summaryList)
+                                 IEnumerable<SummaryEvaluationViewModel> summaryList,
+                                 EvaluationSummaryReportRequestModel model)
         {
             var result = new ResponseFileModel();
             int maxCountUser = summaryList.Select(x => x.UserLists.Count).Max();
-            string sheetName = "รายงานตรวจสอบสถานะการประเมิน";
+            string sheetName = "รายงานสถานะการประเมินผู้ขาย";
 
             using (var memoryStream = new MemoryStream())
             {
@@ -112,27 +124,61 @@ namespace EVF.Report.Bll
 
                 ISheet sheet1 = workbook.CreateSheet(sheetName);
 
-                sheet1.AddMergedRegion(new CellRangeAddress(3, 3, 0, 7));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 0, 0));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 1, 1));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 2, 3));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 4, 4));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 5, 5));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 6, 6));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 7, 7));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 8, 8));
-                sheet1.AddMergedRegion(new CellRangeAddress(5, 6, 9, 9));
+                sheet1.AddMergedRegion(new CellRangeAddress(2, 2, 0, 7));
+                sheet1.AddMergedRegion(new CellRangeAddress(3, 3, 0, 3));
 
-                int rowIndex = 3;
-                int cellHeaderIndex = this.GenerateHeaderTable(workbook, sheet1, ref rowIndex, maxCountUser);
-                this.GenerateContentTable(workbook, sheet1, summaryList, evaluationList, rowIndex, cellHeaderIndex);
+                var periodItemList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
+                var empList = _unitOfWork.GetRepository<Hremployee>().GetCache();
+                int rowIndex = 2;
+
+                this.GenerateTopicReport(workbook, sheet1, ref rowIndex, model);
+
+                foreach (var item in evaluationList)
+                {
+                    var summary = summaryList.FirstOrDefault(x => x.Id == item.Id);
+                    var periodItem = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId.Value);
+                    this.GenerateHeaderTable(workbook, sheet1, ref rowIndex);
+
+                    //Merge header table.
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 0, 0));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 1, 1));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 2, 3));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 4, 4));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 5, 5));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 6, 6));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 7, 7));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex - 1, rowIndex, 8, 8));
+
+                    this.GenerateContentTable(workbook, sheet1, summary, item, ref rowIndex, periodItem, empList);
+                    rowIndex++;
+                }
 
                 workbook.Write(memoryStream);
 
                 result.FileContent = memoryStream.ToArray();
-                result.FileName = $"EvaluationSummary_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
+                result.FileName = $"EvaluationVendorStatus_{DateTime.Now.ToString("yyyyMMddHHmmss")}.xlsx";
             }
             return result;
+        }
+
+        /// <summary>
+        /// Generate topic report.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="sheet1">The npoi sheet interface.</param>
+        /// <param name="rowIndex">The row target index.</param>
+        /// <param name="model">The filter criteria value.</param>
+        private void GenerateTopicReport(IWorkbook workbook, ISheet sheet1, ref int rowIndex,
+                                         EvaluationSummaryReportRequestModel model)
+        {
+            IRow topicRow = sheet1.CreateRow(rowIndex);
+            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, $"รายงานสถานะการประเมินผู้ขาย - วันที่พิมพ์ {UtilityService.DateTimeToStringTH(DateTime.Now, "dd MMM yyyy")}");
+            rowIndex = rowIndex + 1;
+            IRow criteriaRow = sheet1.CreateRow(3);
+            criteriaRow.Height = 3000;
+            ExcelService.CreateCriteriaCell(workbook, sheet1, criteriaRow, 0, $"{this.GenerateCriteria(model)}");
+            ExcelService.SetCellCriteriaStyle(workbook, criteriaRow, 1, 3);
+            rowIndex = rowIndex + 2;
         }
 
         /// <summary>
@@ -141,26 +187,20 @@ namespace EVF.Report.Bll
         /// <param name="workbook">The npoi workbook interface.</param>
         /// <param name="sheet1">The npoi sheet interface.</param>
         /// <param name="rowIndex">The row target index.</param>
-        /// <param name="maxCountUser">The max count user for generate dynamic header column.</param>
-        /// <returns></returns>
-        private int GenerateHeaderTable(IWorkbook workbook, ISheet sheet1,
-                                         ref int rowIndex, int maxCountUser)
+        private void GenerateHeaderTable(IWorkbook workbook, ISheet sheet1,
+                                         ref int rowIndex)
         {
-            IRow topicRow = sheet1.CreateRow(rowIndex);
-            ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, "รายงานตรวจสอบสถานะการประเมิน");
-            rowIndex = rowIndex + 2;
             string[] mainHeaders = new string[]
             {
                     "เลขที่ใบประเมิน",
                     "บริษัท",
                     "รอบการประเมิน",
                     "รอบการประเมิน",
+                    "ชื่อรอบการประเมิน",
                     "รหัสผู้ขาย",
                     "ชื่อผู้ขาย",
                     "ชื่อประเภทผู้ขาย",
                     "ชื่อกลุ่มจัดซื้อ",
-                    "จำนวนผู้ประเมิน",
-                    "ประเมินแล้วเสร็จ",
             };
             IRow headerRow = sheet1.CreateRow(rowIndex);
             headerRow.Height = 500;
@@ -172,47 +212,102 @@ namespace EVF.Report.Bll
                 cellHeaderIndex++;
             }
 
-            string[] userHeaders = new string[]
-            {
-                    "ผู้ประเมิน",
-                    "สถานะ",
-                    "เหตุผล"
-            };
-
-            for (int i = 0; i < maxCountUser; i++)
-            {
-                foreach (var item in userHeaders)
-                {
-                    ExcelService.SetCellHeaderStyle(workbook, headerRow, cellHeaderIndex);
-                    ExcelService.CreateHeaderCell(workbook, sheet1, headerRow, cellHeaderIndex, item);
-                    sheet1.AddMergedRegion(new CellRangeAddress(5, 6, cellHeaderIndex, cellHeaderIndex));
-                    cellHeaderIndex++;
-                }
-            }
             rowIndex++;
             IRow headerRow2 = sheet1.CreateRow(rowIndex);
             ExcelService.SetCellContentStyle(workbook, headerRow2, 0, cellHeaderIndex - 1);
-            return cellHeaderIndex;
         }
 
         /// <summary>
-        /// Get evaluation status text.
+        /// Generate criteria selected information in report.
         /// </summary>
-        /// <param name="isAction">The evaluation action flag.</param>
-        /// <param name="isReject">The evaluation reject flag.</param>
+        /// <param name="model">The filter criteria value.</param>
         /// <returns></returns>
-        private string GetEvaStatus(bool isAction, bool isReject)
+        private string GenerateCriteria(EvaluationSummaryReportRequestModel model)
         {
-            string status = "ไม่ประเมิน";
-            if (isAction)
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"   Criteria ที่เลือก");
+            stringBuilder.AppendLine($"ปี : {this.GetYear(model.PeriodId)}");
+            stringBuilder.AppendLine($"รอบ : {this.GetPeriodItemName(model.PeriodItemId)}");
+            stringBuilder.AppendLine($"บริษัท : {this.GetCompanyName(model.ComCode)}");
+            stringBuilder.AppendLine($"กลุ่มจัดซื้อ : {this.GetPurchaseName(model.PurchaseOrg)}");
+            stringBuilder.AppendLine($"ประเภทผู้ขาย : {this.GetWeightingKey(model.WeightingKey)}");
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
+        /// Get year selected.
+        /// </summary>
+        /// <param name="periodId">The period identity.</param>
+        /// <returns></returns>
+        private string GetYear(int? periodId)
+        {
+            string result = "";
+            if (periodId.HasValue)
             {
-                status = "ประเมิน";
+                result = _unitOfWork.GetRepository<Period>().GetCache(x => x.Id == periodId.Value).FirstOrDefault().Year.ToString();
             }
-            if (isReject)
+            return result;
+        }
+
+        /// <summary>
+        /// Get period item name.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <returns></returns>
+        private string GetPeriodItemName(int? periodItemId)
+        {
+            string result = "";
+            if (periodItemId.HasValue)
             {
-                status = "ไม่ประสงค์ประเมิน";
+                result = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId.Value).FirstOrDefault().PeriodName;
             }
-            return status;
+            return result;
+        }
+
+        /// <summary>
+        /// Get company name.
+        /// </summary>
+        /// <param name="comCode">The company code identity.</param>
+        /// <returns></returns>
+        private string GetCompanyName(string comCode)
+        {
+            string result = "";
+            if (!string.IsNullOrEmpty(comCode))
+            {
+                result = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == comCode).FirstOrDefault().LongText;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get purchase org name.
+        /// </summary>
+        /// <param name="purchaseOrg">The purchase org code identity.</param>
+        /// <returns></returns>
+        private string GetPurchaseName(string purchaseOrg)
+        {
+            string result = "";
+            if (!string.IsNullOrEmpty(purchaseOrg))
+            {
+                result = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == purchaseOrg).FirstOrDefault().PurchaseName;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get weigthing key name.
+        /// </summary>
+        /// <param name="valueKey">The weighting key value key.</param>
+        /// <returns></returns>
+        private string GetWeightingKey(string valueKey)
+        {
+            string result = "";
+            if (!string.IsNullOrEmpty(valueKey))
+            {
+                result = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey &&
+                                                                              x.ValueKey == valueKey).FirstOrDefault().ValueText;
+            }
+            return result;
         }
 
         /// <summary>
@@ -225,72 +320,201 @@ namespace EVF.Report.Bll
         /// <param name="rowIndex">The row data index.</param>
         /// <param name="cellHeaderIndex">The max cell table generate.</param>
         private void GenerateContentTable(IWorkbook workbook, ISheet sheet1,
-                                          IEnumerable<SummaryEvaluationViewModel> summaryList,
-                                          IEnumerable<Data.Pocos.Evaluation> evaluationList,
-                                          int rowIndex, int cellHeaderIndex)
+                                          SummaryEvaluationViewModel summary,
+                                          Data.Pocos.Evaluation evaluation,
+                                          ref int rowIndex,
+                                          PeriodItem periodItem, IEnumerable<Hremployee> empList)
         {
-            var periodItemList = _unitOfWork.GetRepository<PeriodItem>().GetCache();
-            foreach (var item in evaluationList)
+            rowIndex++;
+            IRow contentRow = sheet1.CreateRow(rowIndex);
+            int cellContentIndex = 0;
+            string[] mainContent = new string[]
             {
-                rowIndex++;
-                var periodItem = periodItemList.FirstOrDefault(x => x.Id == item.PeriodItemId.Value);
-                IRow contentRow = sheet1.CreateRow(rowIndex);
-                int cellContentIndex = 0;
-                var summary = summaryList.FirstOrDefault(x => x.Id == item.Id);
-                string[] mainContent = new string[]
-                {
-                        item.DocNo,
-                        item.ComCode,
+                        evaluation.DocNo,
+                        evaluation.ComCode,
                         UtilityService.DateTimeToString(periodItem.StartEvaDate.Value,"dd.MM.yyyy"),
                         UtilityService.DateTimeToString(periodItem.EndEvaDate.Value,"dd.MM.yyyy"),
-                        item.VendorNo,
+                        periodItem.PeriodName,
+                        evaluation.VendorNo,
                         summary.VendorName,
                         summary.WeightingKey,
                         summary.PurchasingOrgName,
-                        summary.UserLists.Count.ToString(),
-                        summary.UserLists.Where(x=>x.IsAction).Count().ToString(),
-                };
+            };
 
-                foreach (var content in mainContent)
+            foreach (var content in mainContent)
+            {
+                ExcelService.CreateContentCell(workbook, sheet1, contentRow, cellContentIndex, content);
+                cellContentIndex++;
+            }
+
+            rowIndex += 2;
+
+            var evaTemplate = _evaluationTemplateBll.LoadTemplate(evaluation.EvaluationTemplateId.Value);
+            this.GenerateScoreHeader(workbook, sheet1, ref rowIndex, summary);
+
+            foreach (var user in summary.UserLists)
+            {
+                var emp = empList.FirstOrDefault(x => x.Aduser == user.AdUser);
+                string evaluatorName = $"   คุณ{emp?.FirstnameTh} {emp?.LastnameTh}";
+
+                IRow userContent = sheet1.CreateRow(rowIndex);
+                ExcelService.CreateContentCell(workbook, sheet1, userContent, 1, evaluatorName, horizontalAlignment: HorizontalAlignment.Left);
+                ExcelService.SetCellContentStyle(workbook, userContent, 2, 2);
+                sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, 2));
+
+                var evaLogs = user.EvaluationLogs.FirstOrDefault();
+                this.GenerateCriteriaContent(workbook, sheet1, ref rowIndex, evaluation.WeightingKey, summary, evaTemplate, evaLogs);
+
+                rowIndex += 2;
+            }
+
+        }
+
+        /// <summary>
+        /// Generate evaluation template and user score evaluation.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="sheet1">The npoi sheet interface.</param>
+        /// <param name="rowIndex">The row target index.</param>
+        /// <param name="weigthingKey">The weighting key condition max score.</param>
+        /// <param name="summary">The evaluation summary.</param>
+        /// <param name="evaTemplate">The evaluation template.</param>
+        /// <param name="evaLogs">The user evaluation log collection.</param>
+        private void GenerateCriteriaContent(IWorkbook workbook, ISheet sheet1, ref int rowIndex,
+                                         string weigthingKey,
+                                         SummaryEvaluationViewModel summary,
+                                         EvaluationTemplateDisplayViewModel evaTemplate,
+                                         UserEvaluationDetailViewModel evaLogs)
+        {
+            foreach (var item in evaTemplate.Criteria.CriteriaGroups)
+            {
+                rowIndex++;
+                string criteriaGroup = $" {item.Sequence}. {item.KpiGroupNameTh}";
+                string score = this.GetScore(evaLogs, item.KpiGroupId, 0);
+
+                IRow kpiGroupContent = sheet1.CreateRow(rowIndex);
+                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 2, criteriaGroup, horizontalAlignment: HorizontalAlignment.Left);
+                ExcelService.SetCellContentStyle(workbook, kpiGroupContent, 3, 3);
+                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 4, score);
+                ExcelService.CreateContentCell(workbook, sheet1, kpiGroupContent, 5, this.GetMaxScore(weigthingKey, item.MaxScore));
+                sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 3));
+
+                foreach (var subItem in item.CriteriaItems)
                 {
-                    ExcelService.CreateContentCell(workbook, sheet1, contentRow, cellContentIndex, content);
-                    cellContentIndex++;
+                    rowIndex++;
+                    string criteriaItem = $"    {item.Sequence}.{subItem.Sequence}. {subItem.KpiNameTh}";
+                    string subScore = this.GetScore(evaLogs, item.KpiGroupId, subItem.KpiId.Value);
+
+                    IRow kpiContent = sheet1.CreateRow(rowIndex);
+                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 2, criteriaItem, horizontalAlignment: HorizontalAlignment.Left);
+                    ExcelService.SetCellContentStyle(workbook, kpiContent, 3, 3);
+                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 4, score);
+                    ExcelService.CreateContentCell(workbook, sheet1, kpiContent, 5, this.GetMaxScore(weigthingKey, subItem.MaxScore));
+                    sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 2, 3));
+
                 }
 
-                this.GenerateUserCellContent(summary, ref cellContentIndex, workbook, sheet1, contentRow);
-
-                if (cellContentIndex < cellHeaderIndex)
-                {
-                    ExcelService.SetCellContentStyle(workbook, contentRow, cellContentIndex, cellHeaderIndex - 1);
-                }
             }
         }
 
         /// <summary>
-        /// Generate user cell content data.
+        /// Generate header table score.
         /// </summary>
-        /// <param name="summary">The evaluation summary result.</param>
-        /// <param name="cellContentIndex">The target cell content index.</param>
         /// <param name="workbook">The npoi workbook interface.</param>
         /// <param name="sheet1">The npoi sheet interface.</param>
-        /// <param name="contentRow">The npoi content row interface.</param>
-        private void GenerateUserCellContent(SummaryEvaluationViewModel summary, ref int cellContentIndex,
-                                             IWorkbook workbook, ISheet sheet1, IRow contentRow)
+        /// <param name="rowIndex">The row target index.</param>
+        /// <param name="summary">The evaluation summary.</param>
+        private void GenerateScoreHeader(IWorkbook workbook, ISheet sheet1, ref int rowIndex,
+                                         SummaryEvaluationViewModel summary)
         {
-            foreach (var user in summary.UserLists)
+            this.GenerateSubHeaderTable(workbook, sheet1, ref rowIndex);
+            IRow subContentRow = sheet1.CreateRow(rowIndex);
+            int cellSubContentIndex = 3;
+            string[] subContent = new string[]
             {
-                string[] content = new string[]
+                "คะแนนรวม",
+                summary.Total.ToString(),
+                "100",
+                summary.GradeName,
+                ""
+            };
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 6, 7));
+            foreach (var content in subContent)
+            {
+                ExcelService.CreateContentCell(workbook, sheet1, subContentRow, cellSubContentIndex, content);
+                cellSubContentIndex++;
+            }
+            rowIndex += 1;
+            IRow topicUserContent = sheet1.CreateRow(rowIndex);
+            ExcelService.CreateContentCellNoBorder(workbook, sheet1, topicUserContent, 1, "คะแนนผู้ประเมิน");
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 1, 2));
+            rowIndex += 1;
+        }
+
+        /// <summary>
+        /// Get evaluation score kpi or kpi group.
+        /// </summary>
+        /// <param name="evaLogs">The evaluation log collection.</param>
+        /// <param name="kpiGroupId">The kpi group identity.</param>
+        /// <param name="kpiId">The kpi identity.</param>
+        /// <returns></returns>
+        private string GetScore(UserEvaluationDetailViewModel evaLogs,
+                                int kpiGroupId, int kpiId)
+        {
+            string score = "";
+            if (evaLogs != null)
+            {
+                var evaLog = evaLogs.EvaluationLogs.FirstOrDefault(x => x.KpiGroupId == kpiGroupId && x.KpiId == kpiId);
+                if (evaLog != null)
                 {
-                            user.FullName,
-                            this.GetEvaStatus(user.IsAction,user.IsReject),
-                            user.ReasonReject
-                };
-                foreach (var userContent in content)
-                {
-                    ExcelService.CreateContentCell(workbook, sheet1, contentRow, cellContentIndex, userContent);
-                    cellContentIndex++;
+                    score = evaLog.Score.Value.ToString();
                 }
             }
+            return score;
+        }
+
+        /// <summary>
+        /// Get max score kpi or kpi group.
+        /// </summary>
+        /// <param name="weigthingKey">The weighting key condition max score.</param>
+        /// <param name="maxScore">The default max score.</param>
+        /// <returns></returns>
+        private string GetMaxScore(string weigthingKey, int maxScore)
+        {
+            string result = "100";
+            if (!string.Equals("A2", weigthingKey, StringComparison.OrdinalIgnoreCase))
+            {
+                result = maxScore.ToString();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Generate sub header table in report.
+        /// </summary>
+        /// <param name="workbook">The npoi workbook interface.</param>
+        /// <param name="sheet1">The npoi sheet interface.</param>
+        /// <param name="rowIndex">The row target index.</param>
+        private void GenerateSubHeaderTable(IWorkbook workbook, ISheet sheet1,
+                                         ref int rowIndex)
+        {
+            string[] mainHeaders = new string[]
+            {
+                    "คะแนนที่ได้",
+                    "คะแนนเต็ม",
+                    "เกณฑ์การประเมินที่ได้",
+                    "เกณฑ์การประเมินที่ได้"
+            };
+            sheet1.AddMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 6, 7));
+            IRow headerRow = sheet1.CreateRow(rowIndex);
+            int cellHeaderIndex = 4;
+            foreach (var item in mainHeaders)
+            {
+                ExcelService.SetCellHeaderStyle(workbook, headerRow, cellHeaderIndex);
+                ExcelService.CreateHeaderCell(workbook, sheet1, headerRow, cellHeaderIndex, item);
+                cellHeaderIndex++;
+            }
+            rowIndex++;
         }
 
         /// <summary>
