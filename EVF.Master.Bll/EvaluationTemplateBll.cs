@@ -101,7 +101,8 @@ namespace EVF.Master.Bll
         {
             var levelPointIds = this.GetLevelPointIds(weightingKey);
             return _mapper.Map<IEnumerable<EvaluationTemplate>, IEnumerable<EvaluationTemplateViewModel>>(
-                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.ForPurchaseOrg.Contains(purchaseOrg) &&
+                   _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.ForPurchaseOrg != null && 
+                                                                                 x.ForPurchaseOrg.Contains(purchaseOrg) &&
                                                                                  levelPointIds.Contains(x.LevelPointId.Value),
                                                                             x => x.OrderBy(y => y.EvaluationTemplateName)));
         }

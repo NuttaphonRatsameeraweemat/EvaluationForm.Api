@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using EVF.Data.Pocos;
 using EVF.Data.Repository.Interfaces;
+using EVF.Email.Bll.Interfaces;
 using EVF.Evaluation.Bll.Interfaces;
 using EVF.Evaluation.Bll.Models;
 using EVF.Helper;
@@ -37,6 +38,14 @@ namespace EVF.Evaluation.Bll
         /// The workflow manager provides workflow functionality.
         /// </summary>
         private readonly IWorkflowBll _workflow;
+        /// <summary>
+        /// The email task provides email task functionality.
+        /// </summary>
+        private readonly IEmailTaskBll _emailTask;
+        /// <summary>
+        /// The email service provides email service functionality.
+        /// </summary>
+        private readonly IEmailService _emailService;
 
         #endregion
 
@@ -48,12 +57,15 @@ namespace EVF.Evaluation.Bll
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IWorkflowBll workflow)
+        public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IWorkflowBll workflow,
+                                    IEmailTaskBll emailTask, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _token = token;
             _workflow = workflow;
+            _emailTask = emailTask;
+            _emailService = emailService;
         }
 
         #endregion
@@ -481,7 +493,7 @@ namespace EVF.Evaluation.Bll
         {
             var gradeInfo = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
             var gradePoint = gradeInfo.FirstOrDefault(x => x.StartPoint <= totalScore && x.EndPoint >= totalScore);
-            return new string[] { gradePoint.GradeNameTh , gradePoint.GradeNameEn };
+            return new string[] { gradePoint.GradeNameTh, gradePoint.GradeNameEn };
         }
 
         /// <summary>
@@ -566,7 +578,90 @@ namespace EVF.Evaluation.Bll
                 _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Update(data);
                 _unitOfWork.Complete(scope);
             }
+            this.SendEmailToApproval(id);
             return result;
+        }
+
+        /// <summary>
+        /// Send email vendor evaluation report.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        private void SendEmailToApproval(int id)
+        {
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+            var company = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == data.ComCode).FirstOrDefault();
+            var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == data.PurchasingOrg).FirstOrDefault();
+
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeEvaluationApproveNotice).FirstOrDefault();
+            var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.Id).FirstOrDefault();
+
+            string[] periodInfo = this.GetPeriodName(data.PeriodItemId.Value);
+            var approvalInfo = this.GetApprovalInfo(id);
+            string[] grade = this.GetGrade(evaluationTemplate.GradeId.Value, data.TotalScore.Value);
+
+            string subject = emailTemplate.Subject;
+            string content = emailTemplate.Content;
+
+            subject = subject.Replace("%PERIOD%", periodInfo[0]);
+            subject = subject.Replace("%PERIODITEM%", periodInfo[1]);
+
+            content = content.Replace("%TO%", string.Format($"คุณ{ConstantValue.EmpTemplate}", 
+                                                              approvalInfo?.FirstnameTh, approvalInfo?.LastnameTh));
+            content = content.Replace("%DOCNO%", data.DocNo);
+            content = content.Replace("%VENDOR%", vendor?.VendorName);
+            content = content.Replace("%COMNAME%", company?.LongText);
+            content = content.Replace("%PURCHASEORG%", purchaseOrg?.PurchaseName);
+            content = content.Replace("%TOTALSCORE%", data.TotalScore.Value.ToString());
+            content = content.Replace("%GRADE%", grade[0]);
+
+            _emailService.SendEmail(new EmailModel
+            {
+                Body = content,
+                Receiver = approvalInfo.Email,
+                Subject = subject,
+            });
+
+            _emailTask.Save(new Email.Bll.Models.EmailTaskViewModel
+            {
+                DocNo = data.DocNo,
+                Content = $"{content}",
+                Subject = subject,
+                TaskCode = ConstantValue.EmailVendorEvaluationReportNoticeCode,
+                Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
+                {
+                    new Email.Bll.Models.EmailTaskReceiveViewModel{ Email = vendor.Email, FullName = vendor.VendorName, ReceiverType = ConstantValue.ReceiverTypeTo }
+                },
+                TaskBy = _token.AdUser,
+                TaskDate = DateTime.Now,
+                Status = ConstantValue.EmailTaskStatusSending
+            });
+        }
+
+        /// <summary>
+        /// Get approval information.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        /// <returns></returns>
+        private Hremployee GetApprovalInfo(int id)
+        {
+            var processInstances = _unitOfWork.GetRepository<WorkflowProcessInstance>().Get(x => x.DataId == id &&
+                                                                                                 x.ProcessCode == ConstantValue.EvaluationProcessCode).FirstOrDefault();
+            var workflowStep = _unitOfWork.GetRepository<WorkflowActivityStep>().Get(x => x.ProcessInstanceId == processInstances.ProcessInstanceId &&
+                                                                                        x.Step == processInstances.CurrentStep).FirstOrDefault();
+            return _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == workflowStep.ActionUser).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get Period information for generate content.
+        /// </summary>
+        /// <param name="periodItemId">The period item identity.</param>
+        /// <returns></returns>
+        private string[] GetPeriodName(int periodItemId)
+        {
+            var periodItem = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId).FirstOrDefault();
+            var period = _unitOfWork.GetRepository<Period>().GetCache(x => x.Id == periodItem.PeriodId).FirstOrDefault();
+            return new string[] { period.Year.ToString(), periodItem.PeriodName };
         }
 
         /// <summary>
