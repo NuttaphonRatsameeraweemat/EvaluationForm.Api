@@ -597,6 +597,8 @@ namespace EVF.Evaluation.Bll
             var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
             var company = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == data.ComCode).FirstOrDefault();
             var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == data.PurchasingOrg).FirstOrDefault();
+            var valueHelp = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey &&
+                                                                               x.ValueKey == data.WeightingKey).FirstOrDefault();
 
             var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeEvaluationApproveNotice).FirstOrDefault();
             var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.Id).FirstOrDefault();
@@ -615,6 +617,7 @@ namespace EVF.Evaluation.Bll
                                                               approvalInfo?.FirstnameTh, approvalInfo?.LastnameTh));
             content = content.Replace("%DOCNO%", data.DocNo);
             content = content.Replace("%VENDOR%", vendor?.VendorName);
+            content = content.Replace("%WEIGTHNIGKEY%", valueHelp?.ValueText);
             content = content.Replace("%COMNAME%", company?.LongText);
             content = content.Replace("%PURCHASEORG%", purchaseOrg?.PurchaseName);
             content = content.Replace("%TOTALSCORE%", data.TotalScore.Value.ToString());
@@ -694,7 +697,70 @@ namespace EVF.Evaluation.Bll
                 }
                 _unitOfWork.Complete(scope);
             }
+            this.SendEmailToCreater(model.DataId);
             return result;
+        }
+
+        /// <summary>
+        /// Send email vendor evaluation report.
+        /// </summary>
+        /// <param name="id">The evaluation identity.</param>
+        private void SendEmailToCreater(int id)
+        {
+            var data = _unitOfWork.GetRepository<Data.Pocos.Evaluation>().GetById(id);
+            var vendor = _unitOfWork.GetRepository<Data.Pocos.Vendor>().GetCache(x => x.VendorNo == data.VendorNo).FirstOrDefault();
+            var company = _unitOfWork.GetRepository<Hrcompany>().GetCache(x => x.SapcomCode == data.ComCode).FirstOrDefault();
+            var purchaseOrg = _unitOfWork.GetRepository<PurchaseOrg>().GetCache(x => x.PurchaseOrg1 == data.PurchasingOrg).FirstOrDefault();
+            var weightingKey = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeWeightingKey &&
+                                                                               x.ValueKey == data.WeightingKey).FirstOrDefault();
+            var status = _unitOfWork.GetRepository<ValueHelp>().GetCache(x => x.ValueType == ConstantValue.ValueTypeEvaStatus &&
+                                                                              x.ValueKey == data.Status).FirstOrDefault();
+            var emp = _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.EmpNo == data.CreateBy).FirstOrDefault();
+
+            var emailTemplate = _unitOfWork.GetRepository<EmailTemplate>().GetCache(x => x.EmailType == ConstantValue.EmailTypeEvaluationNotice).FirstOrDefault();
+            var evaluationTemplate = _unitOfWork.GetRepository<EvaluationTemplate>().GetCache(x => x.Id == data.Id).FirstOrDefault();
+
+            string[] periodInfo = this.GetPeriodName(data.PeriodItemId.Value);
+            string[] grade = this.GetGrade(evaluationTemplate.GradeId.Value, data.TotalScore.Value);
+
+            string subject = emailTemplate.Subject;
+            string content = emailTemplate.Content;
+
+            subject = subject.Replace("%PERIOD%", periodInfo[0]);
+            subject = subject.Replace("%PERIODITEM%", periodInfo[1]);
+
+            content = content.Replace("%TO%", string.Format($"คุณ{ConstantValue.EmpTemplate}",
+                                                              emp?.FirstnameTh, emp?.LastnameTh));
+            content = content.Replace("%DOCNO%", data.DocNo);
+            content = content.Replace("%VENDOR%", vendor?.VendorName);
+            content = content.Replace("%WEIGTHNIGKEY%", weightingKey?.ValueText);
+            content = content.Replace("%COMNAME%", company?.LongText);
+            content = content.Replace("%PURCHASEORG%", purchaseOrg?.PurchaseName);
+            content = content.Replace("%TOTALSCORE%", data.TotalScore.Value.ToString());
+            content = content.Replace("%GRADE%", grade[0]);
+            content = content.Replace("%STATUS%", status?.ValueText);
+
+            _emailService.SendEmail(new EmailModel
+            {
+                Body = content,
+                Receiver = emp.Email,
+                Subject = subject,
+            });
+
+            _emailTask.Save(new Email.Bll.Models.EmailTaskViewModel
+            {
+                DocNo = data.DocNo,
+                Content = $"{content}",
+                Subject = subject,
+                TaskCode = ConstantValue.EmailVendorEvaluationReportNoticeCode,
+                Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
+                {
+                    new Email.Bll.Models.EmailTaskReceiveViewModel{ Email = vendor.Email, FullName = vendor.VendorName, ReceiverType = ConstantValue.ReceiverTypeTo }
+                },
+                TaskBy = _token.AdUser,
+                TaskDate = DateTime.Now,
+                Status = ConstantValue.EmailTaskStatusSending
+            });
         }
 
         /// <summary>
