@@ -185,7 +185,9 @@ namespace EVF.Evaluation.Bll
                 result.Total = 0;
             }
             else result.Total = Math.Round(result.Total);
-            result.GradeName = this.GetGrade(templateInfo.GradeId.Value, result.Total);
+            string[] grade = this.GetGrade(templateInfo.GradeId.Value, result.Total);
+            result.GradeName = grade[0];
+            result.GradeNameEn = grade[1];
             return result;
         }
 
@@ -475,11 +477,11 @@ namespace EVF.Evaluation.Bll
         /// <param name="gradeId">The grade identity using in template.</param>
         /// <param name="totalScore">The total score.</param>
         /// <returns></returns>
-        private string GetGrade(int gradeId, double totalScore)
+        private string[] GetGrade(int gradeId, double totalScore)
         {
             var gradeInfo = _unitOfWork.GetRepository<GradeItem>().GetCache(x => x.GradeId == gradeId);
             var gradePoint = gradeInfo.FirstOrDefault(x => x.StartPoint <= totalScore && x.EndPoint >= totalScore);
-            return gradePoint.GradeNameTh;
+            return new string[] { gradePoint.GradeNameTh , gradePoint.GradeNameEn };
         }
 
         /// <summary>

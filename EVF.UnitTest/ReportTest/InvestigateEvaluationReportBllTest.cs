@@ -35,24 +35,20 @@ namespace EVF.UnitTest.ReportTest
         #region [Methods]
 
         [Theory]
-        [InlineData("", null, null, "", "")]
-        //[InlineData("1600", null, 22, "", "")]
-        //[InlineData("1600", 12, null, "", "")]
-        //[InlineData("1600", 12, 22, "1600", "A2")]
-        //[InlineData("1600", 12, 22, "1600", "A3")]
-        //[InlineData("1600", 12, 22, "1600", "A4")]
-        //[InlineData("1600", 12, 22, "1600", "A5")]
-        public void ExportSummaryReport(string comCode, int? periodId, int? periodItemId, string purchaseOrg, string weightingKey)
+        [InlineData("", null, null, "", "", null)]
+        public void ExportSummaryReport(string comCode, int[] year, int[] periodItemId, 
+                                        string purchaseOrg, string weightingKey, string[] status)
         {
             try
             {
-                var response = _evaluationSummaryReport.ExportSummaryReport(new Report.Bll.Models.EvaluationSummaryReportRequestModel
+                var response = _evaluationSummaryReport.ExportSummaryReport(new Report.Bll.Models.InvestigateEvaluationReportRequestModel
                 {
                     ComCode = comCode,
-                    PeriodId = periodId,
+                    Year = year,
                     PeriodItemId = periodItemId,
                     PurchaseOrg = purchaseOrg,
-                    WeightingKey = weightingKey
+                    WeightingKey = weightingKey,
+                    Status = status
                 });
 
                 var filePath = $@"D:\{response.FileName}";

@@ -19,6 +19,7 @@ namespace EVF.Evaluation.Bll.Models
         public string PurchasingOrgName { get; set; }
         public double Total { get; set; }
         public string GradeName { get; set; }
+        public string GradeNameEn { get; set; }
         public List<SummaryEvaluationDetailViewModel> Summarys { get; set; }
         public List<UserEvaluationViewModel> UserLists { get; set; }
     }

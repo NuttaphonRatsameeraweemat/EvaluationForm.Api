@@ -36,21 +36,16 @@ namespace EVF.UnitTest.ReportTest
 
         [Theory]
         [InlineData("", null, null, "", "")]
-        //[InlineData("1600", null, 22, "", "")]
-        //[InlineData("1600", 12, null, "", "")]
-        //[InlineData("1600", 12, 22, "1600", "A2")]
-        //[InlineData("1600", 12, 22, "1600", "A3")]
-        //[InlineData("1600", 12, 22, "1600", "A4")]
-        //[InlineData("1600", 12, 22, "1600", "A5")]
-        public void ExportSummaryReport(string comCode, int? periodId, int? periodItemId, string purchaseOrg, string weightingKey)
+        [InlineData("", new int[] { 2016 }, null, "", "")]
+        public void ExportSummaryReport(string comCode, int[] year, int[] periodItemIds, string purchaseOrg, string weightingKey)
         {
             try
             {
-                var response = _evaluationSummaryReport.ExportEvaluationCompareReport(new Report.Bll.Models.EvaluationSummaryReportRequestModel
+                var response = _evaluationSummaryReport.ExportEvaluationCompareReport(new Report.Bll.Models.EvaluationCompareReportRequestModel
                 {
                     ComCode = comCode,
-                    PeriodId = periodId,
-                    PeriodItemId = periodItemId,
+                    Year = year,
+                    PeriodItemId = periodItemIds,
                     PurchaseOrg = purchaseOrg,
                     WeightingKey = weightingKey
                 });

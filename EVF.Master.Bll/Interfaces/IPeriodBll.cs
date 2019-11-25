@@ -19,6 +19,16 @@ namespace EVF.Master.Bll.Interfaces
         /// <returns></returns>
         IEnumerable<PeriodViewModel> GetListAll();
         /// <summary>
+        /// Get Period year distinct list.
+        /// </summary>
+        /// <returns></returns>
+        int[] GetYear();
+        /// <summary>
+        /// Get all period by year.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int year);
+        /// <summary>
         /// Get Period list.
         /// </summary>
         /// <returns></returns>

@@ -69,7 +69,7 @@ namespace EVF.Report.Bll
         /// Export vendor evaluation status excel report.
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
-        public ResponseFileModel ExportVendorEvaluationStatusReport(EvaluationSummaryReportRequestModel model)
+        public ResponseFileModel ExportVendorEvaluationStatusReport(VendorEvaluationStatusReportRequestModel model)
         {
             var dataList = this.GetDataCollection(model);
             var summaryList = this.GetSummarys(dataList);
@@ -81,7 +81,7 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
         /// <returns></returns>
-        private IEnumerable<Data.Pocos.Evaluation> GetDataCollection(EvaluationSummaryReportRequestModel model)
+        private IEnumerable<Data.Pocos.Evaluation> GetDataCollection(VendorEvaluationStatusReportRequestModel model)
         {
             var whereClause = this.BuildDynamicWhereClause(model);
             return _unitOfWork.GetRepository<Data.Pocos.Evaluation>().Get(whereClause);
@@ -111,7 +111,7 @@ namespace EVF.Report.Bll
         /// <param name="model">The filter criteria value.</param>
         private ResponseFileModel ExportExcel(IEnumerable<Data.Pocos.Evaluation> evaluationList,
                                  IEnumerable<SummaryEvaluationViewModel> summaryList,
-                                 EvaluationSummaryReportRequestModel model)
+                                 VendorEvaluationStatusReportRequestModel model)
         {
             var result = new ResponseFileModel();
             string sheetName = "รายงานสถานะการประเมินผู้ขาย";
@@ -168,7 +168,7 @@ namespace EVF.Report.Bll
         /// <param name="rowIndex">The row target index.</param>
         /// <param name="model">The filter criteria value.</param>
         private void GenerateTopicReport(IWorkbook workbook, ISheet sheet1, ref int rowIndex,
-                                         EvaluationSummaryReportRequestModel model)
+                                         VendorEvaluationStatusReportRequestModel model)
         {
             IRow topicRow = sheet1.CreateRow(rowIndex);
             ExcelService.CreateTopicCell(workbook, sheet1, topicRow, 0, $"รายงานสถานะการประเมินผู้ขาย - วันที่พิมพ์ {UtilityService.DateTimeToStringTH(DateTime.Now, "dd MMM yyyy")}");
@@ -221,11 +221,16 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
         /// <returns></returns>
-        private string GenerateCriteria(EvaluationSummaryReportRequestModel model)
+        private string GenerateCriteria(VendorEvaluationStatusReportRequestModel model)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            string year = string.Empty;
+            if (model.Year != null)
+            {
+                year = string.Join(",", model.Year);
+            }
             stringBuilder.AppendLine($"   Criteria ที่เลือก");
-            stringBuilder.AppendLine($"ปี : {this.GetYear(model.PeriodId)}");
+            stringBuilder.AppendLine($"ปี : {year}");
             stringBuilder.AppendLine($"รอบ : {this.GetPeriodItemName(model.PeriodItemId)}");
             stringBuilder.AppendLine($"บริษัท : {this.GetCompanyName(model.ComCode)}");
             stringBuilder.AppendLine($"กลุ่มจัดซื้อ : {this.GetPurchaseName(model.PurchaseOrg)}");
@@ -251,14 +256,15 @@ namespace EVF.Report.Bll
         /// <summary>
         /// Get period item name.
         /// </summary>
-        /// <param name="periodItemId">The period item identity.</param>
+        /// <param name="periodItemIds">The period item identity.</param>
         /// <returns></returns>
-        private string GetPeriodItemName(int? periodItemId)
+        private string GetPeriodItemName(int[] periodItemIds)
         {
             string result = "";
-            if (periodItemId.HasValue)
+            if (periodItemIds != null)
             {
-                result = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.Id == periodItemId.Value).FirstOrDefault().PeriodName;
+                var temp = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => periodItemIds.Contains(x.Id)).Select(x => x.PeriodName);
+                result = string.Join(",", temp);
             }
             return result;
         }
@@ -521,10 +527,11 @@ namespace EVF.Report.Bll
         /// </summary>
         /// <param name="model">The criteria value.</param>
         /// <returns></returns>
-        private Expression<Func<Data.Pocos.Evaluation, bool>> BuildDynamicWhereClause(EvaluationSummaryReportRequestModel model)
+        private Expression<Func<Data.Pocos.Evaluation, bool>> BuildDynamicWhereClause(VendorEvaluationStatusReportRequestModel model)
         {
             // simple method to dynamically plugin a where clause
             var predicate = PredicateBuilder.True<Data.Pocos.Evaluation>(); // true -where(true) return all
+            predicate = predicate.And(s => s.Status == ConstantValue.WorkflowStatusApproved);
             if (!string.IsNullOrEmpty(model.ComCode))
             {
                 predicate = predicate.And(s => s.ComCode == model.ComCode);
@@ -538,13 +545,14 @@ namespace EVF.Report.Bll
                 predicate = predicate.And(s => s.WeightingKey == model.WeightingKey);
             }
 
-            if (model.PeriodItemId.HasValue)
+            if (model.Year != null)
             {
-                predicate = predicate.And(s => s.PeriodItemId == model.PeriodItemId);
-            }
-            else if (model.PeriodId.HasValue)
-            {
-                var periodItemIds = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => x.PeriodId == model.PeriodId).Select(x => x.Id).ToArray();
+                var periodAll = _unitOfWork.GetRepository<Period>().GetCache(x => model.Year.Contains(x.Year)).Select(x => x.Id);
+                var periodItemIds = _unitOfWork.GetRepository<PeriodItem>().GetCache(x => periodAll.Contains(x.PeriodId.Value)).Select(x => x.Id);
+                if (model.PeriodItemId != null)
+                {
+                    periodItemIds = periodItemIds.Where(x => model.PeriodItemId.Contains(x));
+                }
                 predicate = predicate.And(s => periodItemIds.Contains(s.PeriodItemId.Value));
             }
 

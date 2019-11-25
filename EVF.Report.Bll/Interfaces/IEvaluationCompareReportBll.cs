@@ -11,6 +11,6 @@ namespace EVF.Report.Bll.Interfaces
         /// Export vendor evaluation status excel report.
         /// </summary>
         /// <param name="model">The filter criteria value.</param>
-        ResponseFileModel ExportEvaluationCompareReport(EvaluationSummaryReportRequestModel model);
+        ResponseFileModel ExportEvaluationCompareReport(EvaluationCompareReportRequestModel model);
     }
 }

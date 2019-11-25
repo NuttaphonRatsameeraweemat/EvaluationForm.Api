@@ -42,7 +42,7 @@ namespace EVF.Api.Controllers.ReportController
         
         [HttpPost]
         [Route("ExportSummaryReport")]
-        public IActionResult ExportSummaryReport([FromBody]EvaluationSummaryReportRequestModel model)
+        public IActionResult ExportSummaryReport([FromBody]InvestigateEvaluationReportRequestModel model)
         {
             var result = _evaluationSummaryReport.ExportSummaryReport(model);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);

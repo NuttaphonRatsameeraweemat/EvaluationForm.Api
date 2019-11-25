@@ -76,6 +76,31 @@ namespace EVF.Master.Bll
         }
 
         /// <summary>
+        /// Get Period year distinct list.
+        /// </summary>
+        /// <returns></returns>
+        public int[] GetYear()
+        {
+            var data = _unitOfWork.GetRepository<Period>().GetCache(orderBy: x => x.OrderByDescending(y => y.Year)).Select(x => x.Year).Distinct();
+            return data.ToArray();
+        }
+
+        /// <summary>
+        /// Get all period by year.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int year)
+        {
+            var periodItems = new List<PeriodItemViewModel>();
+            var ids = _unitOfWork.GetRepository<Period>().GetCache(x => x.Year == year).Select(x => x.Id);
+            foreach (var id in ids)
+            {
+                periodItems.AddRange(this.GetPeriodItem(id));
+            }
+            return periodItems;
+        }
+
+        /// <summary>
         /// Get Period list.
         /// </summary>
         /// <returns></returns>
