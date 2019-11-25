@@ -164,6 +164,7 @@ namespace EVF.Api.Extensions
         {
             services.AddScoped<IWorkflowBll, WorkflowBll>();
             services.AddScoped<IWorkflowDelegateBll, WorkflowDelegateBll>();
+            services.AddScoped<IWorkflowActivityBll, WorkflowActivityBll>();
         }
 
 
