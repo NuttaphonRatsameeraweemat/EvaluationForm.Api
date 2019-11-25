@@ -51,6 +51,20 @@ namespace EVF.Api.Controllers.MasterController
         }
 
         [HttpGet]
+        [Route("GetYear")]
+        public IActionResult GetYear()
+        {
+            return Ok(_period.GetYear());
+        }
+
+        [HttpGet]
+        [Route("GetAllPeriodByYear")]
+        public IActionResult GetAllPeriodByYear(int[] years)
+        {
+            return Ok(_period.GetAllPeriodByYear(years));
+        }
+
+        [HttpGet]
         [Route("GetListInformation")]
         public IActionResult GetListInformation()
         {

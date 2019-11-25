@@ -5,45 +5,45 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers.ReportController
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class InvestigateEvaluationReportController : ControllerBase
+    public class EvaluationCompareReportController : ControllerBase
     {
 
         #region [Fields]
-        
+
         /// <summary>
-        /// The investigate evaluation report manager provides investigate evaluation report functionality.
+        /// The evaluation compare report manager provides evaluation compare report functionality.
         /// </summary>
-        private readonly IInvestigateEvaluationReportBll _evaluationSummaryReport;
+        private readonly IEvaluationCompareReportBll _evaluationCompareReport;
 
         #endregion
 
         #region [Constructors]
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="InvestigateEvaluationReportController" /> class.
+        ///  Initializes a new instance of the <see cref="EvaluationCompareReportController" /> class.
         /// </summary>
         /// <param name="evaluationSummaryReport"></param>
-        public InvestigateEvaluationReportController(IInvestigateEvaluationReportBll evaluationSummaryReport)
+        public EvaluationCompareReportController(IEvaluationCompareReportBll evaluationCompareReport)
         {
-            _evaluationSummaryReport = evaluationSummaryReport;
+            _evaluationCompareReport = evaluationCompareReport;
         }
 
         #endregion
 
         #region [Methods]
-        
+
         [HttpPost]
         [Route("ExportSummaryReport")]
-        public IActionResult ExportSummaryReport([FromBody]InvestigateEvaluationReportRequestModel model)
+        public IActionResult ExportSummaryReport([FromBody]EvaluationCompareReportRequestModel model)
         {
-            var result = _evaluationSummaryReport.ExportSummaryReport(model);
+            var result = _evaluationCompareReport.ExportEvaluationCompareReport(model);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);
             return File(result.FileContent, "application/octet-stream");
         }
-        
+
         #endregion
 
     }

@@ -92,6 +92,13 @@ namespace EVF.Api.Controllers
             return Ok(_valueHelp.GetPurGroup());
         }
 
+        [HttpGet]
+        [Route("GetEvaluationStatus")]
+        public IActionResult GetEvaluationStatus()
+        {
+            return Ok(_valueHelp.Get(ConstantValue.ValueTypeEvaStatus));
+        }
+
         #endregion
 
     }

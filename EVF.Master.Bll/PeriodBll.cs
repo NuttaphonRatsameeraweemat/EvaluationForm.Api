@@ -89,10 +89,10 @@ namespace EVF.Master.Bll
         /// Get all period by year.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int year)
+        public IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int[] years)
         {
             var periodItems = new List<PeriodItemViewModel>();
-            var ids = _unitOfWork.GetRepository<Period>().GetCache(x => x.Year == year).Select(x => x.Id);
+            var ids = _unitOfWork.GetRepository<Period>().GetCache(x => years.Contains(x.Year)).Select(x => x.Id);
             foreach (var id in ids)
             {
                 periodItems.AddRange(this.GetPeriodItem(id));

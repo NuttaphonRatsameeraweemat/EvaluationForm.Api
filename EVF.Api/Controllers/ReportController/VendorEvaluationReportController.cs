@@ -16,9 +16,9 @@ namespace EVF.Api.Controllers.ReportController
     {
 
         #region [Fields]
-        
+
         /// <summary>
-        /// The cache manager provides cache functionality.
+        /// The vendor evaluation manager provides vendor evaluation functionality.
         /// </summary>
         private readonly IVendorEvaluationReportBll _vendorEvaluationReport;
 

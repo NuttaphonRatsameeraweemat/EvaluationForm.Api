@@ -196,6 +196,8 @@ namespace EVF.Api.Extensions
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IVendorEvaluationReportBll, VendorEvaluationReportBll>();
             services.AddScoped<IInvestigateEvaluationReportBll, InvestigateEvaluationReportBll>();
+            services.AddScoped<IVendorEvaluationStatusReportBll, VendorEvaluationStatusReportBll>();
+            services.AddScoped<IEvaluationCompareReportBll, EvaluationCompareReportBll>();
         }
 
         /// <summary>

@@ -27,7 +27,7 @@ namespace EVF.Master.Bll.Interfaces
         /// Get all period by year.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int year);
+        IEnumerable<PeriodItemViewModel> GetAllPeriodByYear(int[] years);
         /// <summary>
         /// Get Period list.
         /// </summary>

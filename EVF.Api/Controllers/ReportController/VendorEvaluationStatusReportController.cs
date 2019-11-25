@@ -5,45 +5,45 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EVF.Api.Controllers.ReportController
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class InvestigateEvaluationReportController : ControllerBase
+    public class VendorEvaluationStatusReportController : ControllerBase
     {
 
         #region [Fields]
-        
+
         /// <summary>
-        /// The investigate evaluation report manager provides investigate evaluation report functionality.
+        /// The evaluation compare report manager provides evaluation compare report functionality.
         /// </summary>
-        private readonly IInvestigateEvaluationReportBll _evaluationSummaryReport;
+        private readonly IVendorEvaluationStatusReportBll _vendorEvaluationStatusReport;
 
         #endregion
 
         #region [Constructors]
 
         /// <summary>
-        ///  Initializes a new instance of the <see cref="InvestigateEvaluationReportController" /> class.
+        ///  Initializes a new instance of the <see cref="VendorEvaluationStatusReportController" /> class.
         /// </summary>
         /// <param name="evaluationSummaryReport"></param>
-        public InvestigateEvaluationReportController(IInvestigateEvaluationReportBll evaluationSummaryReport)
+        public VendorEvaluationStatusReportController(IVendorEvaluationStatusReportBll vendorEvaluationStatusReport)
         {
-            _evaluationSummaryReport = evaluationSummaryReport;
+            _vendorEvaluationStatusReport = vendorEvaluationStatusReport;
         }
 
         #endregion
 
         #region [Methods]
-        
+
         [HttpPost]
         [Route("ExportSummaryReport")]
-        public IActionResult ExportSummaryReport([FromBody]InvestigateEvaluationReportRequestModel model)
+        public IActionResult ExportSummaryReport([FromBody]VendorEvaluationStatusReportRequestModel model)
         {
-            var result = _evaluationSummaryReport.ExportSummaryReport(model);
+            var result = _vendorEvaluationStatusReport.ExportVendorEvaluationStatusReport(model);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + result.FileName);
             return File(result.FileContent, "application/octet-stream");
         }
-        
+
         #endregion
 
     }
