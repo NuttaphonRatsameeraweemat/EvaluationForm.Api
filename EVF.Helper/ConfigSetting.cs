@@ -132,6 +132,10 @@ namespace EVF.Helper
         /// Get Report Url.
         /// </summary>
         public string ReportUrl => this.GetAppSetting("Report:Url");
+        /// <summary>
+        /// Get Task Url.
+        /// </summary>
+        public string TaskUrl => this.GetAppSetting("TaskUrl");
 
         #endregion
 

@@ -98,5 +98,9 @@ namespace EVF.Helper.Interfaces
         /// Get Report Url.
         /// </summary>
         string ReportUrl { get; }
+        /// <summary>
+        /// Get Task Url.
+        /// </summary>
+        string TaskUrl { get; }
     }
 }

@@ -46,6 +46,10 @@ namespace EVF.Evaluation.Bll
         /// The email service provides email service functionality.
         /// </summary>
         private readonly IEmailService _emailService;
+        /// <summary>
+        /// The config value in appsetting.json
+        /// </summary>
+        private readonly IConfigSetting _config;
 
         #endregion
 
@@ -58,7 +62,7 @@ namespace EVF.Evaluation.Bll
         /// <param name="mapper">The auto mapper.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
         public SummaryEvaluationBll(IUnitOfWork unitOfWork, IMapper mapper, IManageToken token, IWorkflowBll workflow,
-                                    IEmailTaskBll emailTask, IEmailService emailService)
+                                    IEmailTaskBll emailTask, IEmailService emailService, IConfigSetting config)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -66,6 +70,7 @@ namespace EVF.Evaluation.Bll
             _workflow = workflow;
             _emailTask = emailTask;
             _emailService = emailService;
+            _config = config;
         }
 
         #endregion
@@ -515,7 +520,7 @@ namespace EVF.Evaluation.Bll
             else
             {
                 int[] percentage = new int[] { percentageConfig.PurchasePercentage, percentageConfig.UserPercentage };
-                if (userResult == null)
+                if (userResult == null || userResult.Count() == 0)
                 {
                     percentage[0] = 100; //purchase percentage calculate 100 percen when no user evaluation
                     percentage[1] = 0; //user percentage
@@ -606,7 +611,7 @@ namespace EVF.Evaluation.Bll
             subject = subject.Replace("%PERIOD%", periodInfo[0]);
             subject = subject.Replace("%PERIODITEM%", periodInfo[1]);
 
-            content = content.Replace("%TO%", string.Format($"คุณ{ConstantValue.EmpTemplate}", 
+            content = content.Replace("%TO%", string.Format($"คุณ{ConstantValue.EmpTemplate}",
                                                               approvalInfo?.FirstnameTh, approvalInfo?.LastnameTh));
             content = content.Replace("%DOCNO%", data.DocNo);
             content = content.Replace("%VENDOR%", vendor?.VendorName);
@@ -614,6 +619,7 @@ namespace EVF.Evaluation.Bll
             content = content.Replace("%PURCHASEORG%", purchaseOrg?.PurchaseName);
             content = content.Replace("%TOTALSCORE%", data.TotalScore.Value.ToString());
             content = content.Replace("%GRADE%", grade[0]);
+            content = content.Replace("%URL%", _config.TaskUrl + "Inbox");
 
             _emailService.SendEmail(new EmailModel
             {
@@ -646,7 +652,8 @@ namespace EVF.Evaluation.Bll
         private Hremployee GetApprovalInfo(int id)
         {
             var processInstances = _unitOfWork.GetRepository<WorkflowProcessInstance>().Get(x => x.DataId == id &&
-                                                                                                 x.ProcessCode == ConstantValue.EvaluationProcessCode).FirstOrDefault();
+                                                                                                 x.ProcessCode == ConstantValue.EvaluationProcessCode,
+                                                                                                 orderBy: x => x.OrderByDescending(y => y.ProcessInstanceId)).FirstOrDefault();
             var workflowStep = _unitOfWork.GetRepository<WorkflowActivityStep>().Get(x => x.ProcessInstanceId == processInstances.ProcessInstanceId &&
                                                                                         x.Step == processInstances.CurrentStep).FirstOrDefault();
             return _unitOfWork.GetRepository<Hremployee>().GetCache(x => x.Aduser == workflowStep.ActionUser).FirstOrDefault();
