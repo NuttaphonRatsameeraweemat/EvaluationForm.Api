@@ -37,6 +37,10 @@ namespace EVF.Email.Bll
         /// The Logger.
         /// </summary>
         private readonly ILoggerManager _logger;
+        /// <summary>
+        /// The config value in appsetting.json
+        /// </summary>
+        private readonly IConfigSetting _config;
 
         #endregion
 
@@ -47,13 +51,15 @@ namespace EVF.Email.Bll
         /// </summary>
         /// <param name="unitOfWork">The utilities unit of work.</param>
         /// <param name="token">The ClaimsIdentity in token management.</param>
-        public SummaryEmailTaskBll(IUnitOfWork unitOfWork, IManageToken token, IEmailTaskBll emailTask, IEmailService emailService, ILoggerManager logger)
+        public SummaryEmailTaskBll(IUnitOfWork unitOfWork, IManageToken token, IEmailTaskBll emailTask, 
+                                   IEmailService emailService, ILoggerManager logger, IConfigSetting config)
         {
             _unitOfWork = unitOfWork;
             _token = token;
             _emailTask = emailTask;
             _emailService = emailService;
             _logger = logger;
+            _config = config;
         }
 
         #endregion
@@ -262,6 +268,7 @@ namespace EVF.Email.Bll
             string content = emailTemplate.Content;
             content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
             content = content.Replace("%TABLE%", table);
+            content = content.Replace("%URL%", _config.TaskUrl + "Evaluation_Group/Evaluation_MGT_Group/SummaryEvaluation");
             return new EmailTaskViewModel
             {
                 Content = content,
@@ -408,6 +415,7 @@ namespace EVF.Email.Bll
             string content = emailTemplate.Content;
             content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
             content = content.Replace("%TABLE%", table);
+            content = content.Replace("%URL%", _config.TaskUrl + "Evaluation_Group/Evaluation_MGT_Group/Evaluation");
             return new EmailTaskViewModel
             {
                 Content = content,
@@ -524,6 +532,7 @@ namespace EVF.Email.Bll
             string content = emailTemplate.Content;
             content = content.Replace("%TO%", string.Format(ConstantValue.EmpTemplate, empInfo.FirstnameTh, empInfo.LastnameTh));
             content = content.Replace("%TABLE%", table);
+            content = content.Replace("%URL%", _config.TaskUrl + "Inbox");
             return new EmailTaskViewModel
             {
                 Content = content,
