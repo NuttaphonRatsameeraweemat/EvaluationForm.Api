@@ -105,6 +105,8 @@ namespace EVF.Helper.Components
         public const string EmailSummaryTaskRejectCode = "S03";
         public const string EmailVendorEvaluationReportNoticeCode = "N01";
         public const string EmailVendorFilterNoticeCode = "N02";
+        public const string EmailEvaluationApproveNotice = "N03";
+        public const string EmailEvaluationNotice = "N04";
         //Email Task Status
         public const string EmailTaskStatusWaiting = "Wait";
         public const string EmailTaskStatusSending = "Send";

@@ -636,7 +636,7 @@ namespace EVF.Evaluation.Bll
                 DocNo = data.DocNo,
                 Content = $"{content}",
                 Subject = subject,
-                TaskCode = ConstantValue.EmailVendorEvaluationReportNoticeCode,
+                TaskCode = ConstantValue.EmailEvaluationApproveNotice,
                 Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
                 {
                     new Email.Bll.Models.EmailTaskReceiveViewModel{ Email = vendor.Email, FullName = vendor.VendorName, ReceiverType = ConstantValue.ReceiverTypeTo }
@@ -752,7 +752,7 @@ namespace EVF.Evaluation.Bll
                 DocNo = data.DocNo,
                 Content = $"{content}",
                 Subject = subject,
-                TaskCode = ConstantValue.EmailVendorEvaluationReportNoticeCode,
+                TaskCode = ConstantValue.EmailEvaluationNotice,
                 Receivers = new List<Email.Bll.Models.EmailTaskReceiveViewModel>
                 {
                     new Email.Bll.Models.EmailTaskReceiveViewModel{ Email = vendor.Email, FullName = vendor.VendorName, ReceiverType = ConstantValue.ReceiverTypeTo }
