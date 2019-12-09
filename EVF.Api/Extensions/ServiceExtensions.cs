@@ -49,6 +49,8 @@ using EVF.Report.Bll;
 using System.Linq;
 using EVF.Email.Bll.Interfaces;
 using EVF.Email.Bll;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace EVF.Api.Extensions
 {
@@ -77,6 +79,16 @@ namespace EVF.Api.Extensions
         public static void ConfigureRedisCache(this IServiceCollection services, IConfiguration Configuration)
         {
             RedisCacheHandler.ConnectionString = Configuration["ConnectionStrings:RedisCacheConnection"];
+        }
+
+        /// <summary>
+        /// Dependency Injection produce response type attribute filter.
+        /// </summary>
+        /// <param name="services">>The service collection.</param>
+        public static void ConfigureProduceResponseType(this IServiceCollection services)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, 
+                                                        ProduceResponseTypeModelProvider>());
         }
 
         /// <summary>

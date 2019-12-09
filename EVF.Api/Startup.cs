@@ -41,6 +41,7 @@ namespace EVF.Api
             services.ConfigureCors();
             //services.ConfigureCookieAuthen(Configuration);
             services.ConfigureJwtAuthen(Configuration);
+            services.ConfigureProduceResponseType();
             services.ConfigureEmailService();
             services.ConfigureComponent();
             services.AddAutoMapper();
